@@ -107,7 +107,6 @@ if ${COVERAGE_ENABLED} ; then
   cd Bulls*
   # Set up the license
   echo $PATH >install-path
-  scp yos@localhost:~/bull-license .
   set +x # keep password secret
   ./install --prefix /usr/bullseyes  --key $(cat ${WORKSPACE}/bull-license)
   set -x # back to debug
