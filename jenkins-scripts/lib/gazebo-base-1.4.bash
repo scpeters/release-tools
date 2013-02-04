@@ -1,5 +1,13 @@
 #!/bin/bash -x
 
+# Enable support for code coverage. This is not activiting it only enabling the support
+# to activate it set COVERAGE_ENABLED=true prior to call this script
+if [ -z ${SCRIPT_DIR} ]; then
+  echo "SCRIPT_DIR variable should be set before calling this script lib"
+fi
+
+. ${SCRIPT_DIR}/lib/code_coverage.sh
+
 ###################################################
 # Boilerplate.
 # DO NOT MODIFY
@@ -87,6 +95,8 @@ sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sou
 wget http://packages.ros.org/ros.key -O - | apt-key add -
 apt-get update
 
+code_coverage_prepare_if_enabled
+
 # Step 1: install everything you need
 
 # Required stuff for Gazebo
@@ -107,7 +117,13 @@ LD_LIBRARY_PATH=/opt/ros/fuerte/lib make test ARGS="-VV" || true
 # Step 3: code check
 cd $WORKSPACE/gazebo
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+
+# Step 4: generate code coverage if enabled
+code_coverage_generate_if_enabled
 DELIM
+
+# Copy the bullseye license to the chroot
+cp -a $HOME/bullseye-jenkins-license $WORKSPACE/bullseye-jenkins-license
 
 # Make project-specific changes here
 ###################################################
