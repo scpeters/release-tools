@@ -1,12 +1,10 @@
 #!/bin/bash -x
 
-# Enable support for code coverage. This is not activiting it only enabling the support
-# to activate it set COVERAGE_ENABLED=true prior to call this script
-if [ -z ${SCRIPT_DIR} ]; then
-  echo "SCRIPT_DIR variable should be set before calling this script lib"
-fi
+# No explicit activation means no coverage
+[ -z ${COVERAGE_ENABLED} ] && COVERAGE_ENABLED=false
 
-. ${SCRIPT_DIR}/lib/code_coverage.sh
+# By now, activate it for debugging proposes
+COVERAGE_ENABLED=true
 
 ###################################################
 # Boilerplate.
@@ -95,15 +93,33 @@ sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sou
 wget http://packages.ros.org/ros.key -O - | apt-key add -
 apt-get update
 
-code_coverage_prepare_if_enabled
-
 # Step 1: install everything you need
 
 # Required stuff for Gazebo
 apt-get install -y cmake build-essential debhelper libfreeimage-dev libprotoc-dev libprotobuf-dev protobuf-compiler freeglut3-dev libcurl4-openssl-dev libtinyxml-dev libtar-dev libtbb-dev libogre-dev libxml2-dev pkg-config libqt4-dev ros-fuerte-urdfdom libltdl-dev libboost-thread-dev libboost-signals-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-regex-dev libboost-iostreams-dev cppcheck robot-player-dev libcegui-mk2-dev libavformat-dev libavcodec-dev libswscale-dev
 
-# Step 2: configure and build
+if [[ ${COVERAGE_ENABLED} ]]; then
 
+  # Download and install Bullseyes
+  cd $WORKSPACE
+  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x64.tar -O bullseye.tar
+  tar -xf bullseye.tar
+  cd Bulls*
+  # Set up the license
+  echo $PATH >install-path
+  scp yos@localhost:~/bull-license .
+  set +x # keep password secret
+  ./install --prefix /usr/bullseyes  --key $(cat ${WORKSPACE}/bull-license)
+  set -x # back to debug
+  # Set up Bullseyes for compiling
+  export PATH=/usr/bullseyes/bin:\$PATH
+  export COVFILE=$WORKSPACE/gazebo/test.cov
+  cd $WORKSPACE/gazebo
+  covselect --file test.cov --add .
+  cov01 --on
+fi
+
+# Step 2: configure and build
 # Normal cmake routine for Gazebo
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
@@ -119,7 +135,22 @@ cd $WORKSPACE/gazebo
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 
 # Step 4: generate code coverage if enabled
-code_coverage_generate_if_enabled
+if [[ ${COVERAGE_ENABLED} ]]; then
+
+  rm -fr $WORKSPACE/coverage
+  mkdir -p $WORKSPACE/coverage
+  covselect --add '!build/' '!deps/' '!/opt/'
+  covhtml --srcdir $WORKSPACE/gazebo/ $WORKSPACE/coverage
+  # Generate valid cover.xml file using the bullshtml software
+  # java is needed to run bullshtml
+  apt-get install -y default-jre
+  cd $WORKSPACE
+  wget http://bullshtml.googlecode.com/files/bullshtml_1.0.5.tar.gz -O bullshtml.tar.gz
+  tar -xzf bullshtml.tar.gz
+  cd bullshtml
+  sh bullshtml .
+fi
+
 DELIM
 
 # Copy the bullseye license to the chroot
