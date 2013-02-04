@@ -154,6 +154,8 @@ if ${COVERAGE_ENABLED} ; then
   tar -xzf bullshtml.tar.gz
   cd bullshtml
   sh bullshtml .
+  # debug
+  find $WORKSPACE -name clover.xml
 fi
 
 DELIM
