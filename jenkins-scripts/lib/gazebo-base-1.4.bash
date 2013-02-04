@@ -98,7 +98,7 @@ apt-get update
 # Required stuff for Gazebo
 apt-get install -y cmake build-essential debhelper libfreeimage-dev libprotoc-dev libprotobuf-dev protobuf-compiler freeglut3-dev libcurl4-openssl-dev libtinyxml-dev libtar-dev libtbb-dev libogre-dev libxml2-dev pkg-config libqt4-dev ros-fuerte-urdfdom libltdl-dev libboost-thread-dev libboost-signals-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-regex-dev libboost-iostreams-dev cppcheck robot-player-dev libcegui-mk2-dev libavformat-dev libavcodec-dev libswscale-dev
 
-if [[ ${COVERAGE_ENABLED} ]]; then
+if ${COVERAGE_ENABLED} ; then
 
   # Download and install Bullseyes
   cd $WORKSPACE
@@ -135,7 +135,7 @@ cd $WORKSPACE/gazebo
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 
 # Step 4: generate code coverage if enabled
-if [[ ${COVERAGE_ENABLED} ]]; then
+if ${COVERAGE_ENABLED} ; then
 
   rm -fr $WORKSPACE/coverage
   mkdir -p $WORKSPACE/coverage
