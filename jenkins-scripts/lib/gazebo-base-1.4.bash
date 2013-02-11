@@ -144,7 +144,7 @@ if ${COVERAGE_ENABLED} ; then
 
   rm -fr $WORKSPACE/coverage
   mkdir -p $WORKSPACE/coverage
-  covselect --add '!build/' '!deps/' '!/opt/'
+  covselect --add '!$WORKSPACE/build/' '!deps/' '!/opt/' '!rendering/skyx'
   covhtml --srcdir $WORKSPACE/gazebo/ $WORKSPACE/coverage
   # Generate valid cover.xml file using the bullshtml software
   # java is needed to run bullshtml
@@ -154,8 +154,6 @@ if ${COVERAGE_ENABLED} ; then
   tar -xzf bullshtml.tar.gz
   cd bullshtml
   sh bullshtml .
-  # debug
-  find $WORKSPACE -name clover.xml
 fi
 
 DELIM
