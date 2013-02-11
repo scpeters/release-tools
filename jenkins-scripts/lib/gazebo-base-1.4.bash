@@ -14,7 +14,7 @@ COVERAGE_ENABLED=true
 set -e
 
 distro=precise
-arch=amd64
+arch=i386
 base=/var/cache/pbuilder-$distro-$arch
 
 aptconffile=$WORKSPACE/apt.conf
@@ -108,7 +108,7 @@ if ${COVERAGE_ENABLED} ; then
 
   # Download and install Bullseyes
   cd $WORKSPACE
-  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x64.tar -O bullseye.tar
+  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x86.tar -O bullseye.tar
   tar -xf bullseye.tar
   cd Bulls*
   # Set up the license
@@ -154,6 +154,8 @@ if ${COVERAGE_ENABLED} ; then
   tar -xzf bullshtml.tar.gz
   cd bullshtml
   sh bullshtml .
+  # Hack to remove long paths from report
+  find . -name clover.xml -exec sed -i -e 's:$WORKSPACE/gazebo::g' {} \;
 fi
 
 DELIM
