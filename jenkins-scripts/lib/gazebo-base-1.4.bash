@@ -14,7 +14,7 @@ COVERAGE_ENABLED=true
 set -e
 
 distro=precise
-arch=i386
+arch=amd64
 base=/var/cache/pbuilder-$distro-$arch
 
 aptconffile=$WORKSPACE/apt.conf
@@ -108,11 +108,12 @@ if ${COVERAGE_ENABLED} ; then
 
   # Download and install Bullseyes
   cd $WORKSPACE
-  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x86.tar -O bullseye.tar
+  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x64.tar -O bullseye.tar
   tar -xf bullseye.tar
   cd Bulls*
   # Set up the license
   echo $PATH >install-path
+  rm -fr /usr/bullseyes
   set +x # keep password secret
   ./install --prefix /usr/bullseyes --key $BULLSEYE_LICENSE
   set -x # back to debug
