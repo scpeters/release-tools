@@ -1,4 +1,4 @@
-#!/bin/bash -x
+!/bin/bash -x
 
 # No explicit activation means no coverage
 [ -z ${COVERAGE_ENABLED} ] && COVERAGE_ENABLED=false
@@ -108,7 +108,7 @@ if ${COVERAGE_ENABLED} ; then
 
   # Download and install Bullseyes
   cd $WORKSPACE
-  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.42-Linux-x64.tar -O bullseye.tar
+  wget http://www.bullseye.com/download/BullseyeCoverage-8.7.45-Linux-x64.tar -O bullseye.tar
   tar -xf bullseye.tar
   cd Bulls*
   # Set up the license
