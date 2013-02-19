@@ -115,6 +115,8 @@ if ${COVERAGE_ENABLED} ; then
   # Set up the license
   echo $PATH >install-path
   rm -fr /usr/bullseyes
+  uname -a
+  file ./install
   set +x # keep password secret
   ./install --prefix /usr/bullseyes --key $BULLSEYE_LICENSE
   set -x # back to debug
