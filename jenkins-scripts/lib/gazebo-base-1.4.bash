@@ -108,6 +108,7 @@ if ${COVERAGE_ENABLED} ; then
 
   # Download and install Bullseyes
   cd $WORKSPACE
+  rm -fr $WORKSPACE/Bulls*
   wget http://www.bullseye.com/download/BullseyeCoverage-8.7.45-Linux-x86.tar -O bullseye.tar
   tar -xf bullseye.tar
   cd Bulls*
