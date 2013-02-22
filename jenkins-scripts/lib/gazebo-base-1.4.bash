@@ -14,7 +14,7 @@ COVERAGE_ENABLED=true
 set -e
 
 distro=precise
-arch=i386
+arch=amd64
 base=/var/cache/pbuilder-$distro-$arch
 
 aptconffile=$WORKSPACE/apt.conf
