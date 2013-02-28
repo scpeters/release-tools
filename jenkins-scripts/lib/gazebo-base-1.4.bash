@@ -148,8 +148,9 @@ sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 if ${COVERAGE_ENABLED} ; then
 
   rm -fr $WORKSPACE/coverage
+  rm -fr $WORKSPACE/bullshtml
   mkdir -p $WORKSPACE/coverage
-  covselect --add '!$WORKSPACE/build/' '!$WORKSPACE/deps/' '!/opt/' '!$WORKSPACE/rendering/skyx/'
+  covselect --add '!$WORKSPACE/build/' '!../build/' '!test/' '!tools/test/' '!$WORKSPACE/deps/' '!/opt/' '!gazebo/rendering/skyx/'
   covhtml --srcdir $WORKSPACE/gazebo/ $WORKSPACE/coverage
   # Generate valid cover.xml file using the bullshtml software
   # java is needed to run bullshtml
@@ -160,9 +161,8 @@ if ${COVERAGE_ENABLED} ; then
   cd bullshtml
   sh bullshtml .
   # Hack to remove long paths from report
-  ls -las \$COVFILE
-  find . -name clover.xml
-  find . -name clover.xml -exec sed -i -e 's:$WORKSPACE/gazebo::g' {} \;
+  ls -lash \$COVFILE
+  find . -name clover.xml -exec sed -i -e 's:$WORKSPACE/build/gazebo::g' {} \;
 fi
 
 DELIM
