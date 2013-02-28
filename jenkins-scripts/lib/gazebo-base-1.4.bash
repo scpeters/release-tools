@@ -161,7 +161,7 @@ if ${COVERAGE_ENABLED} ; then
   cd bullshtml
   sh bullshtml .
   # Hack to remove long paths from report
-  find . -name clover.xml -exec sed -i -e 's:$WORKSPACE/build/gazebo::g' {} \\;
+  find . -name clover.xml -exec sed -i -e 's:$WORKSPACE/build/gazebo::g' {} \\\;
 fi
 
 DELIM
