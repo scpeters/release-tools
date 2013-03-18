@@ -39,6 +39,7 @@ fi
 apt-get install -y mercurial ca-certificates
 rm -fr $WORKSPACE/gazebo
 hg clone https://bitbucket.org/osrf/gazebo -b gazebo_1.5 $WORKSPACE/gazebo
+cd $WORKSPACE/gazebo
 hg up gazebo_1.5
 
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
