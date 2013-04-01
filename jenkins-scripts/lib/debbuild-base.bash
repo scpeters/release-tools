@@ -51,6 +51,9 @@ else
   PACKAGE_SRC_BUILD_DIR=$PACKAGE-$VERSION
 fi
 
+# TEMP FIX
+sed -i -e 's:-j4:-j1:g' $WORKSPACE/build/\$PACKAGE_SRC_BUILD_DIR/ros/CMakeLists.txt
+
 # Step 4: add debian/ subdirectory with necessary metadata files to unpacked source tarball
 rm -rf /tmp/$PACKAGE-release
 hg clone https://bitbucket.org/osrf/$PACKAGE-release /tmp/$PACKAGE-release 
