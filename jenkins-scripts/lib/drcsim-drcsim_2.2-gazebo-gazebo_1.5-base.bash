@@ -6,10 +6,6 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
-# Forcing Release built type. We want to test this for a quick release cycle of
-# gazebo-1.5.1 and drcsim_2.2.1
-GZ_CMAKE_BUILD_TYPE=Release
-
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -44,7 +40,7 @@ cd $WORKSPACE/gazebo
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
 mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
 cd $WORKSPACE/gazebo/build
-CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
+CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} cmake ${GZ_EXTRA_CMAKE_OPTIONS} ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
 make -j3
 make install
 . /usr/share/gazebo-1.*/setup.sh
