@@ -52,6 +52,11 @@ fi
 # Normal cmake routine
 . /opt/ros/${ROS_DISTRO}/setup.sh
 . /usr/share/gazebo/setup.sh
+
+# Be sure of use always same version
+cd $WORKSPACE/drcsim
+hg up drcsim_2.2.0
+
 rm -rf $WORKSPACE/build $WORKSPACE/install
 mkdir -p $WORKSPACE/build $WORKSPACE/install
 cd $WORKSPACE/build
