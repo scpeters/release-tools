@@ -96,7 +96,7 @@ cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
 
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
-debuild --no-tgz-check -S -uc -us --source-option=--include-binaries
+debuild --no-tgz-check -S -uc -us --source-option=--include-binaries --source-option=--auto-commit
 
 # Step 5.1: define a pbuilder hack to include all things needed to run from inside
 # pbuilder.
