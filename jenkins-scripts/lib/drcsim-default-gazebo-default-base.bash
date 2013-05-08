@@ -59,6 +59,12 @@ if [ $DISTRO = quantal ]; then
     done
 fi
 
+# 0. Get gazebo_models from repo
+mkdir -p \$HOME/.gazebo/
+hg clone https://bitbucket.org/osrf/gazebo_models \$HOME/.gazebo/models
+rm -fr \$HOME/.gazebo/.hg
+rm -fr \$HOME/.gazebo/*.in
+
 # 1. Normal cmake routine for osrf-common
 rm -fr $WORKSPACE/osrf-common
 hg clone https://bitbucket.org/osrf/osrf-common $WORKSPACE/osrf-common
