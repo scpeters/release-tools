@@ -52,6 +52,13 @@ if [ $DISTRO = quantal ]; then
     done
 fi
 
+# 0. Get gazebo_models from repo
+sudo apt-get -y install mercurial
+mkdir -p \$HOME/.gazebo/
+hg clone https://bitbucket.org/osrf/gazebo_models \$HOME/.gazebo/models
+rm -fr \$HOME/.gazebo/.hg
+rm -fr \$HOME/.gazebo/*.in
+
 # Normal cmake routine
 . /opt/ros/${ROS_DISTRO}/setup.sh
 . /usr/share/gazebo/setup.sh
