@@ -22,7 +22,7 @@ wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 apt-get update
 
 # Step 1: install everything you need
-apt-get install -y mercurial ca-certificates ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${DRCSIM_BASE_DEPENDENCIES}
+apt-get install -y mercurial ca-certificates ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${DRCSIM_BASE_DEPENDENCIES} sandia-hand-nightly osrf-common-nightly
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
