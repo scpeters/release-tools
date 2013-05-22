@@ -22,9 +22,7 @@ wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 apt-get update
 
 # Step 1: install everything you need
-
-# Install drcsim's and gazebo Build-Depends
-apt-get install -y ${BASE_DEPENDENCIES} ros-${ROS_DISTRO}-pr2-mechanism ros-${ROS_DISTRO}-std-msgs ros-${ROS_DISTRO}-common-msgs ros-${ROS_DISTRO}-image-common ros-${ROS_DISTRO}-geometry ros-${ROS_DISTRO}-pr2-controllers ros-${ROS_DISTRO}-geometry-experimental ros-${ROS_DISTRO}-image-pipeline build-essential  libfreeimage-dev libprotoc-dev libprotobuf-dev protobuf-compiler freeglut3-dev libcurl4-openssl-dev libtinyxml-dev libtar-dev libtbb-dev libogre-dev libbullet-dev ros-${ROS_DISTRO}-visualization-common libxml2-dev pkg-config libqt4-dev ros-${ROS_DISTRO}-urdfdom ros-${ROS_DISTRO}-console-bridge libltdl-dev libboost-thread-dev libboost-signals-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-regex-dev libboost-iostreams-dev cppcheck ros-${ROS_DISTRO}-robot-model-visualization osrf-common-nightly sandia-hand-nightly
+apt-get install -y mercurial ca-certificates ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${DRCSIM_BASE_DEPENDENCIES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
@@ -32,7 +30,6 @@ if ${GRAPHIC_CARD_FOUND}; then
 fi
 
 # Normal cmake routine for Gazebo
-apt-get install -y mercurial ca-certificates
 rm -fr $WORKSPACE/gazebo
 hg clone https://bitbucket.org/osrf/gazebo -b gazebo_1.8 $WORKSPACE/gazebo
 cd $WORKSPACE/gazebo
