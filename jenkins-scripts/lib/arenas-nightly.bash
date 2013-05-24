@@ -51,7 +51,7 @@ rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 cmake $WORKSPACE/vrc_arenas -DCMAKE_INSTALL_PREFIX=/usr ${ARENAS_LIGHT_TEST_SUITE_STR}
-make install
+make -j${MAKE_JOBS} install
 . /usr/share/vrc_arenas/setup.sh
 
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results make test ARGS="-VV" || true

@@ -11,10 +11,6 @@ else
     GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${GZ_BUILD_TYPE}"
 fi
 
-if [ -z ${MAKE_JOBS} ]; then
-    MAKE_JOBS=1
-fi
-
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM

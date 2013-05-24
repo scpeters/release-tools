@@ -10,6 +10,11 @@ if [ -z ${ROS_DISTRO} ]; then
   ROS_DISTRO=fuerte
 fi
 
+# Define making jobs by default if not present
+if [ -z ${MAKE_JOBS} ]; then
+    MAKE_JOBS=1
+fi
+
 # Useful for running tests properly in ros based software
 export ROS_HOSTNAME=localhost
 export ROS_MASTER_URI=http://localhost:11311
