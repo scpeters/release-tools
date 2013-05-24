@@ -55,6 +55,7 @@ make install
 . /usr/share/vrc_arenas/setup.sh
 
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results make test ARGS="-VV" || true
+ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
 DELIM
 
 # Make project-specific changes here
