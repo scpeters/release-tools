@@ -27,7 +27,7 @@ apt-get update
 
 # Step 1: install everything you need
 # Install drcsim's and gazebo nightly
-apt-get install -y drcsim-nightly
+apt-get install -y drcsim-nightly ${DRCSIM_BASE_DEPENDENCIES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
