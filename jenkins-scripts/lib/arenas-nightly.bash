@@ -7,9 +7,15 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 ARENAS_LIGHT_TEST_SUITE_STR="-DLIGHT_TEST_SUITE=1"
 
 if ! ${ARENAS_LIGHT_TEST_SUITE} ; then
-    ARENAS_LIGHT_TEST_SUITE_STR=""
+    ARENAS_TEST_SUITE_STR=""
 fi
- 
+if ! ${ARENAS_HEAVY_TEST_SUITE} ; then
+    ARENAS_TEST_SUITE_STR="-DHEAVY_TEST_SUITE=1"
+fi
+if ! ${ARENAS_PARANOID_TEST_SUITE} ; then
+    ARENAS_TEST_SUITE_STR="-DPARANOID_TEST_SUITE=1"
+fi
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -50,7 +56,7 @@ SHELL=/bin/sh . /usr/share/drcsim/setup.sh
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
-cmake $WORKSPACE/vrc_arenas -DCMAKE_INSTALL_PREFIX=/usr ${ARENAS_LIGHT_TEST_SUITE_STR}
+cmake $WORKSPACE/vrc_arenas -DCMAKE_INSTALL_PREFIX=/usr ${ARENAS_TEST_SUITE_STR}
 make -j${MAKE_JOBS} install
 . /usr/share/vrc_arenas/setup.sh
 
