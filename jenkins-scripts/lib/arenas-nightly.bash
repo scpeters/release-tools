@@ -56,7 +56,7 @@ SHELL=/bin/sh . /usr/share/drcsim/setup.sh
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
-cmake $WORKSPACE/vrc_arenas -DCMAKE_INSTALL_PREFIX=/usr ${ARENAS_TEST_SUITE_STR}
+cmake $WORKSPACE/vrc_arenas -DCMAKE_INSTALL_PREFIX=/usr \${ARENAS_TEST_SUITE_STR}
 make -j${MAKE_JOBS} install
 . /usr/share/vrc_arenas/setup.sh
 
