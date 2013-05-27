@@ -6,6 +6,11 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
+# Be able to pass different gazebo branches to testing
+if [ -z ${GAZEBO_BRANCH} ]; then
+    GAZEBO_BRANCH="gazebo_1.8"
+fi
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -31,9 +36,9 @@ fi
 
 # Normal cmake routine for Gazebo
 rm -fr $WORKSPACE/gazebo
-hg clone https://bitbucket.org/osrf/gazebo -b gazebo_1.8 $WORKSPACE/gazebo
+hg clone https://bitbucket.org/osrf/gazebo -b ${GAZEBO_BRANCH} $WORKSPACE/gazebo
 cd $WORKSPACE/gazebo
-hg up gazebo_1.8
+hg up ${GAZEBO_BRANCH}
 
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
 mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
