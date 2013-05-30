@@ -65,6 +65,14 @@ SHELL=/bin/sh . $WORKSPACE/install/share/drcsim/setup.sh
 export PATH="\$PATH:$WORKSPACE/install/bin/"
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results make test ARGS="-VV" || true
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
+# Try to get core files out of chroot
+mkdir $WORKSPACE/build/core_dumped
+if [ -d /var/lib/jenkins/.ros ]; then
+cp -a /var/lib/jenkins/.ros/ $WORKSPACE/build/core_dumped/
+fi
+if [ -d /root/.ros ]; then
+cp -a /root/.ros/ $WORKSPACE/build/core_dumped/
+fi
 DELIM
 
 # Make project-specific changes here
