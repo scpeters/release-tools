@@ -17,6 +17,9 @@ cat > build.sh << DELIM
 #
 set -ex
 
+# try to get core dumps
+ulimit -c unlimited
+
 # get ROS repo's key
 apt-get install -y wget
 sh -c 'echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/ros-latest.list'
