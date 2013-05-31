@@ -1,6 +1,12 @@
 # Common instructions to create the building enviroment
 set -e
 
+# monitor all subprocess and enforce termination (thanks to ROS crew)
+# never failed on this
+wget https://raw.github.com/ros-infrastructure/buildfarm/master/scripts/subprocess_reaper.py
+sudo python subprocess_reaper.py $$ &
+sleep 1
+
 # Default values - Provide them is prefered
 if [ -z ${DISTRO} ]; then
     DISTRO=precise
