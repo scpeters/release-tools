@@ -11,6 +11,8 @@ if [ -z ${GAZEBO_BRANCH} ]; then
     GAZEBO_BRANCH="log_debug"
 fi
 
+export GZ_CMAKE_BUILD_TYPE="RelWithDebInfo"
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -30,7 +32,7 @@ wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 apt-get update
 
 # Step 1: install everything you need
-apt-get install -y mercurial ca-certificates ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${DRCSIM_BASE_DEPENDENCIES} sandia-hand-nightly osrf-common-nightly
+apt-get install -y mercurial ca-certificates ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${DRCSIM_BASE_DEPENDENCIES} sandia-hand-nightly osrf-common-nightly openssh-client
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
