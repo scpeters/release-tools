@@ -88,4 +88,4 @@ sudo pbuilder  --execute \
     --basetgz $basetgz \
     -- build.sh
 
-find $WORKSPACE/build/core_dumped -name *core* -exec cp {} ${HOME}/core_$RANDOM \;
+find $WORKSPACE/build/core_dumped -name *core* -exec mv {} ${HOME}/core_$RANDOM \;
