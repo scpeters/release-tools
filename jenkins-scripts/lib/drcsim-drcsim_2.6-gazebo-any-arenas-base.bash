@@ -11,7 +11,7 @@ if [ -z ${GAZEBO_BRANCH} ]; then
     GAZEBO_BRANCH="log_debug"
 fi
 
-export GZ_CMAKE_BUILD_TYPE="RelWithDebInfo"
+export GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 
 cat > build.sh << DELIM
 ###################################################
