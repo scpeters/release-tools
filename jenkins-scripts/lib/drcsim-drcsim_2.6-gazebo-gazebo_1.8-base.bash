@@ -87,3 +87,5 @@ sudo pbuilder  --execute \
     --bindmounts $WORKSPACE \
     --basetgz $basetgz \
     -- build.sh
+
+find $WORKSPACE/build/core_dumped -name *core* -exec cp {} /root/core_$RANDOM \;
