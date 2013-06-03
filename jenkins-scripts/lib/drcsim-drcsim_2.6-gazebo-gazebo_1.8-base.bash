@@ -81,15 +81,12 @@ fi
 done
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
 # Try to get core files out of chroot
+rmdir -fr $WORKSPACE/build/core_dumped
 mkdir $WORKSPACE/build/core_dumped
-if [ -d /var/lib/jenkins/.ros ]; then
-echo "core in jenkins/.ros"
-cp -a /var/lib/jenkins/.ros/ $WORKSPACE/build/core_dumped/
-fi
-if [ -d /root/.ros ]; then
-echo "core in /root/.ros"
-cp -a /root/.ros/ $WORKSPACE/build/core_dumped/
-fi
+find /var/lib/jenkins -name *core* -exec ls -lash {} \;
+find /var/lib/jenkins -name *core* -exec cp {} $WORKSPACE/build/core_dumped/ \;
+find /var/lib/jenkins -name *core* -exec ls -lash {} \;
+find /var/lib/jenkins -name *core* -exec cp {} $WORKSPACE/build/core_dumped/ \;
 DELIM
 
 # Make project-specific changes here
@@ -100,4 +97,6 @@ sudo pbuilder  --execute \
     --basetgz $basetgz \
     -- build.sh
 
-[[ -d $WORKSPACE/build/core_dumped ]] && find $WORKSPACE/build/core_dumped -name *core* -exec sudo mv {} /var/lib/jenkins/core_$RANDOM \;
+if [[ -d "$WORKSPACE/build/core_dumped" ]]; then 
+find $WORKSPACE/build/core_dumped -name *core* -exec sudo mv {} /var/lib/jenkins/core_$RANDOM \;
+fi
