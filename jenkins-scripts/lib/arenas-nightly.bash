@@ -30,6 +30,14 @@ apt-get update
 
 # Step 1: install everything you need
 # Install drcsim's and gazebo nightly
+
+# Inject gazebo log_segfault_alt
+apt-get install -y wget
+wget https://www.dropbox.com/s/0do8h1w7kw98kyq/gazebo-nightly_1.8.3%7Eexphg20130603ra11495281488-1%7Eprecise_amd64.deb
+dpkg -i gazebo-nightly_*.deb
+wget https://www.dropbox.com/s/54u843jib73fok7/gazebo-nightly-dbg_1.8.3%7Eexphg20130603ra11495281488-1%7Eprecise_amd64.deb 
+dpkg -i gazebo-nightly-dbg_*.deb
+
 apt-get install -y drcsim-nightly ${DRCSIM_BASE_DEPENDENCIES}
 
 # Optional stuff. Check for graphic card support
@@ -59,6 +67,12 @@ make -j${MAKE_JOBS} install
 
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results make test ARGS="-VV" || true
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
+if [ -d /root/.ros ]; then
+cp -a /root/.ros/ $WORKSPACE/build/core_dumped/
+fi
+if [ -d /var/lib/jenkins/.ros ]; then
+cp -a /var/lib/jenkins/.ros/ $WORKSPACE/build/core_dumped/
+fi
 DELIM
 
 # Make project-specific changes here
@@ -68,3 +82,5 @@ sudo pbuilder  --execute \
     --bindmounts $WORKSPACE \
     --basetgz $basetgz \
     -- build.sh
+
+find $WORKSPACE/build/core_dumped -name *core* -exec mv {} ${HOME}/core_$RANDOM \;
