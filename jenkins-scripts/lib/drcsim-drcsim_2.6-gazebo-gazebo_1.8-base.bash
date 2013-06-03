@@ -11,6 +11,10 @@ if [ -z ${GAZEBO_BRANCH} ]; then
     GAZEBO_BRANCH="gazebo_1.8"
 fi
 
+if [ -z ${TEST_RUNS} ]; then
+    TEST_RUNS=1
+fi
+
 export GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 
 cat > build.sh << DELIM
@@ -68,14 +72,22 @@ make -j${MAKE_JOBS}
 make install
 SHELL=/bin/sh . $WORKSPACE/install/share/drcsim/setup.sh
 export PATH="\$PATH:$WORKSPACE/install/bin/"
+for i in \`seq 1 $TEST_RUNS \`; do
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results make test ARGS="-VV" || true
+if [ -f /root/.ros/core ]; then
+echo "found a core dump"
+break
+fi
+done
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
 # Try to get core files out of chroot
 mkdir $WORKSPACE/build/core_dumped
 if [ -d /var/lib/jenkins/.ros ]; then
+echo "core in jenkins/.ros"
 cp -a /var/lib/jenkins/.ros/ $WORKSPACE/build/core_dumped/
 fi
 if [ -d /root/.ros ]; then
+echo "core in /root/.ros"
 cp -a /root/.ros/ $WORKSPACE/build/core_dumped/
 fi
 DELIM
