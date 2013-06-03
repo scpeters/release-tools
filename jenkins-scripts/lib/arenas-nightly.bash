@@ -32,7 +32,7 @@ apt-get update
 # Install drcsim's and gazebo nightly
 
 # Inject gazebo log_segfault_alt
-apt-get install -y wget
+apt-get install -y gazebo-nightly
 wget --no-check-certificate https://www.dropbox.com/s/0do8h1w7kw98kyq/gazebo-nightly_1.8.3%7Eexphg20130603ra11495281488-1%7Eprecise_amd64.deb
 dpkg -i gazebo-nightly_*.deb
 wget --no-check-certificate https://www.dropbox.com/s/54u843jib73fok7/gazebo-nightly-dbg_1.8.3%7Eexphg20130603ra11495281488-1%7Eprecise_amd64.deb 
