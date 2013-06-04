@@ -99,4 +99,4 @@ sudo pbuilder  --execute \
     --basetgz $basetgz \
     -- build.sh
 
-[[ -d $WORKSPACE/build/core_dumped ]] && find $WORKSPACE/build/core_dumped -name *core* -exec sudo mv {} /var/lib/jenkins/core_$RANDOM \;
+#[[ -d $WORKSPACE/build/core_dumped ]] && find $WORKSPACE/build/core_dumped -name *core* -exec sudo mv {} /var/lib/jenkins/core_$RANDOM \;
