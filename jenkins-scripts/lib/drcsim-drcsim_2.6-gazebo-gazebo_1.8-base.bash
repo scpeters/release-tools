@@ -45,7 +45,7 @@ gcc foo.c -o foo
 ./foo || true
 
 echo $WORKSPACE/core_dumps
-rmdir -fr $WORKSPACE/core_dumps
+rm -fr $WORKSPACE/core_dumps
 mkdir -p $WORKSPACE/core_dumps
 find /var/lib/jenkins -name *core* -exec ls -lash {} \;
 find /var/lib/jenkins -name *core* -exec cp {} $WORKSPACE/core_dumps/ \;
