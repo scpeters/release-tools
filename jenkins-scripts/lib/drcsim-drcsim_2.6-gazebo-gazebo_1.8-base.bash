@@ -33,15 +33,15 @@ wget http://packages.ros.org/ros.key -O - | apt-key add -
 # Also get drc repo's key, to be used in getting Gazebo
 sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
 wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
-apt-get update
+#apt-get update
 
 # Step 1: install everything you need
-apt-get install -y drcsim-nightly
+#apt-get install -y drcsim-nightly
 
 cat > foo.c <<- DELIM2
 main;
 DELIM2
-gcc -o foo.c -o foo
+gcc foo.c -o foo
 ./foo
 
 echo $WORKSPACE/core_dumps
