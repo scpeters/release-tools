@@ -13,6 +13,11 @@ if [[ ${ARENAS_PARANOID_TEST_SUITE} ]] ; then
     ARENAS_TEST_SUITE_STR="-DPARANOID_TEST_SUITE=1"
 fi
 
+DRCSIM_PKG="drcsim-nightly"
+if [[ ${PKG_VERSION} == "stable" ]]; then
+    DRCSIM_PKG="drcsim"
+fi
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -29,8 +34,8 @@ wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 apt-get update
 
 # Step 1: install everything you need
-# Install drcsim's and gazebo nightly
-apt-get install -y drcsim-nightly ${DRCSIM_BASE_DEPENDENCIES}
+# Install drcsim's and gazebo 
+apt-get install -y ${DRCSIM_PKG} ${DRCSIM_BASE_DEPENDENCIES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
