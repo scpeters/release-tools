@@ -42,7 +42,7 @@ cat > foo.c <<- DELIM2
 main;
 DELIM2
 gcc foo.c -o foo
-./foo
+./foo || true
 
 echo $WORKSPACE/core_dumps
 rmdir -fr $WORKSPACE/core_dumps
