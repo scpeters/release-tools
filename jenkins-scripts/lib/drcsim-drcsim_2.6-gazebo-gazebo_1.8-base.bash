@@ -81,7 +81,7 @@ fi
 done
 ROS_TEST_RESULTS_DIR=$WORKSPACE/build/test_results rosrun rosunit clean_junit_xml.py
 # Try to get core files out of chroot
-rmdir -fr $WORKSPACE/build/core_dumped
+rm -fr $WORKSPACE/build/core_dumped
 mkdir $WORKSPACE/build/core_dumped
 find /var/lib/jenkins -name *core* -exec ls -lash {} \;
 find /var/lib/jenkins -name *core* -exec cp {} $WORKSPACE/build/core_dumped/ \;
