@@ -96,7 +96,3 @@ sudo pbuilder  --execute \
     --bindmounts $WORKSPACE \
     --basetgz $basetgz \
     -- build.sh
-
-if [[ -d "$WORKSPACE/build/core_dumped" ]]; then 
-find $WORKSPACE/build/core_dumped -name *core* -exec sudo mv {} /var/lib/jenkins/core_$RANDOM \;
-fi
