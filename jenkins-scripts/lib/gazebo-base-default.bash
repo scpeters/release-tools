@@ -55,7 +55,7 @@ CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_IN
 make -j${MAKE_JOBS}
 make install
 . /usr/share/gazebo/setup.sh
-LD_LIBRARY_PATH=/opt/ros/${ROS_DISTRO}/lib make test ARGS="-VV" || true
+LD_LIBRARY_PATH=/opt/ros/${ROS_DISTRO}/lib make test -j${MAKE_JOBS} ARGS="-VV" || true
 
 # Step 3: code check
 cd $WORKSPACE/gazebo
