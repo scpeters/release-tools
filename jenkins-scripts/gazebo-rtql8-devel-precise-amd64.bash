@@ -59,7 +59,6 @@ cd $WORKSPACE/build
 CMAKE_PREFIX_PATH=/opt/ros/fuerte cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
 make -j1
 make install
-. /usr/share/gazebo/setup.sh
 LD_LIBRARY_PATH=/opt/ros/fuerte/lib make test ARGS="-VV" || true
 
 # Step 3: code check

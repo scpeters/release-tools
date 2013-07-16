@@ -44,8 +44,6 @@ fi
 if [ -f /opt/ros/${ROS_DISTRO}/setup.sh ]; then
   . /opt/ros/${ROS_DISTRO}/setup.sh
 fi
-if [ -f /usr/share/gazebo/setup.sh ]; then
-  . /usr/share/gazebo/setup.sh
 fi
 if [ -f /usr/share/drcsim/setup.sh ]; then
   SHELL=/bin/sh . /usr/share/drcsim/setup.sh
