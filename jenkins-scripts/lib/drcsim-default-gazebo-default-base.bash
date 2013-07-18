@@ -12,6 +12,11 @@ else
     GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${GZ_BUILD_TYPE}"
 fi
 
+# Be able to pass different gazebo branches to testing
+if [ -z ${GAZEBO_BRANCH} ]; then
+    GAZEBO_BRANCH="default"
+fi
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -88,6 +93,8 @@ make install
 # Normal cmake routine for Gazebo
 rm -fr $WORKSPACE/gazebo
 hg clone https://bitbucket.org/osrf/gazebo $WORKSPACE/gazebo
+cd $WORKSPACE/gazebo
+hg up $GAZEBO_BRANCH
 
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
 mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/gazebo/install
