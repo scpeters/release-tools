@@ -48,7 +48,7 @@ fi
 
 # monitor all subprocess and enforce termination (thanks to ROS crew)
 # never failed on this
-wget https://raw.github.com/ros-infrastructure/buildfarm/master/scripts/subprocess_reaper.py
+wget https://raw.github.com/ros-infrastructure/buildfarm/master/scripts/subprocess_reaper.py -O subprocess_reaper.py
 sudo python subprocess_reaper.py $$ &
 sleep 1
 
