@@ -20,6 +20,7 @@ cat > build.sh << DELIM
 set -ex
 
 # OSRF repository to get bullet
+apt-get install -y wget
 sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
 wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 apt-get update
