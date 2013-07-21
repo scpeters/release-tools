@@ -44,7 +44,6 @@ make -j${MAKE_JOBS}
 # Step 3: code check
 cd $WORKSPACE/gazebo
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
-kill -9 \$K_PID
 DELIM
 
 # Make project-specific changes here
