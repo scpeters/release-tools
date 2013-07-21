@@ -33,6 +33,14 @@ apt-get update
 # Required stuff for Gazebo
 apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 
+# Normal cmake routine for Gazebo
+rm -rf $WORKSPACE/build $WORKSPACE/install
+mkdir -p $WORKSPACE/build $WORKSPACE/install
+cd $WORKSPACE/build
+CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
+make -j${MAKE_JOBS}
+
+
 # Step 3: code check
 cd $WORKSPACE/gazebo
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
