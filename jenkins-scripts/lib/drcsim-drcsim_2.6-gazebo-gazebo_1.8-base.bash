@@ -11,7 +11,7 @@ if [ -z ${GAZEBO_BRANCH} ]; then
     GAZEBO_BRANCH="gazebo_1.8"
 fi
 
-export GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+export GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=Release"
 
 cat > build.sh << DELIM
 ###################################################
