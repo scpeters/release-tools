@@ -31,7 +31,7 @@ apt-get update
 # Step 1: install everything you need
 
 # Required stuff for Gazebo
-apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
+apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} time
 
 # Normal cmake routine for Gazebo
 rm -rf $WORKSPACE/build $WORKSPACE/install
