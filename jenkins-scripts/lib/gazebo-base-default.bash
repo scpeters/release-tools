@@ -43,7 +43,7 @@ make -j${MAKE_JOBS}
 
 # Step 3: code check
 cd $WORKSPACE/gazebo
-sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+time sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 DELIM
 
 # Make project-specific changes here
