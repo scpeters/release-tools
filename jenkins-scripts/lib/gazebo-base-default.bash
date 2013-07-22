@@ -11,6 +11,10 @@ else
     GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${GZ_BUILD_TYPE}"
 fi
 
+if [ -z ${USE_CPPCHECK} ]; then
+    USE_CPPCHECK=false
+fi
+
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -66,7 +70,9 @@ done
 DELIM3
 sh keep_output.sh &
 K_PID=\$!
-sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+if $USE_CPPCHECK; then
+  sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+fi
 kill -9 \$K_PID
 DELIM
 

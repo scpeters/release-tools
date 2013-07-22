@@ -5,5 +5,6 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 export DISTRO=raring
+export USE_CPPCHECK=true
 
 . ${SCRIPT_DIR}/lib/gazebo-base-default.bash
