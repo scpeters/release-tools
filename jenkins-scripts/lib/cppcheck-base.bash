@@ -11,6 +11,11 @@ if [ -z ${SOFTWARE} ]; then
     exit 1
 fi
 
+QUERY_HOST_PACKAGES=$(dpkg-query -Wf'${db:Status-abbrev}' cppcheck 2>&1) || true
+if [[ -n ${QUERY_HOST_PACKAGES} ]]; then
+  sudo apt-get install -y cppcheck
+fi
+
 SOFTWARE_DIR=${WORKSPACE}/${SOFTWARE}
 
 if [ ! -d ${SOFTWARE_DIR} ]; then
