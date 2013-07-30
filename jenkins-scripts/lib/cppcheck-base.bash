@@ -13,7 +13,7 @@ fi
 
 SOFTWARE_DIR=${WORKSPACE}/${SOFTWARE}
 
-if [ -d ${SOFTWARE_DIR} ]; then
+if [ ! -d ${SOFTWARE_DIR} ]; then
     hg clone https://bitbucket.org/osrf/$SOFTWARE ${SOFTWARE_DIR}
 else
     cd ${SOFTWARE_DIR}
