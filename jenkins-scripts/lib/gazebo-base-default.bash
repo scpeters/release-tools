@@ -50,9 +50,9 @@ mkdir -p $WORKSPACE/build $WORKSPACE/install
 cd $WORKSPACE/build
 cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
 make -j${MAKE_JOBS}
-make install
-. /usr/share/gazebo/setup.sh
-make test ARGS="-VV" || true
+# make install
+# . /usr/share/gazebo/setup.sh
+# make test ARGS="-VV" || true
 DELIM
 
 # Make project-specific changes here
