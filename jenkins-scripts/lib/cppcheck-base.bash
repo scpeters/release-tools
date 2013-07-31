@@ -13,24 +13,14 @@ fi
 
 QUERY_HOST_PACKAGES=$(dpkg-query -Wf'${db:Status-abbrev}' cppcheck 2>&1) || true
 if [[ -n ${QUERY_HOST_PACKAGES} ]]; then
-  sudo apt-get install -y cppcheck
+  sudo apt-get install -y cppcheck bzip2
 fi
 
-SOFTWARE_DIR=${WORKSPACE}/${SOFTWARE}
+rm -fr ${WORKSPACE}/source_code/
+mkdir -p ${WORKSPACE}/source_code/
 
-if [ ! -d ${SOFTWARE_DIR} ]; then
-    hg clone https://bitbucket.org/osrf/$SOFTWARE ${SOFTWARE_DIR}
-else
-    cd ${SOFTWARE_DIR}
-    hg revert --all 
-    hg update --clean
-    hg pull
-fi
-    
-cd ${SOFTWARE_DIR}
-hg update ${MERCURIAL_REVISION}
+tar jxf *.tar.bz2 -C ${WORKSPACE}/source_code/
+cd ${WORKSPACE}/source_code/$SOFTWARE/build
 
 # Run cpp check
-rm -fr ${SOFTWARE_DIR}/cppcheck_results
-mkdir -p ${SOFTWARE_DIR}/cppcheck_results
-sh tools/code_check.sh -xmldir ${SOFTWARE_DIR}/cppcheck_results || true
+sh tools/code_check.sh -xmldir ${WORKSPACE}/${SOFTWARE}/build/cppcheck_results || true
