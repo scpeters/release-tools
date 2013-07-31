@@ -31,6 +31,6 @@ cd ${SOFTWARE_DIR}
 hg update ${MERCURIAL_REVISION}
 
 # Run cpp check
-rm -fr ${WORKSPACE}/cppcheck_results
-mkdir -p ${WORKSPACE}/cppcheck_results
-sh tools/code_check.sh -xmldir cppcheck_results || true
+rm -fr ${SOFTWARE_DIR}/cppcheck_results
+mkdir -p ${SOFTWARE_DIR}/cppcheck_results
+sh tools/code_check.sh -xmldir ${SOFTWARE_DIR}/cppcheck_results || true
