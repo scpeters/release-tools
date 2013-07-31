@@ -20,6 +20,7 @@ rm -fr ${WORKSPACE}/source_code/
 mkdir -p ${WORKSPACE}/source_code/
 
 tar jxf *.tar.bz2 -C ${WORKSPACE}/source_code/
+mkdir -p ${WORKSPACE}/source_code/$SOFTWARE/build
 cd ${WORKSPACE}/source_code/$SOFTWARE/build
 
 # Run cpp check
