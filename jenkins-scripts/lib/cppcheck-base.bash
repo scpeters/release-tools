@@ -32,4 +32,4 @@ hg update ${MERCURIAL_REVISION}
 # Run cpp check
 rm -fr ${WORKSPACE}/cppcheck_results
 mkdir -p ${WORKSPACE}/cppcheck_results
-sh tools/code_check.sh -xmldir $WORKSPACE/cppcheck_results || true
+sh tools/code_check.sh -xmldir cppcheck_results || true
