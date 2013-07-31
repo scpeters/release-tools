@@ -53,7 +53,7 @@ cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
 # Export package_source
 rm -fr $WORKSPACE/artifacts/source_code/*
 mkdir -p $WORKSPACE/artifacts/source_code/
-tar jcf --exclude-vcs $WORKSPACE/gazebo $WORKSPACE/artifacts/source_code/source.tar.bz2
+tar jcf --exclude-vcs $WORKSPACE/artifacts/source_code/source.tar.bz2 $WORKSPACE/gazebo 
 
 # make -j${MAKE_JOBS}
 # make install
