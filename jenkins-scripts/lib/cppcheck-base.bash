@@ -24,6 +24,7 @@ else
     cd ${SOFTWARE_DIR}
     hg revert --all 
     hg update --clean
+    hg pull
 fi
     
 cd ${SOFTWARE_DIR}
