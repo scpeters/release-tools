@@ -45,10 +45,10 @@ fi
 # Step 2: configure and build
 
 # Normal cmake routine for Gazebo
-rm -rf $WORKSPACE/build $WORKSPACE/install
-mkdir -p $WORKSPACE/build $WORKSPACE/install
-cd $WORKSPACE/build
-cmake ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr $WORKSPACE/gazebo
+rm -rf $WORKSPACE/$SOFTWARE/build $WORKSPACE/install
+mkdir -p $WORKSPACE/$SOFTWARE/build $WORKSPACE/install
+cd $WORKSPACE/$SOFTWARE/build
+cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr
 
 # Export package_source
 rm -fr $WORKSPACE/artifacts/source_code/*
@@ -56,7 +56,14 @@ mkdir -p $WORKSPACE/artifacts/source_code/
 cd $WORKSPACE
 tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo/
 
-# make -j${MAKE_JOBS}
+# Compilation
+mkdir $WORKSPACE/image
+cd $WORKSPACE/build
+make -j${MAKE_JOBS} -DCMAKE_INSTALL_DIR=$WORKSPACE/image
+find . -f -name "UNIT_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/unit_tests.tar.bz2;
+find . -f -name "INTEGRATION_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
+find . -f -name "PERFORMANCE_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
+
 # make install
 # . /usr/share/gazebo/setup.sh
 # make test ARGS="-VV" || true
