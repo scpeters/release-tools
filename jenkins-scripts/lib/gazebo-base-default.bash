@@ -45,9 +45,9 @@ fi
 # Step 2: configure and build
 
 # Normal cmake routine for Gazebo
-rm -rf $WORKSPACE/$SOFTWARE/build $WORKSPACE/install
-mkdir -p $WORKSPACE/$SOFTWARE/build $WORKSPACE/install
-cd $WORKSPACE/$SOFTWARE/build
+rm -rf $WORKSPACE/gazebo/build $WORKSPACE/install
+mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/install
+cd $WORKSPACE/gazebo/build
 cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr
 
 # Export package_source
