@@ -24,4 +24,7 @@ mkdir -p ${WORKSPACE}/source_code/$SOFTWARE/build
 cd ${WORKSPACE}/source_code/$SOFTWARE/build
 
 # Run cpp check
+whoami
+ls -las tools/code_check.sh
+chmod +x tools/code_check.sh
 sh tools/code_check.sh -xmldir ${WORKSPACE}/${SOFTWARE}/build/cppcheck_results || true
