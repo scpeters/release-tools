@@ -64,7 +64,11 @@ find . -f -name "UNIT_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/uni
 find . -f -name "INTEGRATION_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
 find . -f -name "PERFORMANCE_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
 
-# make install
+# Installation
+make install
+cd $WORKSPACE/image
+tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 gazebo/
+
 # . /usr/share/gazebo/setup.sh
 # make test ARGS="-VV" || true
 DELIM
