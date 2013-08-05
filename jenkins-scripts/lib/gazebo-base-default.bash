@@ -59,7 +59,7 @@ tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo/
 # Compilation
 mkdir $WORKSPACE/image
 cd $WORKSPACE/build
-make -j${MAKE_JOBS} -DCMAKE_INSTALL_DIR=$WORKSPACE/image
+make -j${MAKE_JOBS}
 find . -f -name "UNIT_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/unit_tests.tar.bz2;
 find . -f -name "INTEGRATION_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
 find . -f -name "PERFORMANCE_*_TEST" | xargs tar cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
