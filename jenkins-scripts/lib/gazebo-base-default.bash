@@ -54,7 +54,7 @@ cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=$WORKSPACE/image
 rm -fr $WORKSPACE/artifacts/source_code/*
 mkdir -p $WORKSPACE/artifacts/source_code/
 cd $WORKSPACE
-tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo/
+tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 image/
 
 # Compilation
 rm -fr $WORKSPACE/artifacts/binaries
