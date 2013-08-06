@@ -48,7 +48,7 @@ fi
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/install
 mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/install
 cd $WORKSPACE/gazebo/build
-cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=/usr
+cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=$WORKSPACE/image
 
 # Export package_source
 rm -fr $WORKSPACE/artifacts/source_code/*
