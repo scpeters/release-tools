@@ -64,8 +64,8 @@ mkdir -p $WORKSPACE/image
 cd $WORKSPACE/gazebo/build
 make -j${MAKE_JOBS}
 find . -type f -name "UNIT_*_TEST" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/unit_tests.tar.bz2;
-find . -type f -name "INTEGRATION_*_TEST" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
-find . -type f -name "PERFORMANCE_*_TEST" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
+find . -type f -name "INTEGRATION_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
+find . -type f -name "PERFORMANCE_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
 
 # Installation
 make install
