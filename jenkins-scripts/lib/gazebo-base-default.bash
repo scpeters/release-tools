@@ -57,6 +57,9 @@ cd $WORKSPACE
 tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo/
 
 # Compilation
+rm -fr $WORKSPACE/artifacts/binaries
+mkdir -p $WORKSPACE/artifacts/binaries
+rm -fr $WORKSPACE/image
 mkdir -p $WORKSPACE/image
 cd $WORKSPACE/gazebo/build
 make -j${MAKE_JOBS}
