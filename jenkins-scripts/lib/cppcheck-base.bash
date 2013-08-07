@@ -20,10 +20,9 @@ rm -fr ${WORKSPACE}/source_code/
 mkdir -p ${WORKSPACE}/source_code/
 
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}/source_code/
-cd ${WORKSPACE}/source_code/$SOFTWARE/build
 
 # Run cpp check
-whoami
+cd ${WORKSPACE}/source_code/$SOFTWARE
 ls -las tools/code_check.sh
 chmod +x tools/code_check.sh
 sh tools/code_check.sh -xmldir ${WORKSPACE}/${SOFTWARE}/build/cppcheck_results || true
