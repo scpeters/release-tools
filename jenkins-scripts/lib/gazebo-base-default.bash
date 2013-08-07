@@ -69,8 +69,8 @@ find . -type f -name "PERFORMANCE_*" | xargs tar -cvjf $WORKSPACE/artifacts/bina
 
 # Installation
 make install
-cd $WORKSPACE/image
-tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 gazebo/
+cd $WORKSPACE
+tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 image/
 
 # . /usr/share/gazebo/setup.sh
 # make test ARGS="-VV" || true
