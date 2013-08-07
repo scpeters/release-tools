@@ -28,7 +28,7 @@ apt-get update
 # Step 1: install everything you need
 
 # Required stuff for Gazebo
-apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
+time apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
@@ -54,7 +54,7 @@ cmake .. ${GZ_CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=$WORKSPACE/image
 rm -fr $WORKSPACE/artifacts/source_code/*
 mkdir -p $WORKSPACE/artifacts/source_code/
 cd $WORKSPACE
-tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo
+time tar --exclude-vcs -jcf $WORKSPACE/artifacts/source_code/source.tar.bz2 gazebo
 
 # Compilation
 rm -fr $WORKSPACE/artifacts/binaries
@@ -62,15 +62,15 @@ mkdir -p $WORKSPACE/artifacts/binaries
 rm -fr $WORKSPACE/image
 mkdir -p $WORKSPACE/image
 cd $WORKSPACE/gazebo/build
-make -j${MAKE_JOBS}
-find . -type f -name "UNIT_*_TEST" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/unit_tests.tar.bz2;
-find . -type f -name "INTEGRATION_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
-find . -type f -name "PERFORMANCE_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
+time make -j${MAKE_JOBS}
+time find . -type f -name "UNIT_*_TEST" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/unit_tests.tar.bz2;
+time find . -type f -name "INTEGRATION_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/integration_tests.tar.bz2;
+time find . -type f -name "PERFORMANCE_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
 
 # Installation
 make install
 cd $WORKSPACE
-tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 image/
+time tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 image/
 
 # . /usr/share/gazebo/setup.sh
 # make test ARGS="-VV" || true
@@ -79,7 +79,7 @@ DELIM
 # Make project-specific changes here
 ###################################################
 
-sudo pbuilder  --execute \
+time sudo pbuilder  --execute \
     --bindmounts $WORKSPACE \
     --basetgz $basetgz \
     -- build.sh
