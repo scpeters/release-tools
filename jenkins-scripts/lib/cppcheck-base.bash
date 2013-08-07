@@ -19,7 +19,7 @@ fi
 rm -fr ${WORKSPACE}/source_code/
 mkdir -p ${WORKSPACE}/source_code/
 
-tar -xjf ${WORKSPACE}/jxvf source.tar.bz2 -C ${WORKSPACE}/source_code/
+tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}/source_code/
 cd ${WORKSPACE}/source_code/$SOFTWARE/build
 
 # Run cpp check
