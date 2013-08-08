@@ -24,5 +24,7 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}/source_code/
 # Run cpp check
 cd ${WORKSPACE}/source_code/$SOFTWARE
 chmod +x tools/code_check.sh
+# Trick to simulate current script
+mv ${WORKSPACE}/${SOFTWARE}/build ${WORKSPACE}
 ls ../build/*
-sh tools/code_check.sh -xmldir ${WORKSPACE}/${SOFTWARE}/build/cppcheck_results || true
+sh tools/code_check.sh -xmldir ${WORKSPACE}/build/cppcheck_results || true
