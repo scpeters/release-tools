@@ -67,7 +67,7 @@ fi
 
 # Step 4: add debian/ subdirectory with necessary metadata files to unpacked source tarball
 rm -rf /tmp/$PACKAGE-release
-hg clone https://bitbucket.org/thomas_moulard/$PACKAGE-release /tmp/$PACKAGE-release -b move_desktop_file
+hg clone https://bitbucket.org/thomas_moulard/$PACKAGE-release /tmp/$PACKAGE-release
 cd /tmp/$PACKAGE-release
 # In nightly get the default latest version from default changelog
 if $NIGHTLY_MODE; then
@@ -101,11 +101,6 @@ fi
 
 # Parallel build
 export DEB_BUILD_OPTIONS="parallel=$MAKE_JOBS"
-
-# Adding extra directories to code. debian has no problem but some extra directories 
-# handled by symlinks (like cmake) in the repository can not be copied directly. 
-# Need special care to copy, using first a --dereference
-cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
 
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
