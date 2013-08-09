@@ -16,15 +16,18 @@ if [[ -n ${QUERY_HOST_PACKAGES} ]]; then
   sudo apt-get install -y cppcheck bzip2
 fi
 
-rm -fr ${WORKSPACE}/source_code/
-mkdir -p ${WORKSPACE}/source_code/
+CODE_DESTDIR=${WORKSPACE}/${SOFTWARE}
 
-tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}/source_code/
+rm -fr ${CODE_DESTDIR}
+mkdir -p ${CODE_DESTDIR}
+
+tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${CODE_DESTDIR}
+
+# Trick to simulate current script
 
 # Run cpp check
-cd ${WORKSPACE}/source_code/$SOFTWARE
+cd ${CODE_DESTDIR}
 chmod +x tools/code_check.sh
-# Trick to simulate current script
-mv ${WORKSPACE}/${SOFTWARE}/build ${WORKSPACE}
+mv ${CODE_DESTDIR}/build ${WORKSPACE}
 ls ../build/*
 sh tools/code_check.sh -xmldir ${WORKSPACE}/build/cppcheck_results || true
