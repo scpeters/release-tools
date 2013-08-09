@@ -21,7 +21,7 @@ CODE_DESTDIR=${WORKSPACE}/${SOFTWARE}
 rm -fr ${CODE_DESTDIR}
 mkdir -p ${CODE_DESTDIR}
 
-tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${CODE_DESTDIR}
+tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 
 # Trick to simulate current script
 
