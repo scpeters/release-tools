@@ -102,6 +102,13 @@ fi
 # Parallel build
 export DEB_BUILD_OPTIONS="parallel=$MAKE_JOBS"
 
+# Adding extra directories to code. debian has no problem but some extra directories 
+# handled by symlinks (like cmake) in the repository can not be copied directly. 
+# Need special care to copy, using first a --dereference
+ls -R /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/
+cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
+
+
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
 debuild --no-tgz-check -S -uc -us --source-option=--include-binaries
