@@ -28,5 +28,9 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 cd ${CODE_DESTDIR}
 chmod +x tools/code_check.sh
 mv ${CODE_DESTDIR}/build ${WORKSPACE}
+# Hack: avoid to check protobuf headers (generate during compilation)
+if [[ ${SOFTWARE} == 'gazebo' ]]; then
+    rm "${WORKSPACE}/build/gazebo/msgs/MessageTypes.hh"
+fi
 # Run cpp check
 sh tools/code_check.sh -xmldir ${WORKSPACE}/build/cppcheck_results || true
