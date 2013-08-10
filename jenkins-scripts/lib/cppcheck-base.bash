@@ -25,10 +25,8 @@ mkdir -p ${CODE_DESTDIR}
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 
 # Trick to simulate current script
-
-# Run cpp check
 cd ${CODE_DESTDIR}
 chmod +x tools/code_check.sh
 mv ${CODE_DESTDIR}/build ${WORKSPACE}
-ls ../build/*
+# Run cpp check
 sh tools/code_check.sh -xmldir ${WORKSPACE}/build/cppcheck_results || true
