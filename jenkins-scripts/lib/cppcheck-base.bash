@@ -18,6 +18,7 @@ fi
 
 CODE_DESTDIR=${WORKSPACE}/${SOFTWARE}
 
+rm -fr ${WORKSPACE}/build
 rm -fr ${CODE_DESTDIR}
 mkdir -p ${CODE_DESTDIR}
 
