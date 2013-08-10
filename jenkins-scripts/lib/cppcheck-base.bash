@@ -31,6 +31,8 @@ mv ${CODE_DESTDIR}/build ${WORKSPACE}
 # Hack: avoid to check protobuf headers (generate during compilation)
 if [[ ${SOFTWARE} == 'gazebo' ]]; then
     rm "${WORKSPACE}/build/gazebo/msgs/MessageTypes.hh"
+    touch "${WORKSPACE}/build/gazebo/msgs/MessageTypes.hh"
 fi
+
 # Run cpp check
 sh tools/code_check.sh -xmldir ${WORKSPACE}/build/cppcheck_results || true
