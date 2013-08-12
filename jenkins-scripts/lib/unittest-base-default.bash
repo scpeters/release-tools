@@ -35,7 +35,8 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
-tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}
+tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
+tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
 make test ARGS="-VV" || true
 
