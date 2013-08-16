@@ -23,7 +23,7 @@ apt-get update
 apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 
 # Install gazebo: binary version and source code to run tests from there
-tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C /--strip 1 
+tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C / --strip-components=1
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of unit test suite
 tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
