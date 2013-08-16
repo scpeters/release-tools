@@ -39,6 +39,7 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
 # Need to run cmake again to fix system paths
+rm CMakeCache.txt 
 cmake ..
 make test ARGS="-VV" || true
 
