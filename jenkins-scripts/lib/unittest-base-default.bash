@@ -31,7 +31,7 @@ cd ${WORKSPACE}/${SOFTWARE}/build
 # Need to run cmake again to fix system paths
 rm CMakeCache.txt 
 cmake ..
-make test ARGS="-VV" || true
+make test ARGS="-VV -R UNIT_*" || true
 
 # . /usr/share/gazebo/setup.sh
 DELIM
