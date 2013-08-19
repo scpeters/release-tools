@@ -148,7 +148,7 @@ PKG_PATH="/var/lib/jenkins/pbuilder/${DISTRO}_result/"
 PKGS="gazebo gazebo-common libgazebo1.9 libgazebo-dev gazebo-plugin-dev gazebo-doc gazebo-dbg"
 
 for pkgname in \${PKGS}; do
-    pkg=\${PKG_PATH}\${pkgname}\${PKG_SUFFIX}.deb
+    pkg=\${PKG_PATH}\${pkgname}\${PKG_SUFFIX}
     echo "looking for \$pkg"
     # Check for correctly generated packages size > 3Kb
     test -z \$(find \$pkg -size +3k) && exit 1
