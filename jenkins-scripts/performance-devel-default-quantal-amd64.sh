@@ -8,7 +8,7 @@ SCRIPT_DIR="${SCRIPT_DIR%/*}"
 # TODO: remove this when all unit tests are real unit test not needed GUI
 export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 
-export DISTRO=raring
-export ROS_DISTRO=hydro
+export DISTRO=quantal
+export ROS_DISTRO=groovy
 
-. ${SCRIPT_DIR}/lib/unittest-base-default.bash
+. ${SCRIPT_DIR}/lib/performance-base-default.bash
