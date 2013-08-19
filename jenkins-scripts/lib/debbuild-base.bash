@@ -139,16 +139,16 @@ rm -fr $WORKSPACE/pkgs/*
 
 # Set proper package names
 if $NIGHTLY_MODE; then
-  PKG_SUFFIX=\${NIGHTLY_VERSION_SUFFIX}_${ARCH}.deb
+  PKG_SUFFIX=\${NIGHTLY_VERSION_SUFFIX}
 else
-  PKG_SUFFIX=_${VERSION}-${RELEASE_VERSION}~${DISTRO}_${ARCH}.deb
+  PKG_SUFFIX=_${VERSION}-${RELEASE_VERSION}~${DISTRO}
 fi
 
 PKG_PATH="/var/lib/jenkins/pbuilder/${DISTRO}_result/"
-PKGS="gazebo gazebo-common libgazebo1.9 libgazebo-dev gazebo-plugin-dev gazebo-doc gazebo-dbg"
+PKGS="gazebo_${ARCH} gazebo-common_all libgazebo1.9_${ARCH} libgazebo-dev_${ARCH} gazebo-plugin-dev_${ARCH} gazebo-doc_all gazebo-dbg_${ARCH}"
 
 for pkgname in \${PKGS}; do
-    pkg=\${PKG_PATH}\${pkgname}\${PKG_SUFFIX}
+    pkg=\${PKG_PATH}\${pkgname}\${PKG_SUFFIX}.deb
     echo "looking for \$pkg"
     # Check for correctly generated packages size > 3Kb
     test -z \$(find \$pkg -size +3k) && exit 1
