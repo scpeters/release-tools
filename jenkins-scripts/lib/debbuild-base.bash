@@ -67,7 +67,7 @@ fi
 
 # Step 4: add debian/ subdirectory with necessary metadata files to unpacked source tarball
 rm -rf /tmp/$PACKAGE-release
-hg clone https://bitbucket.org/thomas_moulard/$PACKAGE-release /tmp/$PACKAGE-release -b fix_paths
+hg clone https://bitbucket.org/thomas_moulard/$PACKAGE-release /tmp/$PACKAGE-release -b $RELEASE_REPO_BRANCH
 cd /tmp/$PACKAGE-release
 # In nightly get the default latest version from default changelog
 if $NIGHTLY_MODE; then
