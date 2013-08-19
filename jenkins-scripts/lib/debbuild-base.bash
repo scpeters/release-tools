@@ -145,6 +145,7 @@ else
 fi
 
 PKG_PATH="/var/lib/jenkins/pbuilder/${DISTRO}_result/"
+cp \${PKG_PATH}/*.deb $WORKSPACE/pkgs
 PKGS="gazebo_${ARCH} gazebo-common_all libgazebo1.9_${ARCH} libgazebo-dev_${ARCH} gazebo-plugin-dev_${ARCH} gazebo-doc_all gazebo-dbg_${ARCH}"
 
 for pkgname in \${PKGS}; do
