@@ -5,5 +5,6 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 export DISTRO=precise
+export ROS_DISTRO=groovy
 
 . ${SCRIPT_DIR}/lib/ftcsim-default.bash
