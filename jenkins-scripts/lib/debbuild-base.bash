@@ -134,49 +134,26 @@ pbuilder-dist $DISTRO $ARCH build ../*.dsc
 sudo apt-get install -y openssh-client
 cd /var/packages/gazebo/ubuntu
 
-# Set proper package names
-if $NIGHTLY_MODE; then
-  PKG_NAME=${PACKAGE_ALIAS}_\${NIGHTLY_VERSION_SUFFIX}_${ARCH}.deb
-  DBG_PKG_NAME=${PACKAGE_ALIAS}-dbg_\${NIGHTLY_VERSION_SUFFIX}_${ARCH}.deb
-else
-  PKG_NAME=${PACKAGE_ALIAS}_${VERSION}-${RELEASE_VERSION}~${DISTRO}_${ARCH}.deb
-  DBG_PKG_NAME=${PACKAGE_ALIAS}-dbg_${VERSION}-${RELEASE_VERSION}~${DISTRO}_${ARCH}.deb
-fi
-
 mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
-MAIN_PKGS="/var/lib/jenkins/pbuilder/${DISTRO}_result/\${PKG_NAME}"
-DEBUG_PKGS="/var/lib/jenkins/pbuilder/${DISTRO}_result/\${DBG_PKG_NAME}"
+# Set proper package names
+if $NIGHTLY_MODE; then
+  PKG_SUFFIX=\${NIGHTLY_VERSION_SUFFIX}_${ARCH}.deb
+else
+  PKG_SUFFIX=_${VERSION}-${RELEASE_VERSION}~${DISTRO}_${ARCH}.deb
+fi
 
-FOUND_PKG=0
-for pkg in \${MAIN_PKGS}; do
+PKG_PATH="/var/lib/jenkins/pbuilder/${DISTRO}_result/"
+PKGS="gazebo gazebo-common libgazebo1.9 libgazebo-dev gazebo-plugin-dev gazebo-doc gazebo-dbg"
+
+for pkgname in \${PKGS}; do
+    pkg=\${PKG_PATH}\${pkgname}.deb
     echo "looking for \$pkg"
-    if [ -f \${pkg} ]; then
-        echo "found \$pkg"
-	# Check for correctly generated packages size > 3Kb
-        ls -lash \${pkg}
-        test -z \$(find \$pkg -size +3k) && exit 1
-	cp \${pkg} $WORKSPACE/pkgs
-        FOUND_PKG=1
-        break;
-    fi
+    # Check for correctly generated packages size > 3Kb
+    test -z \$(find \$pkg -size +3k) && exit 1
+    cp \${pkg} $WORKSPACE/pkgs
 done
-test \$FOUND_PKG -eq 1 || exit 1
-
-FOUND_PKG=0
-for pkg in \${DEBUG_PKGS}; do
-    if [ -f \${pkg} ]; then
-        # Check for correctly generated debug packages size > 3Kb
-        # when not valid instructions in rules/control it generates 1.5K package
-        ls -lash \${pkg}
-        test -z \$(find \$pkg -size +3k) && exit 1
-	cp \${pkg} $WORKSPACE/pkgs
-        FOUND_PKG=1
-        break;
-    fi
-done
-test \$FOUND_PKG -eq 1 || echo "No debug packages found. No upload"
 DELIM
 
 # Copy in my GPG key, to allow reprepro to sign the debs it builds.
