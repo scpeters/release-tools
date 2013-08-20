@@ -42,7 +42,7 @@ tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
 # Fake build directory
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-quantal-amd64
-ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-quantal-amd64/gazebo/
+ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-quantal-amd64/gazebo
 # Need to run cmake again to fix system paths
 rm CMakeCache.txt 
 cmake ..
