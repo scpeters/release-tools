@@ -41,9 +41,9 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
 # Fake build directory
-mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-${ARCH}
-ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-${ARCH}/gazebo
-ls /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-${ARCH}/gazebo/gazebo/msgs/*.proto
+mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
+ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
+ls /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo/gazebo/msgs/*.proto
 # Need to run cmake again to fix system paths
 rm CMakeCache.txt 
 # Not run cmake this time
