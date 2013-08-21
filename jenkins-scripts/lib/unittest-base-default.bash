@@ -43,9 +43,11 @@ cd ${WORKSPACE}/${SOFTWARE}/build
 # Fake build directory
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-quantal-amd64
 ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-quantal-amd64/gazebo
+ls /var/lib/jenkins/workspace/gazebo-default-refactor_main-precise-amd64/gazebo/gazebo/msgs/*.proto
 # Need to run cmake again to fix system paths
 rm CMakeCache.txt 
-cmake ..
+# Not run cmake this time
+# cmake ..
 make test ARGS="-VV -R UNIT_*" || true
 
 # . /usr/share/gazebo/setup.sh
