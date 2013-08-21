@@ -40,17 +40,21 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of unit test suite
 tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
+
 # Fake build directory
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
 ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
-ls /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo/gazebo/msgs/*.proto
+sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image/:/usr/:g' /usr/share/gazebo-*/setup.sh
+cat /usr/share/gazebo-1.9/setup.sh
+
 # Need to run cmake again to fix system paths
-rm CMakeCache.txt 
 # Not run cmake this time
+# rm CMakeCache.txt 
 # cmake ..
+
+. /usr/share/gazebo/setup.sh
 make test ARGS="-VV -R UNIT_*" || true
 
-# . /usr/share/gazebo/setup.sh
 DELIM
 
 # Make project-specific changes here
