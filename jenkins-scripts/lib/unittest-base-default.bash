@@ -44,7 +44,8 @@ cd ${WORKSPACE}/${SOFTWARE}/build
 # Fake build directory
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
 ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
-sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image/:/usr/:g' /usr/share/gazebo-*/setup.sh
+find / -name setup.sh 
+sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image/:/usr/:g' `find / -name setup.sh | tail -n 1`
 cat /usr/share/gazebo-1.9/setup.sh
 
 # Need to run cmake again to fix system paths
