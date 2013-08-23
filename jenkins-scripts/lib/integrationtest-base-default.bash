@@ -35,7 +35,7 @@ if ${GRAPHIC_CARD_FOUND}; then
 fi
 
 # Install gazebo: binary version and source code to run tests from there
-tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C / --strip-components=1
+tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C /
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of integration test suite
 tar -xjf ${WORKSPACE}/integration_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
