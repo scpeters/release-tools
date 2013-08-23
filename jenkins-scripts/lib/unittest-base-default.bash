@@ -35,7 +35,7 @@ if ${GRAPHIC_CARD_FOUND}; then
 fi
 
 # Install gazebo: binary version and source code to run tests from there
-tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C / --strip-components=1
+tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C /
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of unit test suite
 tar -xjf ${WORKSPACE}/unit_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
@@ -45,7 +45,7 @@ cd ${WORKSPACE}/${SOFTWARE}/build
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
 ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
 find / -name setup.sh 
-sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image/:/usr/:g' `find / -name setup.sh | tail -n 1`
+sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/usr/:/usr/:g' `find / -name setup.sh | tail -n 1`
 cat /usr/share/gazebo-1.9/setup.sh
 
 # Need to run cmake again to fix system paths
