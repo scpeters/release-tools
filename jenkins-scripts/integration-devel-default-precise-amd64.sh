@@ -13,4 +13,4 @@ export ROS_DISTRO=fuerte
 
 export TEST_TYPE=integration
 
-. ${SCRIPT_DIR}/lib/integrationtest-base-default.bash
+. ${SCRIPT_DIR}/lib/performancetest-base-default.bash
