@@ -53,7 +53,7 @@ cat /usr/share/gazebo-1.9/setup.sh
 # rm CMakeCache.txt 
 # cmake ..
 
-./usr/share/gazebo/setup.sh
+. /usr/share/gazebo/setup.sh
 echo \$GAZEBO_RESOURCE_PATH 
 make test ARGS="-VV -R UNIT_*" || true
 
