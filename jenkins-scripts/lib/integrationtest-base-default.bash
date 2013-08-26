@@ -40,12 +40,16 @@ tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of integration test suite
 tar -xjf ${WORKSPACE}/integration_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
-# Need to run cmake again to fix system paths
-rm CMakeCache.txt 
-cmake ..
-make test ARGS="-VV -R INTEGRATION_*" || true
+
+# Fake build directory
+mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
+ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
+f
 
 # . /usr/share/gazebo/setup.sh
+
+make test ARGS="-VV -R INTEGRATION_*" || true
+
 DELIM
 
 # Make project-specific changes here
