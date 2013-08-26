@@ -11,6 +11,6 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 export DISTRO=precise
 export ROS_DISTRO=fuerte
 
-export TEST_TYPE=integration
+export TEST_TYPE=INTEGRATION
 
 . ${SCRIPT_DIR}/lib/performancetest-base-default.bash
