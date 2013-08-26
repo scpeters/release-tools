@@ -59,7 +59,7 @@ cat /usr/share/gazebo/setup.sh
 
 . /usr/share/gazebo/setup.sh
 echo \$GAZEBO_RESOURCE_PATH 
-#make test ARGS="-VV -R UNIT_*" || true
+make test ARGS="-VV -R UNIT_*" || true
 
 DELIM
 
