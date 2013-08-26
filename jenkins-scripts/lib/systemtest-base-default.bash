@@ -10,7 +10,7 @@ fi
 
 if [[ ${TEST_TYPE} == "INTEGRATION" ]]; then
     ARTIFACT_FILE="integration_tests.tar.bz2"
-else if [[ ${TEST_TYPE} == "PERFORMANCE" ]]; then
+elif [[ ${TEST_TYPE} == "PERFORMANCE" ]]; then
     ARTIFACT_FILE="performance_tests.tar.bz2"
 fi
 
