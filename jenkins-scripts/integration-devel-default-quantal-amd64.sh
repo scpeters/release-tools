@@ -11,4 +11,6 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 export DISTRO=quantal
 export ROS_DISTRO=groovy
 
+export TEST_TYPE=integration
+
 . ${SCRIPT_DIR}/lib/integration-base-default.bash

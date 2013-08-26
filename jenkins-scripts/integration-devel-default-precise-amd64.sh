@@ -11,4 +11,6 @@ export DISPLAY=$(ps aux | grep "X :" | grep -v grep | awk '{ print $12 }')
 export DISTRO=precise
 export ROS_DISTRO=fuerte
 
+export TEST_TYPE=integration
+
 . ${SCRIPT_DIR}/lib/integrationtest-base-default.bash

@@ -3,6 +3,17 @@
 #stop on error
 set -e
 
+if [[ -z ${TEST_TYPE} ]]; then
+    echo "No test type specified"
+    exit 1
+fi
+
+if [[ ${TEST_TYPE} == "INTEGRATION" ]]; then
+    ARTIFACT_FILE="integration_tests.tar.bz2"
+else if [[ ${TEST_TYPE} == "PERFORMANCE" ]]; then
+    ARTIFACT_FILE="performance_tests.tar.bz2"
+fi
+
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -37,8 +48,8 @@ fi
 # Install gazebo: binary version and source code to run tests from there
 tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C /
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
-# Install the binaries of integration test suite
-tar -xjf ${WORKSPACE}/integration_tests.tar.bz2 -C ${WORKSPACE}/$SOFTWARE/build
+# Install the binaries of test suite
+tar -xjf ${WORKSPACE}/${ARTIFACT_FILE} -C ${WORKSPACE}/$SOFTWARE/build
 cd ${WORKSPACE}/${SOFTWARE}/build
 
 # Fake build directory
@@ -48,7 +59,7 @@ f
 
 # . /usr/share/gazebo/setup.sh
 
-make test ARGS="-VV -R INTEGRATION_*" || true
+make test ARGS="-VV -R ${TEST_TYPE}_*" || true
 
 DELIM
 
