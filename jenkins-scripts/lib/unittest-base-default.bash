@@ -48,6 +48,10 @@ find / -name setup.sh
 sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image::g' /usr/share/gazebo-1.9/setup.sh 
 cat /usr/share/gazebo-1.9/setup.sh
 
+cat /usr/share/gazebo/setup.sh
+sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image::g' /usr/share/gazebo/setup.sh 
+cat /usr/share/gazebo/setup.sh
+
 # Need to run cmake again to fix system paths
 # Not run cmake this time
 # rm CMakeCache.txt 
@@ -55,7 +59,7 @@ cat /usr/share/gazebo-1.9/setup.sh
 
 . /usr/share/gazebo/setup.sh
 echo \$GAZEBO_RESOURCE_PATH 
-make test ARGS="-VV -R UNIT_*" || true
+#make test ARGS="-VV -R UNIT_*" || true
 
 DELIM
 
