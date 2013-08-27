@@ -37,7 +37,7 @@ time apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEB
 rm -rf $WORKSPACE/gazebo/build $WORKSPACE/install
 mkdir -p $WORKSPACE/gazebo/build $WORKSPACE/install
 cd $WORKSPACE/gazebo/build
-cmake .. ${GZ_CMAKE_BUILD_TYPE} -DFORCE_GRAPHIC_TESTS_COMPILATION=y -DCMAKE_INSTALL_PREFIX=$WORKSPACE/image/usr
+cmake .. ${GZ_CMAKE_BUILD_TYPE} -DFORCE_GRAPHIC_TESTS_COMPILATION=y -DCMAKE_INSTALL_PREFIX=/usr
 
 # Export package_source
 rm -fr $WORKSPACE/artifacts/source_code/*
@@ -57,13 +57,13 @@ time find . -type f -name "INTEGRATION_*" | xargs tar -cvjf $WORKSPACE/artifacts
 time find . -type f -name "PERFORMANCE_*" | xargs tar -cvjf $WORKSPACE/artifacts/binaries/performance_tests.tar.bz2;
 
 # Installation
-make install
+make install DESTDIR="$WORKSPACE/image"
 cd $WORKSPACE/image
 time tar -jcf $WORKSPACE/artifacts/binaries/gazebo.tar.bz2 usr/
 
 # . /usr/share/gazebo/setup.sh
 # make test ARGS="-VV" || true
-DELIM
+
 
 # Make project-specific changes here
 ###################################################
