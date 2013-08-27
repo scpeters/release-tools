@@ -47,7 +47,7 @@ if ${GRAPHIC_CARD_FOUND}; then
 fi
 
 # Install gazebo: binary version and source code to run tests from there
-tar -xvjf ${WORKSPACE}/gazebo.tar.bz2 -C /
+tar -xjf ${WORKSPACE}/gazebo.tar.bz2 -C /
 tar -xjf ${WORKSPACE}/source.tar.bz2 -C ${WORKSPACE}
 # Install the binaries of test suite
 tar -xjf ${WORKSPACE}/${ARTIFACT_FILE} -C ${WORKSPACE}/$SOFTWARE/build
@@ -56,9 +56,10 @@ cd ${WORKSPACE}/${SOFTWARE}/build
 # Fake build directory
 mkdir -p /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64
 ln -s $WORKSPACE/gazebo /var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/gazebo
-sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image::g' /usr/share/gazebo-1.9/setup.sh 
-sed -i -e 's:/var/lib/jenkins/workspace/gazebo-default-refactor_main-${DISTRO}-amd64/image::g' /usr/share/gazebo/setup.sh 
 . /usr/share/gazebo/setup.sh
+
+cat /usr/share/gazebo/cmake/gazebo-config.cmake
+cat /usr/lib/pkgconfig/gazebo.pc
 
 make test ARGS="-VV -R ${TEST_TYPE}_*" || true
 
