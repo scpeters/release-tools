@@ -10,6 +10,7 @@ fi
 
 if [[ ${TEST_TYPE} == "INTEGRATION" ]]; then
     ARTIFACT_FILE="integration_tests.tar.bz2"
+    EXTRA_PACKAGES="${EXTRA_PACKAGES} ${GAZEBO_TEST_INTEGRATION_DEPENDENCIES}"
 elif [[ ${TEST_TYPE} == "PERFORMANCE" ]]; then
     ARTIFACT_FILE="performance_tests.tar.bz2"
 fi
@@ -31,7 +32,7 @@ apt-get update
 # Step 1: install everything you need
 
 # Required stuff for Gazebo
-apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
+apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${GAZEBO_TEST_INTEGRATION_DEPENDENCIES} ${EXTRA_PACKAGES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
