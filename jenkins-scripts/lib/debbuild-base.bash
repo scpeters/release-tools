@@ -53,7 +53,8 @@ cd $WORKSPACE/build
 # Step 1: Get the source (nightly builds or tarball)
 if ${NIGHTLY_MODE}; then
   apt-get install -y mercurial
-  hg clone https://bitbucket.org/osrf/$PACKAGE -r default
+  echo "Remember this branch is only for drcsim"
+  hg clone https://bitbucket.org/osrf/$PACKAGE -r test_catkin_fixes
   PACKAGE_SRC_BUILD_DIR=$PACKAGE
   cd $PACKAGE
   # Store revision for use in version
