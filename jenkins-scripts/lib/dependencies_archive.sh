@@ -25,4 +25,4 @@ if [[ ${ROS_DISTRO} != 'precise' ]]; then
      DRCSIM_BASE_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES} ros-groovy-compressed-depth-image-transport ros-groovy-compressed-image-transport ros-groovy-theora-image-transport"
 fi
 
-DRCSIM_FULL_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES} sandia-hand osrf-common"
+DRCSIM_FULL_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES} sandia-hand-nightly osrf-common-nightly"
