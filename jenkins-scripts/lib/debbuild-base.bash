@@ -52,7 +52,7 @@ cd $WORKSPACE/build
 
 # Step 1: Get the source (nightly builds or tarball)
 if ${NIGHTLY_MODE}; then
-  hg clone https://bitbucket.org/osrf/$PACKAGE -r default
+  hg clone https://bitbucket.org/osrf/$PACKAGE -r fix_atlasinterface_installation 
   PACKAGE_SRC_BUILD_DIR=$PACKAGE
   cd $PACKAGE
   # Store revision for use in version
