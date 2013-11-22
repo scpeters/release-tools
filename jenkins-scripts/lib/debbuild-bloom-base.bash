@@ -50,69 +50,6 @@ fi
 
 # Step 0: create/update distro-specific pbuilder environment
 pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/drc/ubuntu $DISTRO main" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg
-
-# Step 0: Clean up
-rm -rf $WORKSPACE/build
-mkdir -p $WORKSPACE/build
-cd $WORKSPACE/build
-
-# Step 4: checkout bloom software -release repo 
-rm -rf /tmp/$PACKAGE-release
-git clone ${UPSTREAM_RELEASE_REPO} /tmp/$PACKAGE-release
-cd /tmp/$PACKAGE-release
-
-FULL_VERSION=$VERSION-$RELEASE_VERSION
-FULL_DEBIAN_BRANCH_NAME=ros-$ROS_DISTRO-$PACKAGE\_\$FULL_VERSION\_$DISTRO
-
-git checkout release/$ROS_DISTRO/$PACKAGE_UNDERSCORE_NAME/\$FULL_VERSION
-git checkout debian/\$FULL_DEBIAN_BRANCH_NAME
-
-if [ -f debian/control ]; then
-cat debian/control
-fi
-
-echo | dh_make -s --createorig -p ros-$ROS_DISTRO-${PACKAGE}_${VERSION} || true
-ls ..
-
-# Step 5: use debuild to create source package
-#TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
-debuild --no-tgz-check -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
-
-PBUILD_DIR=\$HOME/.pbuilder
-mkdir -p \$PBUILD_DIR
-cat > \$PBUILD_DIR/A10_run_rosdep << DELIM_ROS_DEP
-#!/bin/sh
-if [ -f /usr/bin/rosdep ]; then
-  # root share the same /tmp/buildd HOME than pbuilder user. Need to specify the root
-  # HOME=/root otherwise it will make cache created during ros call forbidden to 
-  # access to pbuilder user.
-  HOME=/root rosdep init
-fi
-DELIM_ROS_DEP
-chmod a+x \$PBUILD_DIR/A10_run_rosdep
-echo "HOOKDIR=\$PBUILD_DIR" > \$HOME/.pbuilderrc
-
-# Step 6: use pbuilder-dist to create binary package(s)
-pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS}
-
-# Set proper package names
-PKG_NAME=ros-${ROS_DISTRO}-${PACKAGE}_${VERSION}-${RELEASE_VERSION}${DISTRO}_${ARCH}.deb
-
-mkdir -p $WORKSPACE/pkgs
-rm -fr $WORKSPACE/pkgs/*
-
-PKGS=\`find /var/lib/jenkins/pbuilder -name *.deb || true\`
-
-FOUND_PKG=0
-for pkg in \${PKGS}; do
-    echo "found \$pkg"
-    # Check for correctly generated packages size > 3Kb
-    test -z \$(find \$pkg -size +3k) && echo "WARNING: empty package?" && exit 1
-    cp \${pkg} $WORKSPACE/pkgs
-    FOUND_PKG=1
-done
-# check at least one upload
-test \$FOUND_PKG -eq 1 || exit 1
 DELIM
 
 #
