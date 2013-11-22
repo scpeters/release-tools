@@ -9,6 +9,8 @@ fi
 # testing jobs and seems to be slow at the end of jenkins jobs
 export ENABLE_REAPER=false
 
+. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
