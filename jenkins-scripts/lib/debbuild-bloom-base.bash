@@ -1,12 +1,5 @@
 #!/bin/bash -x
 
-# RELEASE_REPO_DIRECTORY control the migration from single distribution
-# to multidistribution. If not set, go for ubuntu in single distribution
-# mode
-if [ -z $RELEASE_REPO_DIRECTORY ]; then
-    RELEASE_REPO_DIRECTORY=ubuntu
-fi;
-
 NIGHTLY_MODE=false
 if [ "${VERSION}" = "nightly" ]; then
    NIGHTLY_MODE=true
@@ -27,10 +20,6 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-# ccache is sometimes broken and has now reason to be used here
-# http://lists.debian.org/debian-devel/2012/05/msg00240.html
-echo "unset CCACHEDIR" >> /etc/pbuilderrc
-
 # Install deb-building tools
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial git debhelper wget cdbs 
 
@@ -49,7 +38,12 @@ if [ $DISTRO = 'precise' ]; then
 fi
 
 # Step 0: create/update distro-specific pbuilder environment
-pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/drc/ubuntu $DISTRO main" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg
+pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/drc/ubuntu $DISTRO main" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg || true
+
+mkdir -p $WORKSPACE/pkgs
+
+find . -name core || true
+find . -name core -exec cp {} $WORKSPACE/pkgs 
 DELIM
 
 #
