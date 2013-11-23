@@ -99,6 +99,11 @@ if $NIGHTLY_MODE; then
 fi
 hg up $RELEASE_REPO_BRANCH
 
+# Special checkout to get old style sdformat to inclussion in ROS hydro, groovy
+if [ $PACKAGE = 'sdformat' ]; then
+  hg up -r 31 
+fi
+
 cd /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}
 # [nightly] Adjust version in nightly mode
 if $NIGHTLY_MODE; then
