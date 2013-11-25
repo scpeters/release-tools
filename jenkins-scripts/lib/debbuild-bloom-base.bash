@@ -21,9 +21,9 @@ set -ex
 # Install deb-building tools
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools wget
 
-wget http://packages.ros.org/ros.key -O - | apt-key add -
+# wget http://packages.ros.org/ros.key -O - | apt-key add -
 
-sed -i -e 's:-q::g' /usr/lib/pbuilder/pbuilder-createbuildenv  
+# sed -i -e 's:-q::g' /usr/lib/pbuilder/pbuilder-createbuildenv  
 
 # Step 0: create/update distro-specific pbuilder environment
 -pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/drc/ubuntu $DISTRO main" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg || true
