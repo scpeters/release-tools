@@ -101,7 +101,7 @@ hg up $RELEASE_REPO_BRANCH
 
 # Special checkout to get old style sdformat to inclussion in ROS hydro, groovy
 if [ $PACKAGE = 'sdformat' ]; then
-  hg up -r 31 
+  hg up sdformat_1.11_old_format
 fi
 
 cd /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}
