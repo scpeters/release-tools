@@ -49,6 +49,10 @@ if [ $DISTRO = 'precise' ]; then
   sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
 fi
 
+ls /var/cache/apt/*
+rm /var/cache/apt/*.bin
+apt-cache gencaches
+
 # Step 0: create/update distro-specific pbuilder environment
 if $ENABLE_ROS; then
 pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/drc/ubuntu $DISTRO main" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg
