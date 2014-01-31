@@ -48,3 +48,4 @@ echo $ENABLE_ROS
 if $ENABLE_ROS; then
 pbuilder-dist $DISTRO $ARCH create --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg
 fi
+DELIM
