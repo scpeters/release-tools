@@ -52,6 +52,7 @@ fi
 ls /var/cache/apt/*
 rm /var/cache/apt/*.bin
 apt-cache gencaches
+apt-get update
 
 # Step 0: create/update distro-specific pbuilder environment
 if $ENABLE_ROS; then
