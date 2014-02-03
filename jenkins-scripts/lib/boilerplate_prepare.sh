@@ -33,6 +33,8 @@ fi
 # For precise in this branch. we always create a raring chroot to be able to avoid a segfault that happen
 # when building precise 
 distro=raring
+export RELEASE_REPO_DIRECTORY=$distro
+
 arch=amd64
 base=/var/cache/pbuilder-$distro-$arch
 
