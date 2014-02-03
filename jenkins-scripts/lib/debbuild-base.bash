@@ -112,6 +112,7 @@ if $NIGHTLY_MODE; then
   # TODO: Fix CMakeLists.txt ?
 fi
 
+mkdir -p $WORKSPACE/build/\$PACKAGE_SRC_BUILD_DIR
 cd $WORKSPACE/build/\$PACKAGE_SRC_BUILD_DIR
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
 if $NIGHTLY_MODE; then
