@@ -59,15 +59,16 @@ cd $WORKSPACE/build
 cmake ${GZ_CMAKE_BUILD_TYPE}         \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
+    -DENABLE_TESTS_COMPILATION:BOOL=False \\
   $WORKSPACE/gazebo
 make -j${MAKE_JOBS}
 make install
 . /usr/share/gazebo/setup.sh
-make test ARGS="-VV" || true
 
-# Step 3: code check
-cd $WORKSPACE/gazebo
-sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+timeout 60 gazebo || true
+
+timeout 60 gzserver &
+timeout 60 gzclient
 DELIM
 
 # Make project-specific changes here
