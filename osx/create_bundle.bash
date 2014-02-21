@@ -7,6 +7,9 @@ TEMP_DIR=/tmp/lala
 CELLAR_DIR=/tmp/jenkins.yLtQ/Cellar
 GAZEBO_ROOT_INSTALLATION=${CELLAR_DIR}/gazebo/HEAD/
 
+MACOS_DIR=${TEMP_DIR}/MyApp.app/Contents/MacOS/
+FRAMEWORK_DIR=${TEMP_DIR}/MyApp.app/Contents/Frameworks
+
 DEBUG=${DEBUG:-false}
 
 print_debug()
@@ -25,12 +28,24 @@ need_path_fix_link()
     # Fix all referecences to local user or relative
     [[ ${path:0:6} == '/Users'  ]] && return 0
     [[ ${path:0:3} == 'lib'     ]] && return 0
+    [[ ${path:0:1} == '@'       ]] && return 0
     # Do not change system references
     [[ ${path:0:4} == '/usr'    ]] && return 1 
     [[ ${path:0:7} == '/System' ]] && return 1
     
     echo "!!!!! Unknown value of path: $path"
     exit -1
+}
+
+check_existing_new_link()
+{
+    local new_path=${1}
+
+    link=$(sed "s:@executable_path:${MACOS_DIR}:" <<<  ${new_path})
+    if [[ ! -f $link ]]; then
+        echo "Internal error - fail to locate link: ${link}"
+        #exit -1
+    fi
 }
 
 fix_link_path()
@@ -49,6 +64,7 @@ fix_link_path()
       if need_path_fix_link $path; then
         local new_name="@executable_path/$libdir_path/$lib_name"
         print_debug " - ${path} -> ${new_name}"
+        check_existing_new_link ${new_name}
         install_name_tool -change $path $new_name $file
       fi
     done
@@ -89,9 +105,6 @@ cat > Info.plist <<DELIM
 </plist>
 DELIM
 
-MACOS_DIR=${TEMP_DIR}/MyApp.app/Contents/MacOS/
-FRAMEWORK_DIR=${TEMP_DIR}/MyApp.app/Contents/Frameworks
-
 # We should place here gazebo binary and all gz tools
 mkdir -p ${MACOS_DIR} 
 cp -pR ${GAZEBO_ROOT_INSTALLATION}/bin/* ${MACOS_DIR}
@@ -105,6 +118,9 @@ cp -pR ${GAZEBO_ROOT_INSTALLATION}/share/gazebo-*/* \
 # TODO: Improve the copy of only needed libs
 mkdir -p $FRAMEWORK_DIR 
 find ${CELLAR_DIR} -name '*.dylib' -exec cp {} ${FRAMEWORK_DIR}  \;
+cp $(find ${CELLAR_DIR} -name QtCore -type f -exec file {} \; | grep Mach-O | cut -d: -f 1) ${FRAMEWORK_DIR}
+cp $(find ${CELLAR_DIR} -name QtGui -type f -exec file {} \; | grep Mach-O | cut -d: -f 1) ${FRAMEWORK_DIR}
+
 #remove gazebo plugins, which belongs to a different directory
 rm -fr ${FRAMEWORK_DIR}/lib*Plugin.dylib
 
@@ -117,7 +133,7 @@ cp -pR ${GAZEBO_ROOT_INSTALLATION}/lib/gazebo-*/plugins/*.dylib \
 
 # Fix all bad references in library and binary
 pushd ${FRAMEWORK_DIR} 2> /dev/null
-for f in *.dylib; do
+for f in *; do
     fix_link_path $f ../Frameworks
 done
 
