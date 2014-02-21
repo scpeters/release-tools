@@ -70,7 +70,7 @@ fix_link_path()
     done
 }
 
-rm -r ${TEMP_DIR}
+rm -fr ${TEMP_DIR}
 mkdir -p ${TEMP_DIR}
 
 mkdir -p ${TEMP_DIR}/MyApp.app/Contents/
