@@ -37,6 +37,14 @@ need_path_fix_link()
     exit -1
 }
 
+need_relative_path_keeping_prefix()
+{
+    local path=$1
+    [[ ${path:0:7} == '@loader' ]] && return 1
+
+    return 0
+}
+
 check_existing_new_link()
 {
     local new_path=${1}
@@ -60,9 +68,18 @@ fix_link_path()
     for link in ${LINKED_LIBS}; do
       print_debug "- Processing link ${link}" 
       local path=$(awk '{ print $1 }' <<< ${link})
-      local lib_name=${path##*/}
       if need_path_fix_link $path; then
-        local new_name="@executable_path/$libdir_path/$lib_name"
+	# Special case when we need to preserve prefix but need relative path fixing
+	# this is the case of @loader_path
+	if need_relative_path_keeping_prefix $path; then
+	    local prefix=${path%%/*}
+	    local lib=${path/$prefix}
+            local new_name="${prefix}${lib}"
+	else
+            local lib_name=${path##*/}
+            local new_name="@executable_path/$libdir_path/$lib_name"
+	fi
+
         print_debug " - ${path} -> ${new_name}"
         check_existing_new_link ${new_name}
         install_name_tool -change $path $new_name $file
