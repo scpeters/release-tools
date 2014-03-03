@@ -37,7 +37,7 @@ need_path_fix_link()
     exit -1
 }
 
-need_relative_path_keeping_prefix()
+is_loader_path()
 {
     local path=$1
     [[ ${path:0:7} == '@loader' ]] && return 1
@@ -56,6 +56,15 @@ check_existing_new_link()
     fi
 }
 
+fix_id()
+{
+    local file=$1
+    
+    ID=$(otool -L ${file} | head -n 2 | tail -n 1 | awk '{ print $1 }')
+    print_debug "* Change id ${ID} -> ${file}"
+    install_name_tool -id ${ID} ${file} ${file}
+}
+
 fix_link_path()
 {
     # libdir_path: relative path from exectuable
@@ -68,17 +77,15 @@ fix_link_path()
     for link in ${LINKED_LIBS}; do
       print_debug "- Processing link ${link}" 
       local path=$(awk '{ print $1 }' <<< ${link})
+      # Loader path should be kept as t
+      if is_loader_path $path; then
+        print_debug " - $path ## skipped"
+        continue
+      fi
+      # Check for links that need fixing
       if need_path_fix_link $path; then
-	# Special case when we need to preserve prefix but need relative path fixing
-	# this is the case of @loader_path
-	if need_relative_path_keeping_prefix $path; then
-	    local prefix=${path%%/*}
-	    local lib=${path/$prefix}
-            local new_name="${prefix}${lib}"
-	else
-            local lib_name=${path##*/}
-            local new_name="@executable_path/$libdir_path/$lib_name"
-	fi
+        local lib_name=${path##*/}
+        local new_name="@executable_path/$libdir_path/$lib_name"
 
         print_debug " - ${path} -> ${new_name}"
         check_existing_new_link ${new_name}
@@ -151,10 +158,12 @@ cp -pR ${GAZEBO_ROOT_INSTALLATION}/lib/gazebo-*/plugins/*.dylib \
 # Fix all bad references in library and binary
 pushd ${FRAMEWORK_DIR} 2> /dev/null
 for f in *; do
+    fix_id $f
     fix_link_path $f ../Frameworks
 done
 
 pushd ${MACOS_DIR} 2> /dev/null
 for f in *; do
+    fix_id $f
     fix_link_path $f ../Frameworks
 done
