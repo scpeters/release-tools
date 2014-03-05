@@ -1,11 +1,12 @@
 #!/bin/bash
 
-#set -x
+set -x
 set -e
 
 TEMP_DIR=/tmp/lala
 CELLAR_DIR=/tmp/jenkins.yLtQ/Cellar
 GAZEBO_ROOT_INSTALLATION=${CELLAR_DIR}/gazebo/HEAD/
+DYLIBBUNDLER=/tmp/dylibbundler
 
 MACOS_DIR=${TEMP_DIR}/MyApp.app/Contents/MacOS/
 FRAMEWORK_DIR=${TEMP_DIR}/MyApp.app/Contents/Frameworks
@@ -20,6 +21,44 @@ print_debug()
         echo $msg
     fi
 }
+
+need_full_path()
+{
+    local path=$1
+
+    [[ ${path:0:1} == '/' ]] && return 0
+    [[ ${path:0:1} == '@' ]] && return 0
+
+    return 1
+}
+
+fix_link_path()
+{
+    # libdir_path: relative path from exectuable
+    local file=$1 libdir_path=$2
+
+    LINKED_LIBS=$(otool -L $file | tail -n+2 | awk '{ print $1 }')
+    print_debug $LINKED_LIBS
+    for link in ${LINKED_LIBS}; do
+      print_debug "- Processing link ${link}" 
+      local path=$(awk '{ print $1 }' <<< ${link})
+      # Loader path should be kept as t
+      if is_loader_path $path; then
+        print_debug " - Loader detected $path ## skipped"
+        continue
+      fi
+      # Check for links that need fixing
+      if need_path_fix_link $path; then
+        local lib_name=${path##*/}
+        local new_name="@executable_path/$libdir_path/$lib_name"
+
+        print_debug " - ${path} -> ${new_name}"
+        check_existing_new_link ${new_name}
+        install_name_tool -change $path $new_name $file
+      fi
+    done
+}
+
 
 need_path_fix_link()
 {
@@ -40,14 +79,15 @@ need_path_fix_link()
 is_loader_path()
 {
     local path=$1
-    [[ ${path:0:7} == '@loader' ]] && return 1
+    [[ ${path:0:7} == '@loader' ]] && return 0
 
-    return 0
+    return 1
 }
 
 check_existing_new_link()
 {
     local new_path=${1}
+    
 
     link=$(sed "s:@executable_path:${MACOS_DIR}:" <<<  ${new_path})
     if [[ ! -f $link ]]; then
@@ -58,19 +98,23 @@ check_existing_new_link()
 
 fix_id()
 {
-    local file=$1
-    
-    ID=$(otool -L ${file} | head -n 2 | tail -n 1 | awk '{ print $1 }')
-    print_debug "* Change id ${ID} -> ${file}"
-    install_name_tool -id ${ID} ${file} ${file}
+    local file=${1} new_path=${2}
+
+    # Do not try to fix non binary files
+    if [[ -z $(file ${file} | grep Mach-O) ]]; then
+        print_debug "- ${file} is not binary ## Skipped"
+        return
+    fi
+
+    #ID=$(otool -L ${file} | head -n 2 | tail -n 1 | awk '{ print $1 }')
+    print_debug "+ Change id -> ${new_path}/${file}"
+    install_name_tool -id "${new_path}/${file}" ${file}
 }
 
 fix_link_path()
 {
     # libdir_path: relative path from exectuable
     local file=$1 libdir_path=$2
-
-    echo "* File ${1}" 
 
     LINKED_LIBS=$(otool -L $file | tail -n+2 | awk '{ print $1 }')
     print_debug $LINKED_LIBS
@@ -79,7 +123,7 @@ fix_link_path()
       local path=$(awk '{ print $1 }' <<< ${link})
       # Loader path should be kept as t
       if is_loader_path $path; then
-        print_debug " - $path ## skipped"
+        print_debug " - Loader detected $path ## skipped"
         continue
       fi
       # Check for links that need fixing
@@ -144,26 +188,50 @@ mkdir -p $FRAMEWORK_DIR
 find ${CELLAR_DIR} -name '*.dylib' -exec cp {} ${FRAMEWORK_DIR}  \;
 cp $(find ${CELLAR_DIR} -name QtCore -type f -exec file {} \; | grep Mach-O | cut -d: -f 1) ${FRAMEWORK_DIR}
 cp $(find ${CELLAR_DIR} -name QtGui -type f -exec file {} \; | grep Mach-O | cut -d: -f 1) ${FRAMEWORK_DIR}
+# Ogre libRenderSystem_GL
+cp $(find ${CELLAR_DIR} -name libRenderSystem_GL.dylib) ${FRAMEWORK_DIR}
 
-#remove gazebo plugins, which belongs to a different directory
+#remove plugins, which belongs to a different directory
 rm -fr ${FRAMEWORK_DIR}/lib*Plugin.dylib
 
 # We should place here gazebo plugins
 mkdir -p ${TEMP_DIR}/MyApp.app/Contents/PlugIns
-cp -pR ${GAZEBO_ROOT_INSTALLATION}/lib/gazebo-*/plugins/*.dylib \
-       ${TEMP_DIR}/MyApp.app/Contents/PlugIns
+#cp -pR ${GAZEBO_ROOT_INSTALLATION}/lib/gazebo-*/plugins/*.dylib \
+find ${CELLAR_DIR} -name lib*Plugin.dylib -exec cp {} \
+       ${TEMP_DIR}/MyApp.app/Contents/PlugIns \;
+
+#install dylibbundler if its not installed
+if [ ! -f $DYLIBBUNDLER/dylibbundler ]; then
+  #dylibbundler will automatically search every .dylib file used by a program,
+  #then it will copy it to the given directory and set the absolute path to relative path.
+  
+  rm -fR $DYLIBBUNDLER
+  mkdir -p $DYLIBBUNDLER
+  pushd $DYLIBBUNDLER 2> /dev/null
+  curl -c - -OL http://downloads.sourceforge.net/project/macdylibbundler/macdylibbundler/0.4.4/dylibbundler-0.4.4.zip
+  unzip *.zip
+  cd dylibbundler-*
+  make
+  cp dylibbundler $DYLIBBUNDLER
+  popd 2> /dev/null
+fi
+
+
 
 # TODO: define and Icon
 
 # Fix all bad references in library and binary
-pushd ${FRAMEWORK_DIR} 2> /dev/null
-for f in *; do
-    fix_id $f
-    fix_link_path $f ../Frameworks
-done
+#pushd ${FRAMEWORK_DIR} 2> /dev/null
+#for f in *; do
+#    echo "* Library ${f}" 
+#    fix_id $f '@executable_path/../Frameworks'
+#    fix_link_path $f ../Frameworks
+#done
 
 pushd ${MACOS_DIR} 2> /dev/null
 for f in *; do
-    fix_id $f
-    fix_link_path $f ../Frameworks
+#   fix_id $f #${MACOS_DIR}
+    echo "* Binary ${f}" 
+    $DYLIBBUNDLER/dylibbundler -od -b -x ${f} -d ${FRAMEWORK_DIR}
+    #fix_link_path $f ../Frameworks
 done

@@ -1,15 +1,20 @@
 #!/bin/bash
 
-#set -x
+set -x
 set -e
 
-TEMP_DIR=/tmp/lala
-CELLAR_DIR=/tmp/jenkins.yLtQ/Cellar
-ORIG_LIB_DIR=/tmp/jenkins.yLtQ/lib
+# Original jenkins/homebrew directory 
+JENKINS_ORIG=/Users/jenkins/jenkins.yLtQ
+# Copied original directory into temp
+TEMP_ORIG=/tmp/jenkins.yLtQ
+CELLAR_DIR=${TEMP_ORIG}/Cellar
 GAZEBO_ROOT_INSTALLATION=${CELLAR_DIR}/gazebo/HEAD/
 
+TEMP_DIR=/tmp/lala
 MACOS_DIR=${TEMP_DIR}/MyApp.app/Contents/MacOS/
 FRAMEWORK_DIR=${TEMP_DIR}/MyApp.app/Contents/Frameworks
+
+DYLIBBUNDLER=/tmp/dylibbundler
 
 DEBUG=${DEBUG:-false}
 
@@ -29,10 +34,13 @@ need_path_fix_link()
     # Fix all referecences to local user or relative
     [[ ${path:0:6} == '/Users'  ]] && return 0
     [[ ${path:0:3} == 'lib'     ]] && return 0
+    [[ ${path:0:7} == '@loader' ]] && return 0
     # Do not change system references
-    [[ ${path:0:4} == '/usr'    ]] && return 1 
-    [[ ${path:0:7} == '/System' ]] && return 1
-    [[ ${path:0:1} == '@'       ]] && return 1
+    [[ ${path:0:4} == '/usr'      ]] && return 1 
+    [[ ${path:0:5} == '/tmp/'     ]] && return 1 
+    [[ ${path:0:9} == '/private/' ]] && return 1 
+    [[ ${path:0:7} == '/System'   ]] && return 1
+    [[ ${path:0:1} == '@'         ]] && return 1
     
     echo "!!!!! Unknown value of path: $path"
     exit -1
@@ -41,55 +49,84 @@ need_path_fix_link()
 is_loader_path()
 {
     local path=$1
-    [[ ${path:0:7} == '@loader' ]] && return 1
+    [[ ${path:0:7} == '@loader' ]] && return 0
 
-    return 0
+    return 1
+}
+
+is_relative_loader_path()
+{
+    local path=$1
+    [[ ${path:0:16} == '@loader_path/lib' ]] && return 0
+    
+    return 1
+}
+
+is_relative_path()
+{
+    [[ ${path:0:3} == 'lib' ]] && return 0
+
+    return 1
 }
 
 check_existing_new_link()
 {
     local new_path=${1}
 
+    if is_loader_path $new_path; then
+      new_path=${new_path/@loader_path}
+    fi
+
     link=$(sed "s:@executable_path:${MACOS_DIR}:" <<<  ${new_path})
     if [[ ! -f $link ]]; then
         echo "Internal error - fail to locate link: ${link}"
-        #exit -1
+        exit -1
     fi
 }
 
 fix_id()
 {
     local file=$1
-    
-    ID=$(otool -L ${file} | head -n 2 | tail -n 1 | awk '{ print $1 }')
-    print_debug "* Change id ${ID} -> ${file}"
-    install_name_tool -id ${ID} ${file} ${file}
+      
+    abs_path=$(python -c 'import os; print os.path.realpath("'$file'")')
+    print_debug "+ Change id -> ${abs_path}"
+    install_name_tool -id ${abs_path} ${file}
 }
 
 fix_to_absolute_link_path()
 {
     local file=$1 
 
-    echo "* File ${1}" 
-
     LINKED_LIBS=$(otool -L $file | tail -n+2 | awk '{ print $1 }')
     print_debug $LINKED_LIBS
     for link in ${LINKED_LIBS}; do
       print_debug "- Processing link ${link}" 
       local path=$(awk '{ print $1 }' <<< ${link})
-      # Loader path should be kept as t
-      #if is_loader_path $path; then
-      #  print_debug " - $path ## skipped"
-      #  continue
-      # fi
-      # Check for links that need fixing
-      if need_path_fix_link $path; then
-        local lib_name=${path##*/}
-        local new_name="${ORIG_LIB_DIR}/$lib_name"
 
-        print_debug " - ${path} -> ${new_name}"
+      if need_path_fix_link $path; then
+        if is_relative_path $path; then
+          # Mostly fixing gazebo libraries
+          # TODO: will be broken for paths different than just $TEMP_ORIG/lib/
+          new_name="${TEMP_ORIG}/lib/${path}"
+        elif is_relative_loader_path $path; then
+          # Mostly fixing ogre libraries
+          # TODO: will be broken for paths different than just $TEMP_ORIG/lib/
+          new_name="@loader_path${TEMP_ORIG}/lib/${path/@loader_path\/}"
+        else
+          new_name=`sed "s:$JENKINS_ORIG:$TEMP_ORIG:" <<< $path`
+        fi
+
+        # Need to resolve symlinks
+        if [[ -L $new_name ]]; then
+          new_name=$(python -c 'import os; print os.path.realpath("'$new_name'")')
+          print_debug " + Following symlink: ${new_name}"
+        fi
+
+        print_debug "  - ${path} -> ${new_name}"
         check_existing_new_link ${new_name}
         install_name_tool -change $path $new_name $file
+      else
+        print_debug "  ## skipped"
       fi
     done
 }
@@ -128,6 +165,25 @@ cat > Info.plist <<DELIM
   </dict>
 </plist>
 DELIM
+
+# TODO: define and Icon
+echo "+ FIXING BINARIES IN $TEMP_ORIG"
+pushd ${TEMP_ORIG}/bin 2> /dev/null
+for f in *; do
+    print_debug " * Binary: $f" 
+    fix_to_absolute_link_path $f 
+done
+popd 2> /dev/null
+
+echo "+ FIXING LIBS IN $TEMP_ORIG"
+pushd ${TEMP_ORIG}/lib 2> /dev/null
+for f in *.dylib; do
+    print_debug " * Library: $f" 
+    fix_id $f
+    fix_to_absolute_link_path $f 
+done
+popd 2> /dev/null
+
 
 # We should place here gazebo binary and all gz tools
 mkdir -p ${MACOS_DIR} 
@@ -169,12 +225,8 @@ if [ ! -f $DYLIBBUNDLER/dylibbundler ]; then
   popd 2> /dev/null
 fi
 
-# TODO: define and Icon
+echo "RUNNING dylibdundler"
 pushd ${MACOS_DIR} 2> /dev/null
-for f in *; do
-    fix_to_absolute_link_path $f 
-done
-
 for f in *; do
     # Do not try to fix non binary files
     if [[ -z $(file ${f} | grep Mach-O) ]]; then
@@ -182,6 +234,7 @@ for f in *; do
         continue
     fi
     
-    print_debug "* Binary: ${f} "
+    print_debug " * Binary: ${f} "
     $DYLIBBUNDLER/dylibbundler -od -b -x ${f} -d ${FRAMEWORK_DIR}
 done
+popd 2> /dev/null
