@@ -63,7 +63,6 @@ cmake ${GZ_CMAKE_BUILD_TYPE}         \\
 make -j${MAKE_JOBS}
 make install
 . /usr/share/gazebo/setup.sh
-./test
 
 i=0
 until ! ./test/integration/INTEGRATION_gripper 
