@@ -63,7 +63,17 @@ cmake ${GZ_CMAKE_BUILD_TYPE}         \\
 make -j${MAKE_JOBS}
 make install
 . /usr/share/gazebo/setup.sh
-make test ARGS="-VV" || true
+./test
+
+i=0
+until ! ./test/integration/INTEGRATION_gripper 
+do
+    ((i++))
+    echo \$i
+    if [[ \$i -gt 100 ]]; then
+        break
+    fi
+done
 
 # Step 3: code check
 cd $WORKSPACE/gazebo
