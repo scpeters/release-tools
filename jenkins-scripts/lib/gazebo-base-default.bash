@@ -68,7 +68,7 @@ i=0
 until ! ./test/integration/INTEGRATION_gripper 
 do
     i=\`expr \$i + 1\`
-    if [[ \$i -gt 100 ]]; then
+    if [ \$i -gt 100 ]; then
         break
     fi
 done
