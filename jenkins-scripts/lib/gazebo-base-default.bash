@@ -67,8 +67,7 @@ make install
 i=0
 until ! ./test/integration/INTEGRATION_gripper 
 do
-    ((i++))
-    echo \$i
+    i=\`expr \$i + 1\`
     if [[ \$i -gt 100 ]]; then
         break
     fi
