@@ -80,8 +80,10 @@ GAZEBO_EXTRA_DEPENDENCIES="robot-player-dev \\
                            ruby-ronn "
 
 GAZEBO_DEB_PACKAGE=$GAZEBO_DEB_PACKAGE
+GAZEBO_ROS_PLUGINS=ros-${ROS_DISTRO}-gazebo-plugins
 if [ -z $GAZEBO_DEB_PACKAGE ]; then
     GAZEBO_DEB_PACKAGE=gazebo-current
+    GAZEBO_ROS_PLUGINS=ros-${ROS_DISTRO}-gazebo-plugins-current
 fi
 
 # image-transport-plugins is needed to properly advertise compressed image topics
@@ -95,10 +97,10 @@ DRCSIM_BASE_DEPENDENCIES="ros-${ROS_DISTRO}-pr2-mechanism                     \\
                           ros-${ROS_DISTRO}-robot-model-visualization         \\
                           ros-${ROS_DISTRO}-image-pipeline                    \\
                           ros-${ROS_DISTRO}-image-transport-plugins           \\
-                          ros-${ROS_DISTRO}-gazebo-plugins                    \\
                           ros-${ROS_DISTRO}-compressed-depth-image-transport  \\
                           ros-${ROS_DISTRO}-compressed-image-transport        \\
                           ros-${ROS_DISTRO}-theora-image-transport            \\
+                          ${GAZEBO_ROS_PLUGINS}                               \\
                           ${GAZEBO_DEB_PACKAGE}"
 
 DRCSIM_FULL_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES} \\
