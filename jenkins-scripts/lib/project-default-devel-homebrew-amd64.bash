@@ -32,7 +32,7 @@ ${RUN_DIR}/bin/brew tap osrf/simulation
 # Unlink system dependencies first
 for dep in `/usr/local/bin/brew deps ${PROJECT} ${PROJECT_ARGS}`
 do
-  /usr/local/bin/brew unlink ${dep} || true
+  sudo /usr/local/bin/brew unlink ${dep} || true
 done || true
 
 # Process the package dependencies
