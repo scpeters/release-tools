@@ -39,7 +39,8 @@ apt-add-repository -y ppa:dartsim
 
 # Required stuff for Gazebo
 apt-get update
-apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
+# force-yes to workaround on problem with auth of libccd ppa packages
+apt-get install -y --force-yes ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
