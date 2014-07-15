@@ -5,7 +5,13 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 # Hack to pick from current processes the DISPLAY available
-export DISPLAY=$(ls /tmp/.X11-unix/ | head -1 | sed -e 's@^X@:@')
+for i in `ls /tmp/.X11-unix/ | head -1 | sed -e 's@^X@:@'`
+do
+  ps aux | grep bin/X.*$i | grep -v grep
+  if [ $? -eq 0 ] ; then
+    export DISPLAY=$i
+  fi
+done
 
 export DISTRO=trusty
 export ROS_DISTRO=groovy
