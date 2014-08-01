@@ -38,7 +38,7 @@ upload_package()
     rm -fr ${S3_DIR}
 }
 
-pkgs_path="$WORKSPACE/pkgs"
+pkgs_path="$WORKSPACE"
 
 for pkg in `ls $pkgs_path/*.deb`; do
   # Get components from pkg
@@ -74,4 +74,4 @@ done
 
 
 
-rm -fr $WORKSPACE/pkgs/*.deb
+rm -fr $WORKSPACE/*.deb
