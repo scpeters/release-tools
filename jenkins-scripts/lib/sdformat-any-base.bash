@@ -40,7 +40,7 @@ wget ${REPO_KEY} -O - | apt-key add -
 apt-get update
 
 # Checkout latest libsdformatX-dev package
-SDFORMAT_PKG=\$(apt-cache search sdformat | grep 'libsdformat*-dev\ ' | awk '{ print \$1 }')
+SDFORMAT_PKG=\$(apt-cache search sdformat | grep 'libsdformat.-dev\ ' | tail -n 1 | awk '{ print \$1 }')
 apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES} \${SDFORMAT_PKG} git exuberant-ctags 
 
 # Step 2: configure and build
