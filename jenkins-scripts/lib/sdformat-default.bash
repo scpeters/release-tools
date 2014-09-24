@@ -10,9 +10,9 @@ cat > build.sh << DELIM
 set -ex
 
 # Step 1: Configure apt
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" > /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" > /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" > /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list
 
 apt-get update
 apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES}
