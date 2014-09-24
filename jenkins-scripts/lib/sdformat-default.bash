@@ -24,7 +24,7 @@ cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 make -j${MAKE_JOBS}
 make install
-make test ARGS="-VV" || true
+HOME=\$(pwd) LC_ALL=POSIX make test ARGS="-VV" || true
 
 # Step 3: code check
 cd $WORKSPACE/sdformat
