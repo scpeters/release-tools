@@ -19,6 +19,11 @@ cat > build.sh << DELIM
 #
 set -ex
 
+# Step 1: Configure apt
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list
+
 # OSRF repository to get bullet
 apt-get install -y wget
 sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
@@ -128,11 +133,32 @@ cp -a $WORKSPACE/cppcheck_results $WORKSPACE/build/cppcheck_results
 cp -a $WORKSPACE/test_results $WORKSPACE/build/test_results
 DELIM
 
-# Make project-specific changes here
-###################################################
+cat > Dockerfile << DELIM_DOCKER
+#######################################################
+# Docker file to run build.sh
 
-sudo pbuilder  --execute \
-    --bindmounts $WORKSPACE \
-    --basetgz $basetgz \
-    -- build.sh
+FROM jrivero/gazebo
+MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
 
+# If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
+# By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
+RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
+RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
+  && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
+  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
+  || echo "No squid-deb-proxy detected on docker host"
+
+# Map the workspace into the container
+RUN mkdir -p ${WORKSPACE}
+ADD gazebo ${WORKSPACE}/gazebo
+ADD build.sh build.sh
+RUN chmod +x build.sh
+RUN ./build.sh
+DELIM_DOCKER
+
+sudo docker pull jrivero/gazebo
+sudo docker build -t gazebo/dev .
+CID=$(sudo docker run -d -t gazebo/dev /bin/bash)
+sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
+sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
+sudo docker stop ${CID}
