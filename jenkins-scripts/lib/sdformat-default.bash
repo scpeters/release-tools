@@ -36,7 +36,7 @@ cat > Dockerfile << DELIM_DOCKER
 #######################################################
 # Docker file to run build.sh
 
-FROM jrivero:sdformat
+FROM jrivero/sdformat
 MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
 
 # If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
@@ -55,6 +55,7 @@ RUN chmod +x build.sh
 RUN ./build.sh
 DELIM_DOCKER
 
+sudo docker pull jrivero/sdformat
 sudo docker build -t sdformat/dev .
 CID=$(sudo docker run -d -t sdformat/dev /bin/bash)
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build

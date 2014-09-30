@@ -74,4 +74,3 @@ fi
 
 rm -fr Dockerfile
 cd ${WORKSPACE}
-sudo docker pull ubuntu:${DISTRO}
