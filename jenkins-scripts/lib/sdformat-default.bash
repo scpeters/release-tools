@@ -24,6 +24,9 @@ cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 make -j${MAKE_JOBS}
 make install
+echo "HOME: $HOME"
+echo "HOME2: \$HOME"
+mkdir -p \$HOME
 HOME=\$(pwd) LC_ALL=POSIX make test ARGS="-VV" || true
 
 # Step 3: code check
