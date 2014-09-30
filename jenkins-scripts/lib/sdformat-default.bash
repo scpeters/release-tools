@@ -36,7 +36,7 @@ cat > Dockerfile << DELIM_DOCKER
 #######################################################
 # Docker file to run build.sh
 
-FROM ubuntu:${DISTRO}
+FROM jrivero:sdformat
 MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
 
 # If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
