@@ -19,7 +19,14 @@ cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 make -j${MAKE_JOBS}
 make install
-make test ARGS="-VV" || true
+
+echo "HOME : $HOME"
+ls -las \$HOME || true
+echo "HOME2 : \$HOME"
+ls -las \$HOME2 || true
+mkdir -p \$HOME
+
+LC_ALL=POSIX make test ARGS="-VV" || true
 
 # Step 3: code check
 cd $WORKSPACE/sdformat
