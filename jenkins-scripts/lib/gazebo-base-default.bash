@@ -85,7 +85,7 @@ cmake ${GZ_CMAKE_BUILD_TYPE}         \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
   $WORKSPACE/gazebo
-make -j${MAKE_JOBS}
+make -j${MAKE_JOBS} UNIT_GpuLaser_TEST 
 make install
 . /usr/share/gazebo/setup.sh
 
@@ -93,11 +93,10 @@ make install
 rm -fr $WORKSPACE/cppcheck_results
 rm -fr $WORKSPACE/test_results
 
+export LIBGL_DEBUG=verbose 
+
 # Run tests
 make test ARGS="-VV -R UNIT_*" || true
-make test ARGS="-VV -R INTEGRATION_*" || true
-make test ARGS="-VV -R REGRESSION_*" || true
-make test ARGS="-VV -R EXAMPLE_*" || true
 
 # Only run cppcheck on trusty
 if [ "$DISTRO" = "trusty" ]; then 
