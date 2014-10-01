@@ -26,7 +26,7 @@ echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted un
 
 # OSRF repository to get bullet
 apt-get install -y wget
-sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
+sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
 wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 
 # Dart repositories
