@@ -109,11 +109,9 @@ else
   echo "<results></results>" >> $WORKSPACE/build/cppcheck_results/empty.xml 
 fi
 
-# Step 4: copy test log
-# Broken http://build.osrfoundation.org/job/gazebo-any-devel-precise-amd64-gpu-nvidia/6/console
-# Need fix
-# mkdir $WORKSPACE/logs
-# cp $HOME/.gazebo/logs/*.log $WORKSPACE/logs/
+# Step 4: copy logs
+mkdir -p $WORKSPACE/logs
+cp $HOME/.gazebo/*.log $WORKSPACE/logs/
 
 # Step 5. Need to clean build/ directory so disk space is under control
 # Move cppcheck and test results out of build
