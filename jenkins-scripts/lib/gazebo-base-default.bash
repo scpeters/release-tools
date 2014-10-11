@@ -19,6 +19,8 @@ cat > build.sh << DELIM
 #
 set -ex
 
+export DISPLAY=${DISPLAY}
+
 # Step 1: Configure apt
 echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list
 echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list
@@ -153,7 +155,6 @@ RUN mkdir -p ${WORKSPACE}
 ADD gazebo ${WORKSPACE}/gazebo
 ADD build.sh build.sh
 RUN chmod +x build.sh
-RUN export DISPLAY=${DISPLAY}
 RUN ./build.sh
 DELIM_DOCKER
 
