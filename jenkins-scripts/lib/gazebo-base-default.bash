@@ -151,6 +151,7 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 ADD gazebo ${WORKSPACE}/gazebo
+ADD export DISPLAY=${DISPLAY}
 ADD build.sh build.sh
 RUN chmod +x build.sh
 RUN ./build.sh
