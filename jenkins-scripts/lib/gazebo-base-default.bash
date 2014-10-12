@@ -49,6 +49,9 @@ fi
 
 # Step 1: install everything you need
 
+# TODO: fix databases. Need to look the reason
+/usr/share/debconf/fix_db.pl
+
 # Required stuff for Gazebo
 apt-get update
 apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
