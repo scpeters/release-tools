@@ -24,6 +24,10 @@ apt-get install -y wget
 sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
 wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
 
+echo "Defined ogre export logs: \$OGRE_EXPORT_LOGS"
+export OGRE_EXPORT_LOGS=1
+export OGRE_ASSERT_ON_ERRORS=1
+
 # Dart repositories
 if $DART_FROM_PKGS; then
   # software-properties for apt-add-repository
