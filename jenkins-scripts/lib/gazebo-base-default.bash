@@ -146,6 +146,11 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
   || echo "No squid-deb-proxy detected on docker host"
 
+
+# X display configurations
+ENV DISPLAY ${DISPLAY}
+VOLUME /tmp/.X11-unix
+
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 ADD gazebo ${WORKSPACE}/gazebo
@@ -156,7 +161,13 @@ DELIM_DOCKER
 
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
+
+#CID=$(sudo docker run -d -t gazebo/dev \
+#                         -e DISPLAY=${DISPLAY} \
+#			 -v /tmp/.X11-unix:/tmp/.X11-unix \
+# /bin/bash)
 CID=$(sudo docker run -d -t gazebo/dev /bin/bash)
+
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 sudo docker stop ${CID}
