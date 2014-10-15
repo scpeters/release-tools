@@ -22,14 +22,7 @@ set -ex
 export DISPLAY=${DISPLAY}
 
 # Step 1: Configure apt
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list
-
-# OSRF repository to get bullet
-apt-get install -y wget
-sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
-wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
+# The image already has all the needed source.lists entries
 
 # Dart repositories
 if $DART_FROM_PKGS; then
