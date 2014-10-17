@@ -22,8 +22,11 @@ set -ex
 echo \$DISPLAY
 glxinfo || true
 
+ls -las /tmp/.X11-unix
+
 export DISPLAY=$DISPLAY
 glxinfo
+
 
 # Step 1: Configure apt
 # The image already has all the needed source.lists entries
@@ -162,8 +165,9 @@ DELIM_DOCKER
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
 
+echo "DISPLAY=unix$DISPLAY"
 # --priviledged is essential to make DRI work
-CID=`sudo docker run --privileged 
+CID=`sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
 		       -t gazebo/dev 
