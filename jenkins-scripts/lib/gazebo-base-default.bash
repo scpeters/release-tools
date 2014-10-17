@@ -19,6 +19,9 @@ cat > build.sh << DELIM
 #
 set -ex
 
+echo \$DISPLAY
+glxinfo
+
 # Step 1: Configure apt
 # The image already has all the needed source.lists entries
 
