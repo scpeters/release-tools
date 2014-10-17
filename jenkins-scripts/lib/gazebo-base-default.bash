@@ -19,8 +19,6 @@ cat > build.sh << DELIM
 #
 set -ex
 
-export DISPLAY=${DISPLAY}
-
 # Step 1: Configure apt
 # The image already has all the needed source.lists entries
 
@@ -162,11 +160,8 @@ DELIM_DOCKER
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
 
-#CID=$(sudo docker run -d -t gazebo/dev \
-#                         -e DISPLAY=${DISPLAY} \
-#			 -v /tmp/.X11-unix:/tmp/.X11-unix \
-# /bin/bash)
-CID=$(sudo docker run -d -t gazebo/dev /bin/bash)
+# --priviledged is essential to make DRI work
+CID=$(sudo docker run --privileged -d -t gazebo/dev /bin/bash)
 
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
