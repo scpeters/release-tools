@@ -167,11 +167,11 @@ sudo docker build -t gazebo/dev .
 
 echo "DISPLAY=unix$DISPLAY"
 # --priviledged is essential to make DRI work
-CID=`sudo docker run --privileged \
+sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-		       -t gazebo/dev 
-                        /bin/bash`
+		       -t gazebo/dev \
+                        /bin/bash
 
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
