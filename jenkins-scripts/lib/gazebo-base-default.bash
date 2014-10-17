@@ -148,10 +148,6 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   || echo "No squid-deb-proxy detected on docker host"
 
 
-# X display configurations
-ENV DISPLAY ${DISPLAY}
-VOLUME /tmp/.X11-unix
-
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 ADD gazebo ${WORKSPACE}/gazebo
@@ -164,7 +160,11 @@ sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
 
 # --priviledged is essential to make DRI work
-CID=$(sudo docker run --privileged -d -t gazebo/dev /bin/bash)
+CID=$(sudo docker run --privileged 
+                       -e "DISPLAY=unix$DISPLAY" \
+                       -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+		       -t gazebo/dev 
+                        /bin/bash)
 
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
