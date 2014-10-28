@@ -25,7 +25,7 @@ glxinfo || true
 ls -las /tmp/.X11-unix
 
 export DISPLAY=$DISPLAY
-glxinfo
+glxinfo || true
 
 
 # Step 1: Configure apt
