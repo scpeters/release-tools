@@ -22,7 +22,7 @@ set -ex
 echo \$DISPLAY
 glxinfo || true
 
-ls -las /tmp/.X11-unix
+ls -las /tmp/.X11-unix || true
 
 export DISPLAY=$DISPLAY
 glxinfo || true
