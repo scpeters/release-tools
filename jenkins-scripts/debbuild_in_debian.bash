@@ -51,8 +51,6 @@ cd $WORKSPACE/build
 REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 # Step 1: Get the source (nightly builds or tarball)
-find / . -name $PACKAGE
-find $WORKSPACE . -name $PACKAGE
 cp -a $WORKSPACE/$PACKAGE .
 PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME
 cd \$REAL_PACKAGE_NAME
@@ -76,11 +74,15 @@ sed -i -e "s/ddddd/\${RELEASE_DATE}/g" debian/changelog
 # Get into the unpacked source directory, without explicit knowledge of that 
 # directory's name
 ls $WORKSPACE/build
-find $WORKSPACE/build -mindepth 1 -type d
+find $WORKSPACE/build -mindepth 1 -type d | head -n 1
+pwd
+cd \`find $WORKSPACE/build -mindepth 1 -type d |head -n 1\`
+pwd
+
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
 if $NIGHTLY_MODE; then
   rm -fr .hg*
-  echo | dh_make -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}~hg\${TIMESTAMP}r\${REV} > /dev/null
+  echo | dh_make -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}~hg\${TIMESTAMP}r\${REV}
 fi
 
 # Step 5: use debuild to create source package
@@ -136,6 +138,7 @@ mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
 PKGS=\`find /var/lib/jenkins/pbuilder/*_result* -name *.deb || true\`
+
 
 FOUND_PKG=0
 for pkg in \${PKGS}; do
