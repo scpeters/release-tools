@@ -32,9 +32,21 @@ echo "unset CCACHEDIR" >> /etc/pbuilderrc
 # Install deb-building tools
 if $PRIVATE_REPO; then
     EXTRA_PKGS=openssh-client
+    cat > \$HOME/.ssh/config << DELIM_SSH
+Host *
+	StrictHostKeyChecking no
+DELIM_SSH
 fi
 
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion \$EXTRA_PKGS
+
+chmod o-rwx ~/.ssh/id*
+chmod G-rwx ~/.ssh/id*
+cat \$HOME/.ssh/config
+cat \$HOME/.ssh/id_rsa
+ls \$HOME/.ssh
+chown -R root:root -R \$HOME/.ssh
+
 
 if $ENABLE_ROS; then
 # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
