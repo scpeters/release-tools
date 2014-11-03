@@ -46,6 +46,7 @@ cd $WORKSPACE/build
 REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 # Step 1: Get the source (nightly builds or tarball)
+find / . -name $PACKAGE
 cp -a /var/packages/gazebo/ubuntu/$PACKAGE .
 PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME
 cd \$REAL_PACKAGE_NAME
