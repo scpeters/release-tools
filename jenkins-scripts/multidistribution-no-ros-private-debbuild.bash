@@ -9,4 +9,4 @@ export ENABLE_ROS=false
 export WORKAROUND_PBUILDER_BUG=true
 export PRIVATE_REPO=true
 
-. ${SCRIPT_DIR}/lib/debbuild-base.bash
+. ${SCRIPT_DIR}/lib/debbuild-prop.bash
