@@ -82,7 +82,10 @@ pwd
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
 if $NIGHTLY_MODE; then
   rm -fr .hg*
+  # dh_make does not like debian directories
+  mv debian/ ../
   echo | dh_make -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}~hg\${TIMESTAMP}r\${REV}
+  mv ../debian .
 fi
 
 # Step 5: use debuild to create source package
