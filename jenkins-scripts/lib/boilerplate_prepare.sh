@@ -30,6 +30,10 @@ if [ -z ${NEED_C11_COMPILER} ]; then
   NEED_C11_COMPILER=false
 fi
 
+if [ -z ${PRIVATE_REPO} ]; then
+  PRIVATE_REPO=false
+fi
+
 # Only precise needs to install a C++11 compiler. Trusty on
 # already have a supported version
 if $NEED_C11_COMPILER; then
