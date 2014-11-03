@@ -8,6 +8,11 @@ export ENABLE_REAPER=false
 [[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
+NIGHTLY_MODE=false
+if [ "${VERSION}" = "nightly" ]; then
+   NIGHTLY_MODE=true
+fi  
+
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
