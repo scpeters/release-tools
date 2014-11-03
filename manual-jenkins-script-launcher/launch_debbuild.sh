@@ -42,11 +42,11 @@ set_up_release_tools
 
 # Be sure of not uploading anything
 mkdir -p ${FAKE_HOME}/pbuilder/${DISTRO}_result/
-sed -i -e "s:/var/packages/gazebo/ubuntu:${FAKE_HOME}/pbuilder/${DISTRO}_result/:g" ${SCRIPT_DIR}/lib/debbuild-base.bash
+sed -i -e "s:/var/packages/gazebo/ubuntu:${FAKE_HOME}/pbuilder/${DISTRO}_result/:g" ${SCRIPT_DIR}/lib/debbuild-prop.bash
 
 echo "3. Calling jenkins script"
 # pbuilder via sudo needs to own home
-chmod +x ${SCRIPT_DIR}/multidistribution-debbuild.bash
+chmod +x ${SCRIPT_DIR}/multidistribution-no-ros-private-debbuild.bash
 # root needs to own home for pbuilder
 sudo chown -R root:root ${FAKE_HOME}
-HOME=${FAKE_HOME} ${SCRIPT_DIR}/multidistribution-debbuild.bash
+HOME=${FAKE_HOME} ${SCRIPT_DIR}/multidistribution-no-ros-private-debbuild.bash

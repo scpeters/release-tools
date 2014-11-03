@@ -18,6 +18,11 @@ export ENABLE_REAPER=false
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
+# Import key into the 
+if $PRIVATE_REPO; then
+    cp ${HOME}/.ssh/id_* ${WORKSPACE}
+fi
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -32,6 +37,10 @@ echo "unset CCACHEDIR" >> /etc/pbuilderrc
 # Install deb-building tools
 if $PRIVATE_REPO; then
     EXTRA_PKGS=openssh-client
+    # Setup proper key management
+    mv /var/packages/gazebo/ubuntu/.ssh \$HOME/.ssh
+    chmod o-rwx ~/.ssh/id*
+    chmod g-rwx ~/.ssh/id*
     cat > \$HOME/.ssh/config << DELIM_SSH
 Host *
 	StrictHostKeyChecking no
@@ -40,13 +49,7 @@ fi
 
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion \$EXTRA_PKGS
 
-chmod o-rwx ~/.ssh/id*
-chmod G-rwx ~/.ssh/id*
-cat \$HOME/.ssh/config
-cat \$HOME/.ssh/id_rsa
-ls \$HOME/.ssh
-chown -R root:root -R \$HOME/.ssh
-
+hg clone --insecure ssh://hg@bitbucket.org/${BITBUCKET_REPO}/handsim-proprietary 
 
 if $ENABLE_ROS; then
 # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
