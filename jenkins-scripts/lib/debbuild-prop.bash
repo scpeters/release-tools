@@ -20,7 +20,8 @@ export ENABLE_REAPER=false
 
 # Import key into the 
 if $PRIVATE_REPO; then
-    cp ${HOME}/.ssh/id_* ${WORKSPACE}
+    mkdir ${WORKSPACE}/.ssh
+    cp ${HOME}/.ssh/id_* ${WORKSPACE}/.ssh
 fi
 
 cat > build.sh << DELIM
