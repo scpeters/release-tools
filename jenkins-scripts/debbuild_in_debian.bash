@@ -85,6 +85,8 @@ if $NIGHTLY_MODE; then
   # dh_make does not like debian directories
   mv debian/ ../
   echo | dh_make -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}~hg\${TIMESTAMP}r\${REV}
+  # remove dh_make template and place the one we have
+  rm -fr debian/
   mv ../debian .
 fi
 
