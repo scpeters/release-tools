@@ -46,12 +46,12 @@ REM This script upzip's files...
 goto :EOF
 
 :: ##################################
-:wget - Download an URL to the current directory
+:wget - Download an URL to the current directory (5min timeout)
 :: 
 :: arg1 URL to download
 :: arg2 filename (not including the path, just the filename)
-REM Downloading %~1
-bitsadmin /transfer mydownloadjob /download /priority normal %~1 %cd%\%~2 || goto :error
+echo Downloading %~1
+bitsadmin /transfer mydownloadjob /download /priority high /SetNoProgressTimeout 300 %~1 %cd%\%~2 || goto :error
 goto :EOF
 
 :: ##################################
