@@ -180,3 +180,8 @@ sudo pbuilder  --execute \
     --bindmounts "$WORKSPACE /var/packages/gazebo/ubuntu" \
     --basetgz $basetgz \
     -- build.sh
+
+# Upload the package to webserver
+cd /var/packages/gazebo/ubuntu
+scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa ${pkg} \
+    ubuntu@old.gazebosim.org:/var/www/handsim-prop/
