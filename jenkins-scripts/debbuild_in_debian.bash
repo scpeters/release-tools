@@ -16,6 +16,13 @@ if [ "${VERSION}" = "nightly" ]; then
    NIGHTLY_MODE=true
 fi  
 
+UPLOAD_KEY=$HOME/.ssh/id_rsa_uploader
+
+if [[ ! -f ${UPLOAD_KEY} ]]; then
+    echo "Can not find the uploader key in: ${UPLOAD_KEY}"
+    exit -1
+fi
+
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -189,6 +196,6 @@ sudo pbuilder  --execute \
 pkgs_path="$WORKSPACE/pkgs"
 
 for pkg in `ls $pkgs_path/*.deb`; do
-  scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa $pkg \
+  scp -o StrictHostKeyChecking=no -i ${UPLOAD_KEY} $pkg \
     ubuntu@old.gazebosim.org:/var/www/handsim-prop/
 done
