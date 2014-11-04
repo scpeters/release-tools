@@ -36,6 +36,7 @@ REM TODO: mercurial autoinstalled in windows if not present? Is that even possib
 hg clone https://bitbucket.org/ignitionrobotics/ign-transport > clone_ign_transport.log
 cd ign-transport
 
+echo "Compiling"
 mkdir build
 cd build
 call "..\configure.bat" || goto:error
