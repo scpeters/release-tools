@@ -197,5 +197,5 @@ pkgs_path="$WORKSPACE/pkgs"
 
 for pkg in `ls $pkgs_path/*.deb`; do
   scp -o StrictHostKeyChecking=no -i ${UPLOAD_KEY} $pkg \
-    ubuntu@old.gazebosim.org:/var/www/handsim-prop/
+    ubuntu@gazebosim.org:/home/ubuntu/haptix/proprietary/
 done
