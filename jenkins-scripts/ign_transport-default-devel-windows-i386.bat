@@ -16,7 +16,7 @@ IF %PLATFORM_TO_BUILD% == x86 (
 REM Configure the VC++ compilation
 call "c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" %PLATFORM_TO_BUILD%
 
-rmdir /S workspace  || goto:error
+rmdir /s /q workspace  || goto:error
 mkdir workspace
 cd workspace
 
