@@ -59,7 +59,6 @@ goto :EOF
 ::
 :: arg1 path to the zip file to uncompress
 cscript //B j_unzip.vbs %~1 || goto:error
-cscript //B j_unzip.vbs zip_file_name_goes_here.zip
 goto :EOF
 
 :: ##################################
