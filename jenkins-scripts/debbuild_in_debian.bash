@@ -187,5 +187,5 @@ sudo pbuilder  --execute \
 
 # Upload the package to webserver
 cd /var/packages/gazebo/ubuntu
-scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa ${pkg} \
+scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa `ls *.deb` \
     ubuntu@old.gazebosim.org:/var/www/handsim-prop/
