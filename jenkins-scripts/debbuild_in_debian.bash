@@ -8,6 +8,9 @@ export ENABLE_REAPER=false
 [[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
+# We need catkin to compile
+ENABLE_ROS=true
+
 NIGHTLY_MODE=false
 if [ "${VERSION}" = "nightly" ]; then
    NIGHTLY_MODE=true
@@ -29,6 +32,12 @@ echo "unset CCACHEDIR" >> /etc/pbuilderrc
 # Install deb-building tools
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
 
+if $ENABLE_ROS; then
+# get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
+sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list'
+wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
+fi
+
 # Also get gazebo repo's key, to be used in getting Gazebo
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
 wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
@@ -40,7 +49,11 @@ if [ $DISTRO = 'precise' ]; then
   sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
 fi
 
+if $ENABLE_ROS; then
+OTHERMIRROR='deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse' pbuilder-dist $DISTRO $ARCH create --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
+else
 pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
+fi
 
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
