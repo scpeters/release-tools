@@ -77,6 +77,10 @@ if $NIGHTLY_MODE; then
     UPSTREAM_VERSION=\$( sed -n '/(/,/)/ s/.*(\([^)]*\)).*/\1 /p' debian/changelog | head -n 1 | tr -d ' ' | sed 's/-.*//')
 fi
 
+# Hardcoded by now. FIX it
+echo "Hardcoding version 0.1.0. Please FIXME"
+UPSTREAM_VERSION="0.1.0"
+
 TIMESTAMP=\$(date '+%Y%m%d')
 RELEASE_DATE=\$(date '+%a, %d %B %Y %T -0700')
 NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}~hg\${TIMESTAMP}r\${REV}-${RELEASE_VERSION}~${DISTRO}
