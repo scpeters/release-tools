@@ -41,7 +41,7 @@ fi
 
 # Check for ati stuff
 if [ -n "$(lspci -v | grep "ATI" | grep "VGA")" ]; then
-  if [ -n $(lsmod | grep fglrx) ]; then
+  if [ -n "$(lsmod | grep fglrx)" ]; then
     # TODO search for correct version of fglrx
     export GRAPHIC_CARD_PKG=fglrx
     export GRAPHIC_CARD_NAME="ATI"
