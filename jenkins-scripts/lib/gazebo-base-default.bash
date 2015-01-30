@@ -80,6 +80,13 @@ LIBGL_DEBUG=verbose glxinfo
 echo "stracing:"
 strace LIBGL_DEBUG=verbose glxinfo
 
+lsmod
+
+modprobe r600_dri
+
+echo "After loading"
+LIBGL_DEBUG=verbose glxinfo
+
 exit -1
 
 # Step 2: configure and build
