@@ -24,6 +24,9 @@ fi
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
+echo "Outside chroot:"
+LIBGL_DEBUG=verbose glxinfo
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -88,6 +91,9 @@ if $DART_COMPILE_FROM_SOURCE; then
   make install
 fi
 
+echo "Inside chroot:"
+LIBGL_DEBUG=verbose glxinfo
+
 # Normal cmake routine for Gazebo
 rm -rf $WORKSPACE/build $WORKSPACE/install
 mkdir -p $WORKSPACE/build $WORKSPACE/install
@@ -96,35 +102,17 @@ cmake ${GZ_CMAKE_BUILD_TYPE}         \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
   $WORKSPACE/gazebo
-make -j${MAKE_JOBS}
-make install
-. /usr/share/gazebo/setup.sh
+make -j${MAKE_JOBS} UNIT_JointVisual_TEST
 
 # Need to clean up from previous built
 rm -fr $WORKSPACE/cppcheck_results
 rm -fr $WORKSPACE/test_results
 
+apt-get install -y strace
+strace ./gazebo/rendering/UNIT_JointVisual_TEST 
+
 # Run tests
-make test ARGS="-VV -R UNIT_*" || true
-make test ARGS="-VV -R INTEGRATION_*" || true
-make test ARGS="-VV -R REGRESSION_*" || true
-make test ARGS="-VV -R EXAMPLE_*" || true
-
-# Only run cppcheck on trusty
-if [ "$DISTRO" = "trusty" ]; then 
-  # Step 3: code check
-  cd $WORKSPACE/gazebo
-  sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
-else
-  mkdir -p $WORKSPACE/build/cppcheck_results/
-  echo "<results></results>" >> $WORKSPACE/build/cppcheck_results/empty.xml 
-fi
-
-# Step 4: copy test log
-# Broken http://build.osrfoundation.org/job/gazebo-any-devel-precise-amd64-gpu-nvidia/6/console
-# Need fix
-# mkdir $WORKSPACE/logs
-# cp $HOME/.gazebo/logs/*.log $WORKSPACE/logs/
+make tests ARGS="-VV -R UNIT_JointVisual_TEST" || true
 
 # Step 5. Need to clean build/ directory so disk space is under control
 # Move cppcheck and test results out of build
