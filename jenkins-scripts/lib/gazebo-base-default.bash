@@ -72,6 +72,11 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
+find /usr/lib/x86_64-linux-gnu/ -name *dri*
+
+echo "Inside chroot:"
+LIBGL_DEBUG=verbose glxinfo
+
 # Step 2: configure and build
 # Check for DART
 if $DART_COMPILE_FROM_SOURCE; then
@@ -90,9 +95,6 @@ if $DART_COMPILE_FROM_SOURCE; then
   make -j1
   make install
 fi
-
-echo "Inside chroot:"
-LIBGL_DEBUG=verbose glxinfo
 
 # Normal cmake routine for Gazebo
 rm -rf $WORKSPACE/build $WORKSPACE/install
