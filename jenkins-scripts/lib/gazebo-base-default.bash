@@ -58,7 +58,7 @@ fi
 
 # Required stuff for Gazebo
 apt-get update
-apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
+apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
@@ -76,6 +76,11 @@ find /usr/lib/x86_64-linux-gnu/ -name *dri*
 
 echo "Inside chroot:"
 LIBGL_DEBUG=verbose glxinfo
+
+echo "stracing:"
+strace LIBGL_DEBUG=verbose glxinfo
+
+exit -1
 
 # Step 2: configure and build
 # Check for DART
@@ -110,7 +115,6 @@ make -j${MAKE_JOBS} UNIT_JointVisual_TEST
 rm -fr $WORKSPACE/cppcheck_results
 rm -fr $WORKSPACE/test_results
 
-apt-get install -y strace
 strace ./gazebo/rendering/UNIT_JointVisual_TEST 
 
 # Run tests
