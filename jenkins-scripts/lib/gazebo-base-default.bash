@@ -78,7 +78,8 @@ echo "Inside chroot:"
 LIBGL_DEBUG=verbose glxinfo
 
 echo "stracing:"
-strace LIBGL_DEBUG=verbose glxinfo
+export LIBGL_DEBUG=verbose 
+strace glxinfo
 
 lsmod
 
