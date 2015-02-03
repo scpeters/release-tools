@@ -72,6 +72,8 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
+ls -lasR /dev/dri
+
 find /usr/lib/x86_64-linux-gnu/ -name *dri*
 
 echo "Inside chroot:"
