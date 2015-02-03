@@ -72,9 +72,10 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
-ls -lasR /dev/dri
+ls -lasR /dev/dri || true
 
-find /usr/lib/x86_64-linux-gnu/ -name *dri*
+lsmod
+
 
 echo "Inside chroot:"
 LIBGL_DEBUG=verbose glxinfo
@@ -86,6 +87,8 @@ strace glxinfo
 lsmod
 
 modprobe r600_dri
+
+apt-get install -s linux-image-\$(uname -r)
 
 echo "After loading"
 LIBGL_DEBUG=verbose glxinfo
