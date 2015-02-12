@@ -77,16 +77,16 @@ ls -lasR /dev/dri || true
 lsmod
 
 
-echo "Inside chroot:"
-LIBGL_DEBUG=verbose glxinfo
+# echo "Inside chroot:"
+# LIBGL_DEBUG=verbose glxinfo
 
-echo "stracing:"
-export LIBGL_DEBUG=verbose 
-strace glxinfo
+# echo "stracing:"
+# export LIBGL_DEBUG=verbose 
+# strace glxinfo
 
-lsmod
+# lsmod
 
-modprobe r600_dri
+modprobe r600_dri || true
 
 apt-get install -s linux-image-\$(uname -r)
 
