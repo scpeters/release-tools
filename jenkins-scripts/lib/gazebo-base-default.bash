@@ -88,7 +88,10 @@ lsmod
 
 modprobe r600_dri || true
 
-apt-get install -s linux-image-\$(uname -r)
+apt-get install --reinstall linux-image-\$(uname -r)
+
+modprobe r600_dri || true
+
 
 echo "After loading"
 LIBGL_DEBUG=verbose glxinfo
