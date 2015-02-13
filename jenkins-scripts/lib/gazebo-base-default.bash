@@ -54,7 +54,7 @@ fi
 # Step 1: install everything you need
 
 # Check that modules.dep.bin exists or regenerate it
-if [[ ! test -f /lib/modules/\$(uname -r)/modules.dep.bin ]]; then
+if [ ! -f /lib/modules/\$(uname -r)/modules.dep.bin ]; then
   apt-get install --reinstall linux-image-\$(uname -r)
 fi
 
