@@ -24,9 +24,6 @@ fi
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
-echo "Outside chroot:"
-LIBGL_DEBUG=verbose glxinfo
-
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -56,6 +53,13 @@ fi
 
 # Step 1: install everything you need
 
+# Check that modules.dep.bin exists or regenerate it
+if [[ ! test -f /lib/modules/\$(uname -r)/modules.dep.bin ]]; then
+  apt-get install --reinstall linux-image-\$(uname -r)
+fi
+
+modprobe radeon || true
+
 # Required stuff for Gazebo
 apt-get update
 apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace
@@ -71,26 +75,6 @@ if ${GRAPHIC_CARD_FOUND}; then
        exit 1
     fi
 fi
-
-ls -lasR /dev/dri || true
-
-lsmod
-
-
-# echo "Inside chroot:"
-# LIBGL_DEBUG=verbose glxinfo
-
-# echo "stracing:"
-# export LIBGL_DEBUG=verbose 
-# strace glxinfo
-
-# lsmod
-
-modprobe r600_dri || true
-
-apt-get install --reinstall linux-image-\$(uname -r)
-
-modprobe r600_dri || true
 
 
 echo "After loading"
