@@ -58,8 +58,6 @@ if [ ! -f /lib/modules/\$(uname -r)/modules.dep.bin ]; then
   apt-get install --reinstall linux-image-\$(uname -r)
 fi
 
-modprobe radeon || true
-
 # Required stuff for Gazebo
 apt-get update
 apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace
@@ -76,6 +74,7 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
+modprobe radeon || true
 
 echo "After loading"
 LIBGL_DEBUG=verbose glxinfo
