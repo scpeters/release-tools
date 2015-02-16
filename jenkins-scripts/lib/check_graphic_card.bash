@@ -41,10 +41,19 @@ fi
 
 # Check for ati stuff
 if [ -n "$(lspci -v | grep "ATI" | grep "VGA")" ]; then
+  if [ -n "$(lsmod | grep fglrx)" ]; then
     # TODO search for correct version of fglrx
     export GRAPHIC_CARD_PKG=fglrx
     export GRAPHIC_CARD_NAME="ATI"
     export GRAPHIC_CARD_FOUND=true
+  elif [ -n "$(lsmod | grep ^radeon)" ]; then
+    export GRAPHIC_CARD_PKG=xserver-xorg-video-radeon
+    export GRAPHIC_CARD_NAME="ATI"
+    export GRAPHIC_CARD_FOUND=true
+  else
+    echo "Could not find which kernel module is handlig ATI graphic card"
+    exit -1
+  fi
 fi
 
 # Check for intel
