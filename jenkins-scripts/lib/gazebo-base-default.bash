@@ -26,7 +26,7 @@ fi
 
 cat > build.sh << DELIM
 ###################################################
-# Make project-specific changes here
+linux-image-extra-3.16.0-23-generic# Make project-specific changes here
 #
 set -ex
 
@@ -60,7 +60,7 @@ fi
 
 # Required stuff for Gazebo
 apt-get update
-apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace
+apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace linux-image-extra-\$(uname -r)
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
@@ -73,6 +73,8 @@ if ${GRAPHIC_CARD_FOUND}; then
        exit 1
     fi
 fi
+
+sudo find /lib -name *radeon*
 
 modprobe radeon || true
 
