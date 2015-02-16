@@ -81,6 +81,10 @@ LIBGL_DEBUG=verbose glxinfo
 
 modprobe radeon || true
 
+lsmod
+
+ls -las /dev/dri* || true
+
 echo "After loading"
 LIBGL_DEBUG=verbose glxinfo
 
