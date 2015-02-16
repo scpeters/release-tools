@@ -147,6 +147,7 @@ DELIM
 sudo pbuilder  --execute \
     --bindmounts $WORKSPACE \
     --bindmounts /sys \
+    --bindmounts /dev/dri \
     --basetgz $basetgz \
     -- build.sh
 
