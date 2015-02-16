@@ -74,7 +74,7 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
-find :/lib -name *radeon*
+find /lib -name *radeon*
 
 echo "Before loading"
 LIBGL_DEBUG=verbose glxinfo
