@@ -60,7 +60,7 @@ fi
 
 # Required stuff for Gazebo
 apt-get update
-apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES} strace linux-image-extra-\$(uname -r)
+apt-get install -y --force-yes  ${BASE_DEPENDENCIES} linux-image-extra-\$(uname -r)
 
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
@@ -74,14 +74,17 @@ if ${GRAPHIC_CARD_FOUND}; then
     fi
 fi
 
-sudo find /lib -name *radeon*
+find :/lib -name *radeon*
+
+echo "Before loading"
+LIBGL_DEBUG=verbose glxinfo
 
 modprobe radeon || true
 
 echo "After loading"
 LIBGL_DEBUG=verbose glxinfo
 
-exit -1
+exit 1
 
 # Step 2: configure and build
 # Check for DART
