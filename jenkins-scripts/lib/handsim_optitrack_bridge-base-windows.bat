@@ -6,6 +6,9 @@
 
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
 
+:: Call vcvarsall and all the friends
+call %win_lib% :configure_msvc_compiler
+
 cd %WORKSPACE%
 IF exist workspace ( rmdir /s /q workspace ) || goto %win_lib% :error
 mkdir workspace
