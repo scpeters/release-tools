@@ -19,7 +19,7 @@ cd %WORKSPACE%/workspace
 mkdir bridgeLibs
 cd bridgeLibs
 call %win_lib% :download_7za
-call %win_lib% :wget https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl=1 bridgeLibs.zip
+call %win_lib% :wget 'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl=1' bridgeLibs.zip
 call %win_lib% :unzip_7za bridgeLibs.zip
 
 echo "Compiling handsim/windows ..."
