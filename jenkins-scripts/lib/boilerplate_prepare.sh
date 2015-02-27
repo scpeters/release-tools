@@ -72,5 +72,20 @@ if [[ -n ${QUERY_HOST_PACKAGES} ]]; then
   sudo apt-get install -y ${NEEDED_HOST_PACKAGES}
 fi
 
+# Docker checking
+# Code imported from https://github.com/CognitiveRobotics/omnimapper/tree/master/docker 
+# under the license detailed in https://github.com/CognitiveRobotics/omnimapper/blob/master/LICENSE 
+#version_gt() { 
+#    test "$(echo "$@" | tr " " "\n" | sort -V | tail -n 1)" == "$1"; 
+#}
+
+#docker_version=$(docker version | grep 'Client version' | awk '{split($0,a,":"); print a[2]}' | tr -d ' ')
+
+# Docker 1.3.0 or later is required for --device
+#if ! version_gt "${docker_version}" "1.2.0"; then
+#  echo "Docker version 1.3.0 or greater is required"
+#  exit 1
+#fi
+
 rm -fr Dockerfile
 cd ${WORKSPACE}
