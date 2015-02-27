@@ -16,7 +16,7 @@ cat > build.sh << DELIM
 set -ex
 
 # get ROS repo's key
-apt-get install -y wget
+apt-get install -y wget mesa-utils
 sh -c 'echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/ros-latest.list'
 wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
 # Also get drc repo's key, to be used in getting Gazebo
