@@ -64,11 +64,17 @@ done
 
 SHELL=/bin/sh . /opt/ros/${ROS_DISTRO}/setup.sh
 
+glxinfo
+
+strace glxinfo
+
 # In our nvidia machines, run the test to launch altas
 # Seems like there is no failure in runs on precise pbuilder in
 # our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
-timeout --preserve-status 180 roslaunch gazebo_ros shapes_world.launch extra_gazebo_args:="--verbose" || cat \$HOME/.gazebo/gzserver.log && echo "Failure response in the launch command" && exit 1
+timeout 180 roslaunch gazebo_ros shapes_world.launch
+
+#timeout --preserve-status 180 roslaunch gazebo_ros shapes_world.launch extra_gazebo_args:="--verbose" || cat \$HOME/.gazebo/gzserver.log && echo "Failure response in the launch command" && exit 1
 
 echo "180 testing seconds finished successfully"
 
