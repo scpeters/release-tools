@@ -216,17 +216,18 @@ RUN apt-get update
 RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
 
 RUN \
-    echo '# BEGIN SECTION: install base image packages' && \
+    echo '# BEGIN SECTION: install base image packages' && \\
 
-    if $ENABLE_ROS; then \
+    if $ENABLE_ROS; then \\
        # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
-       sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list' && \
+       sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list' && \\
        wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
-   fi && \
+   fi && \\
+
    # Also get gazebo repo's key, to be used in getting Gazebo
-   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list' && \
-   wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
-   apt-get update && \
+   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list' && \\
+   wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \\
+   apt-get update && \\
 
    echo '# END SECTION'
 
