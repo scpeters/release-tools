@@ -172,7 +172,7 @@ echo "DISPLAY=unix$DISPLAY"
 sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-		       --cidfile=${CID}
+		       -cidfile=${CID}
 		       -t gazebo/dev \
                         /bin/bash
 
