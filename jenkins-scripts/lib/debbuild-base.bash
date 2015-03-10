@@ -29,6 +29,9 @@ set -ex
 # http://lists.debian.org/debian-devel/2012/05/msg00240.html
 echo "unset CCACHEDIR" >> /etc/pbuilderrc
 
+# Docker will need atp-get update
+apt-get update
+
 # Install deb-building tools
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
 
