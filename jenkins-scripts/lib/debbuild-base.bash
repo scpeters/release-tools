@@ -247,9 +247,9 @@ else
   exit 1
 fi
 
-CID"=${WORKSPACE}/$PACKAGE.cid"
+sudo docker run -t $PACKAGE/debbuild -cidfile=${CIDFILE} .
 
-sudo docker run -t $PACKAGE/debbuild -cidfile=${CID} .
+CID=$(cat ${CIDFILE})
 
 sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
 sudo docker stop ${CID}
