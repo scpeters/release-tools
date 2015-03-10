@@ -231,7 +231,7 @@ DELIM_DOCKER
 # Make project-specific changes here
 ###################################################
 
-if [[ $DISTRO == armhf ]]; then
+if [[ $ARCH == armhf ]]; then
   sudo docker pull osrf/ubuntu_armhf
   sudo docker build -t $PACKAGE/debbuild .
 else
