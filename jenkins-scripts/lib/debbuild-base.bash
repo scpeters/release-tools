@@ -25,6 +25,7 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
+mkdir -p $WORKSPACE/pkgs
 touch $WORKSPACE/pkgs/foo.deb
 touch $WORKSPACE/pkgs/libfoo.deb
 
