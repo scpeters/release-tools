@@ -28,18 +28,6 @@ set -ex
 mkdir -p $WORKSPACE/pkgs
 touch $WORKSPACE/pkgs/foo.deb
 touch $WORKSPACE/pkgs/libfoo.deb
-
-PKGS=\`find $WORKSPACE/pkgs *.deb || true\`
-
-FOUND_PKG=0
-for pkg in \${PKGS}; do
-    echo "found \$pkg"
-    # && exit 1
-    cp \${pkg} $WORKSPACE/pkgs
-    FOUND_PKG=1
-done
-# check at least one upload
-test \$FOUND_PKG -eq 1 || exit 1
 DELIM
 
 cat > Dockerfile << DELIM_DOCKER
