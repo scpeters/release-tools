@@ -64,9 +64,9 @@ else
   exit 1
 fi
 
-CID"=${WORKSPACE}/$PACKAGE.cid"
+CID="${WORKSPACE}/$PACKAGE.cid"
 
-sudo docker run -t $PACKAGE/debbuild --cidfile= .
+sudo docker run -t $PACKAGE/debbuild --cidfile=${CID} .
 
 sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
 sudo docker stop ${CID}
