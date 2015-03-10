@@ -56,7 +56,7 @@ rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 
-echo '# BEGIN SECTION: import the debian metadata"
+echo '# BEGIN SECTION: import the debian metadata'
 
 # Hack to support gazebo-current and friends
 # REAL_PACKAGE_NAME is used to refer to code directory name
@@ -249,7 +249,7 @@ fi
 
 CID"=${WORKSPACE}/$PACKAGE.cid"
 
-sudo docker run -t $PACKAGE/debbuild --cidfile= .
+sudo docker run -t $PACKAGE/debbuild --cidfile=${CID} .
 
 sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
 sudo docker stop ${CID}
