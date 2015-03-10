@@ -94,5 +94,7 @@ fi
 #  exit 1
 #fi
 
+CIDFILE="${WORKSPACE}/$PACKAGE.cid"
+
 rm -fr Dockerfile
 cd ${WORKSPACE}
