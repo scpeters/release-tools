@@ -25,20 +25,6 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-echo '# BEGIN SECTION: install base image packages'
-if $ENABLE_ROS; then
-# get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
-sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list'
-wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
-fi
-
-# Also get gazebo repo's key, to be used in getting Gazebo
-sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
-wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-apt-get update
-
-echo '# END SECTION'
-
 # Hack to avoid problem with non updated 
 if [ $DISTRO = 'precise' ]; then
   echo "Skipping pbuilder check for outdated info"
@@ -132,7 +118,7 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 
 # Build dependencies
-mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends -yes'
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
 
 echo '# END SECTION'
 
@@ -228,6 +214,22 @@ RUN mkdir -p ${WORKSPACE}
 RUN echo "${TODAY_STR}"
 RUN apt-get update
 RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
+
+RUN \
+    echo '# BEGIN SECTION: install base image packages' && \
+
+    if $ENABLE_ROS; then \
+       # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
+       sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list' && \
+       wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
+   fi && \
+   # Also get gazebo repo's key, to be used in getting Gazebo
+   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list' && \
+   wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
+   apt-get update && \
+
+   echo '# END SECTION'
+
 ADD build.sh build.sh
 RUN chmod +x build.sh
 RUN ./build.sh
