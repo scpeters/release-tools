@@ -26,12 +26,6 @@ cat > build.sh << DELIM
 set -ex
 
 echo '# BEGIN SECTION: install base image packages'
-# Docker will need atp-get update
-apt-get update
-
-# Install deb-building tools
-apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
-
 if $ENABLE_ROS; then
 # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
 sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -138,7 +132,7 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 
 # Build dependencies
-mk-build-deps -i debian/control 
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends -yes'
 
 echo '# END SECTION'
 
@@ -230,6 +224,10 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
 
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
+# automatic invalidation of the cache if day is different
+RUN echo "${TODAY_STR}"
+RUN apt-get update
+RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
 ADD build.sh build.sh
 RUN chmod +x build.sh
 RUN ./build.sh

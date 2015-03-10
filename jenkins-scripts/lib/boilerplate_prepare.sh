@@ -94,7 +94,10 @@ fi
 #  exit 1
 #fi
 
+# CID file to create
 CIDFILE="${WORKSPACE}/$PACKAGE.cid"
+# It is used to invalidate cache
+TODAY_STR=$(date +%D)
 
 rm -fr Dockerfile
 cd ${WORKSPACE}
