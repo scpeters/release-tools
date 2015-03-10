@@ -25,15 +25,11 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-# ccache is sometimes broken and has now reason to be used here
-# http://lists.debian.org/debian-devel/2012/05/msg00240.html
-echo "unset CCACHEDIR" >> /etc/pbuilderrc
-
 # Docker will need atp-get update
 apt-get update
 
 # Install deb-building tools
-apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
+apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
 
 if $ENABLE_ROS; then
 # get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
@@ -50,14 +46,6 @@ apt-get update
 if [ $DISTRO = 'precise' ]; then
   echo "Skipping pbuilder check for outdated info"
   sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
-fi
-
-# Step 0: create/update distro-specific pbuilder environment
-# Fix segfault when using two repositories by setting OTHERMIRROR env variable
-if $ENABLE_ROS; then
-OTHERMIRROR='deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse' pbuilder-dist $DISTRO $ARCH create --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
-else
-pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
 fi
 
 # Step 0: Clean up
@@ -140,6 +128,10 @@ fi
 # Need special care to copy, using first a --dereference
 cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
 
+# Build dependencies
+mk-build-deps debian/control
+dpkg -i *build-deps_*.deb || apt-get install -f
+
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
 debuild --no-tgz-check -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
@@ -178,7 +170,11 @@ echo "HOOKDIR=\$PBUILD_DIR" > \$HOME/.pbuilderrc
 export DEB_BUILD_OPTIONS=parallel=${MAKE_JOBS}
 
 # Step 6: use pbuilder-dist to create binary package(s)
-pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS} --mirror $ubuntu_repo_url
+pwd
+debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+ls ..
+
+exit
 
 # Set proper package names
 if $NIGHTLY_MODE; then
