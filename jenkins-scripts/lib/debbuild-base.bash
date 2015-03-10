@@ -220,8 +220,7 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   || echo "No squid-deb-proxy detected on docker host"
 
 # Map the workspace into the container
-RUN mkdir -p /var/packages/gazebo/ubuntu
-ADD ${WORKSPACE} /var/packages/gazebo/ubuntu
+RUN mkdir -p ${WORKSPACE}
 ADD build.sh build.sh
 RUN chmod +x build.sh
 RUN ./build.sh
@@ -240,3 +239,6 @@ else
 fi
 
 sudo docker run -t $PACKAGE/debbuild .
+
+sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
+sudo docker stop ${CID}
