@@ -204,12 +204,40 @@ done
 test \$FOUND_PKG -eq 1 || exit 1
 DELIM
 
+cat > Dockerfile << DELIM_DOCKER
+#######################################################
+# Docker file to run build.sh
+
+FROM osrf/ubuntu_armhf
+MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
+
+# If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
+# By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
+RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
+RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
+  && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
+  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
+  || echo "No squid-deb-proxy detected on docker host"
+
+# Map the workspace into the container
+RUN mkdir -p ${WORKSPACE}
+ADD ${WORKSPACE} /var/packages/gazebo/ubuntu
+ADD build.sh build.sh
+RUN chmod +x build.sh
+RUN ./build.sh
+DELIM_DOCKER
+
 #
 # Make project-specific changes here
 ###################################################
 
+if [[ $DISTRO == armhf ]]; then
+  sudo docker pull osrf/ubuntu_armhf
+  sudo docker build -t $PACKAGE/debbuild .
+else
+  echo "Architecture still unsupported"
+  exit 1
+fi
+
 sudo mkdir -p /var/packages/gazebo/ubuntu
-sudo pbuilder  --execute \
-    --bindmounts "$WORKSPACE /var/packages/gazebo/ubuntu" \
-    --basetgz $basetgz \
-    -- build.sh
+sudo docker run -t $PACKAGE/debbuild .
