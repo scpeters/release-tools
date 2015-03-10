@@ -130,7 +130,7 @@ cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
 
 # Build dependencies
 mk-build-deps debian/control
-dpkg -i *build-deps_*.deb || apt-get install -f
+dpkg -i *build-deps_*.deb || apt-get install -y -f
 
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
