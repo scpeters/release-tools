@@ -165,11 +165,14 @@ DELIM_DOCKER
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
 
+CID="${WORKSPACE}/$PACKAGE.cid"
+
 echo "DISPLAY=unix$DISPLAY"
 # --priviledged is essential to make DRI work
 sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+		       --cidfile=${CID}
 		       -t gazebo/dev \
                         /bin/bash
 

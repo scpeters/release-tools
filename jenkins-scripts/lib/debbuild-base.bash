@@ -25,6 +25,7 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
+echo '# BEGIN SECTION: install base image packages'
 # Docker will need atp-get update
 apt-get update
 
@@ -42,6 +43,8 @@ sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" >
 wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
 apt-get update
 
+echo '# END SECTION'
+
 # Hack to avoid problem with non updated 
 if [ $DISTRO = 'precise' ]; then
   echo "Skipping pbuilder check for outdated info"
@@ -52,6 +55,8 @@ fi
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
+
+echo '# BEGIN SECTION: import the debian metadata"
 
 # Hack to support gazebo-current and friends
 # REAL_PACKAGE_NAME is used to refer to code directory name
@@ -128,9 +133,13 @@ fi
 # Need special care to copy, using first a --dereference
 cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
 
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: install build dependencies"
+
 # Build dependencies
-mk-build-deps debian/control
-dpkg -i *build-deps_*.deb || apt-get install -y -f
+mk-build-deps -i debian/control 
+# dpkg -i *build-deps_*.deb || apt-get install -y -f
 
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
@@ -237,7 +246,9 @@ else
   exit 1
 fi
 
-sudo docker run -t $PACKAGE/debbuild .
+CID"=${WORKSPACE}/$PACKAGE.cid"
+
+sudo docker run -t $PACKAGE/debbuild --cidfile= .
 
 sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
 sudo docker stop ${CID}
