@@ -247,7 +247,9 @@ else
   exit 1
 fi
 
-sudo docker run -t $PACKAGE/debbuild -cidfile=${CIDFILE} .
+sudo docker run -d  \
+            --cidfile=${CIDFILE} \
+            -t $PACKAGE/debbuild
 
 CID=$(cat ${CIDFILE})
 
