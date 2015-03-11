@@ -162,9 +162,6 @@ export DEB_BUILD_OPTIONS=parallel=${MAKE_JOBS}
 # Step 6: use pbuilder-dist to create binary package(s)
 pwd
 debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
-ls ..
-
-exit
 
 # Set proper package names
 if $NIGHTLY_MODE; then
@@ -178,7 +175,12 @@ fi
 mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
-PKGS=\`find /var/lib/jenkins/pbuilder/*_result* -name *.deb || true\`
+# Copy source package files
+cp ../*.dsc $WORKSPACE/pkgs
+cp ../*.orig.* $WORKSPACE/pkgs
+cp ../*.debian.* $WORKSPACE/pkgs
+
+PKGS=\`find .. -name *.deb || true\`
 
 FOUND_PKG=0
 for pkg in \${PKGS}; do
@@ -252,5 +254,6 @@ sudo docker run -d  \
 
 CID=$(cat ${CIDFILE})
 
+mkdir ${WORKSPACE}/pkgs
 sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
 sudo docker stop ${CID}

@@ -8,14 +8,21 @@ if [[ ${#} -lt 2 ]]; then
     exit -1
 fi
 
+pkg_root_name=${PACKAGE%[[:digit:]]}
+
 export PACKAGE=${1}
 export VERSION=${2}
 export RELEASE_VERSION=${3-1}
 export DISTRO=${4-precise}
 export ARCH=${5-amd64}
 export RELEASE_REPO_BRANCH=${7-default}
+if [[ -n $PACKAGE_ALIAS ]]; then
+    export TARBZ_NAME=${PACKAGE_ALIAS}
+else
+    export TARBZ_NAME=$pkg_root_name
+fi
 export PACKAGE_ALIAS=${8-${PACKAGE}}
-export SOURCE_TARBALL_URI=${6-http://old.gazebosim.org/assets/distributions/${PACKAGE_ALIAS}-${VERSION}.tar.bz2}
+export SOURCE_TARBALL_URI=${6-http://osrf-distributions.s3.amazonaws.com/${pkg_root_name}/releases/${TARBZ_NAME}-${VERSION}.tar.bz2}
 export WORKSPACE=/tmp/workspace
 
 . prepare_env.sh
@@ -40,8 +47,7 @@ set_up_workspace
 # get release-tools
 set_up_release_tools
 
-# Be sure of not uploading anything
-mkdir -p ${FAKE_HOME}/pbuilder/${DISTRO}_result/
+# Be sure of not uploading anythingmkdir -p ${FAKE_HOME}/pbuilder/${DISTRO}_result/
 sed -i -e "s:/var/packages/gazebo/ubuntu:${FAKE_HOME}/pbuilder/${DISTRO}_result/:g" ${SCRIPT_DIR}/lib/debbuild-base.bash
 
 echo "3. Calling jenkins script"
