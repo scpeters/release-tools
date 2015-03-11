@@ -172,12 +172,10 @@ echo "DISPLAY=unix$DISPLAY"
 sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-		       -cidfile=${CIDFILE}
-		       -t gazebo/dev \
-                        /bin/bash
+		       --cidfile=${CIDFILE}
+		       -t gazebo/dev
 
 CID=$(cat ${CIDFILE})
-
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 sudo docker stop ${CID}

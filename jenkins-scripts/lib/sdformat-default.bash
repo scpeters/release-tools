@@ -9,14 +9,6 @@ cat > build.sh << DELIM
 #
 set -ex
 
-# Step 1: Configure apt
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list
-echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list
-
-apt-get update
-apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES}
-
 # Step 2: configure and build
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
@@ -52,6 +44,13 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
 
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
+RUN \
+  echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list && \\
+  echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list && \\
+  echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list 
+RUN echo "${TODAY_STR}"
+RUN apt-get update
+RUN apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES}
 ADD sdformat ${WORKSPACE}/sdformat
 ADD build.sh build.sh
 RUN chmod +x build.sh
@@ -60,7 +59,11 @@ DELIM_DOCKER
 
 sudo docker pull jrivero/sdformat
 sudo docker build -t sdformat/dev .
-CID=$(sudo docker run -d -t sdformat/dev /bin/bash)
+sudo docker run -d  \
+            --cidfile=${CIDFILE} \
+            -t sdformat/dev
+
+CID=$(cat ${CIDFILE})
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 sudo docker stop ${CID}
