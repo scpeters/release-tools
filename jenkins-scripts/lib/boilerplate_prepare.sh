@@ -95,7 +95,8 @@ fi
 #fi
 
 # CID file to create
-CIDFILE="${WORKSPACE}/$PACKAGE.cid"
+DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
+CIDFILE="${WORKSPACE}/${PACKAGE}_rnd_${DOCKER_RND_ID}.cid"
 # It is used to invalidate cache
 TODAY_STR=$(date +%D)
 

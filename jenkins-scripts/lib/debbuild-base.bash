@@ -18,6 +18,8 @@ export ENABLE_REAPER=false
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
+DOCKER_TAG="$PACKAGE/debbuild_${DOCKER_RND_ID}"
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -176,9 +178,9 @@ mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
 # Copy source package files
-# cp ../*.dsc $WORKSPACE/pkgs
-# cp ../*.orig.* $WORKSPACE/pkgs
-# cp ../*.debian.* $WORKSPACE/pkgs
+cp ../*.dsc $WORKSPACE/pkgs
+cp ../*.orig.* $WORKSPACE/pkgs
+cp ../*.debian.* $WORKSPACE/pkgs
 
 PKGS=\`find .. -name '*.deb' || true\`
 
@@ -242,7 +244,7 @@ DELIM_DOCKER
 
 if [[ $ARCH == armhf ]]; then
   sudo docker pull osrf/ubuntu_armhf
-  sudo docker build -t $PACKAGE/debbuild .
+  sudo docker build -t ${DOCKER_TAG} .
 else
   echo "Architecture still unsupported"
   exit 1
@@ -250,10 +252,12 @@ fi
 
 sudo docker run -d  \
             --cidfile=${CIDFILE} \
-            -t $PACKAGE/debbuild
+            -t ${DOCKER_TAG}
 
 CID=$(cat ${CIDFILE})
 
 mkdir ${WORKSPACE}/pkgs
-sudo docker cp ${CID}:${WORKSPACE}/pkgs ${WORKSPACE}/pkgs
+sudo docker cp ${CID}:${WORKSPACE}/pkgs/* ${WORKSPACE}/pkgs/
 sudo docker stop ${CID}
+
+sudo docker rm ${DOCKER_TAG}
