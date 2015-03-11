@@ -70,4 +70,6 @@ sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 
 sudo docker stop ${CID}
-sudo docker rm ${DOCKER_TAG}
+sudo docker ps
+sudo docker ps --all
+sudo docker rm ${CID}

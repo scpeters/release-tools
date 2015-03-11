@@ -260,4 +260,4 @@ mkdir ${WORKSPACE}/pkgs
 sudo docker cp ${CID}:${WORKSPACE}/pkgs/* ${WORKSPACE}/pkgs/
 
 sudo docker stop ${CID}
-sudo docker rm ${DOCKER_TAG}
+# Remove the container
