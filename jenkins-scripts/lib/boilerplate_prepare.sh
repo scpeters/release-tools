@@ -107,10 +107,10 @@ fi
 
 # Check if the job was called from jenkins
 if [[ -z ${BUILD_NUMBER} ]]; then
-   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}_${BUILD_NUMBER}"
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}:${BUILD_NUMBER}"
 else
    # Reuse the random id
-   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}_${DOCKER_RND_ID}"
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}:${DOCKER_RND_ID}"
 fi
 
 echo " - Using DOCKER_JOB_NAME ${DOCKER_JOB_NAME}"
