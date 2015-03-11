@@ -96,15 +96,27 @@ fi
 
 # CID file to create
 # - In jenkins we use PROJECT_NAME + BUILD_NUMBER
-CIDFILE="${WORKSPACE}/${PROJECT_NAME}_${BUILD_NUMBER}.cid"
+# Check if the job define a DOCKER_JOB_NAME or generate one random
+DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
 
-# - If the script is run out of jenkins, let's use a random ID
-if [[ -z ${PROJECT_NAME}  ]]; then
-    DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
-    CIDFILE="${WORKSPACE}/${DOCKER_RND_ID}.cid"
-    echo "Jenkins variables are not detected, generating a random container cidfile:"
-    echo " - $CIDFILE "
+if [[ -z $DOCKER_JOB_NAME ]]; then
+    export DOCKER_JOB_NAME=${DOCKER_RND_ID}
+    echo "Warning: DOCKER_JOB_NAME was not defined"
+    echo " - using ${DOCKER_JOB_NAME}"
 fi
+
+# Check if the job was called from jenkins
+if [[ -z ${BUILD_NUMBER} ]]; then
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}_${BUILD_NUMBER}"
+else
+   # Reuse the random id
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}_${DOCKER_RND_ID}"
+fi
+
+echo " - Using DOCKER_JOB_NAME ${DOCKER_JOB_NAME}"
+
+export CIDFILE="${WORKSPACE}/${DOCKER_JOB_NAME}.cid"
+export DOCKER_TAG="${DOCKER_JOB_NAME}"
 
 # It is used to invalidate cache
 TODAY_STR=$(date +%D)

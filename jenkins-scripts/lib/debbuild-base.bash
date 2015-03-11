@@ -16,9 +16,9 @@ fi
 # testing jobs and seems to be slow at the end of jenkins jobs
 export ENABLE_REAPER=false
 
+# Define the name to be used in docker
+DOCKER_JOB_NAME="debbuild_${PACKAGE}"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
-
-DOCKER_TAG="$PACKAGE/debbuild_${DOCKER_RND_ID}"
 
 cat > build.sh << DELIM
 ###################################################
@@ -258,6 +258,6 @@ CID=$(cat ${CIDFILE})
 
 mkdir ${WORKSPACE}/pkgs
 sudo docker cp ${CID}:${WORKSPACE}/pkgs/* ${WORKSPACE}/pkgs/
-sudo docker stop ${CID}
 
+sudo docker stop ${CID}
 sudo docker rm ${DOCKER_TAG}
