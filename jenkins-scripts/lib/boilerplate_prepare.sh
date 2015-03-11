@@ -106,7 +106,7 @@ if [[ -z $DOCKER_JOB_NAME ]]; then
 fi
 
 # Check if the job was called from jenkins
-if [[ -z ${BUILD_NUMBER} ]]; then
+if [[ -n ${BUILD_NUMBER} ]]; then
    export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}:${BUILD_NUMBER}"
 else
    # Reuse the random id

@@ -17,7 +17,7 @@ fi
 export ENABLE_REAPER=false
 
 # Define the name to be used in docker
-DOCKER_JOB_NAME="debbuild_${PACKAGE}"
+DOCKER_JOB_NAME="${PACKAGE}/debbuild"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
