@@ -2,7 +2,7 @@
 set -e
 
 # Define the name to be used in docker
-DOCKER_JOB_NAME="sdformat/CI"
+DOCKER_JOB_NAME="sdformat/ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
