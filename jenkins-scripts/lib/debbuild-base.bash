@@ -164,6 +164,7 @@ export DEB_BUILD_OPTIONS=parallel=${MAKE_JOBS}
 # Step 6: use pbuilder-dist to create binary package(s)
 pwd
 debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+ls ..
 
 # Set proper package names
 if $NIGHTLY_MODE; then
@@ -178,9 +179,9 @@ mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
 # Copy source package files
-cp ../*.dsc $WORKSPACE/pkgs
-cp ../*.orig.* $WORKSPACE/pkgs
-cp ../*.debian.* $WORKSPACE/pkgs
+# cp ../*.dsc $WORKSPACE/pkgs
+# cp ../*.orig.* $WORKSPACE/pkgs
+# cp ../*.debian.* $WORKSPACE/pkgs
 
 PKGS=\`find .. -name '*.deb' || true\`
 
