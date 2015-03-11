@@ -242,7 +242,8 @@ DELIM_DOCKER
 # Make project-specific changes here
 ###################################################
 
-mkdir ${WORKSPACE}/pkgs
+rm -fr ${WORKSPACE}/pkgs
+mkdir -p ${WORKSPACE}/pkgs
 
 if [[ $ARCH == armhf ]]; then
   sudo docker pull osrf/ubuntu_armhf
