@@ -10,7 +10,8 @@ if [ -z ${GZ_BUILD_TYPE} ]; then
 else
     GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${GZ_BUILD_TYPE}"
 fi
-
+# Define the name to be used in docker
+DOCKER_JOB_NAME="gazebo/ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -18,15 +19,6 @@ cat > build.sh << DELIM
 # Make project-specific changes here
 #
 set -ex
-
-echo \$DISPLAY
-glxinfo || true
-
-ls -las /tmp/.X11-unix || true
-
-export DISPLAY=$DISPLAY
-glxinfo || true
-
 
 # Step 1: Configure apt
 # The image already has all the needed source.lists entries
@@ -165,17 +157,17 @@ DELIM_DOCKER
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
 
-CIDFILE="${WORKSPACE}/$PACKAGE.cid"
-
 echo "DISPLAY=unix$DISPLAY"
 # --priviledged is essential to make DRI work
 sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-		       --cidfile=${CIDFILE}
-		       -t gazebo/dev
+                       --cidfile=${CIDFILE} \
+                       -t ${DOCKER_TAG}
 
 CID=$(cat ${CIDFILE})
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
 sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
+
 sudo docker stop ${CID}
+sudo docker rm ${DOCKER_TAG}
