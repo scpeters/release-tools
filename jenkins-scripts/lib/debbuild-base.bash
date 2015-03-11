@@ -236,12 +236,13 @@ RUN \
 
 ADD build.sh build.sh
 RUN chmod +x build.sh
-RUN ./build.sh
 DELIM_DOCKER
 
 #
 # Make project-specific changes here
 ###################################################
+
+mkdir ${WORKSPACE}/pkgs
 
 if [[ $ARCH == armhf ]]; then
   sudo docker pull osrf/ubuntu_armhf
@@ -251,14 +252,13 @@ else
   exit 1
 fi
 
-sudo docker run -d  \
+sudo docker run  \
             --cidfile=${CIDFILE} \
-            -t ${DOCKER_TAG}
+            -v ${WORKSPACE}/pkgs:${WORKSPACE}/pkgs \
+            -t ${DOCKER_TAG} \
+            /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
 
-mkdir ${WORKSPACE}/pkgs
-sudo docker cp ${CID}:${WORKSPACE}/pkgs/* ${WORKSPACE}/pkgs/
-
-sudo docker stop ${CID}
-sudo docker rm ${CID}
+sudo docker stop ${CID} || true
+sudo docker rm ${CID} || true
