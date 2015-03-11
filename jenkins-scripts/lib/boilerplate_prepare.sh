@@ -95,8 +95,17 @@ fi
 #fi
 
 # CID file to create
-DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
-CIDFILE="${WORKSPACE}/${PACKAGE}_rnd_${DOCKER_RND_ID}.cid"
+# - In jenkins we use PROJECT_NAME + BUILD_NUMBER
+CIDFILE="${WORKSPACE}/${PROJECT_NAME}_${BUILD_NUMBER}.cid"
+
+# - If the script is run out of jenkins, let's use a random ID
+if [[ -z ${PROJECT_NAME}  ]]; then
+    DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
+    CIDFILE="${WORKSPACE}/${DOCKER_RND_ID}.cid"
+    echo "Jenkins variables are not detected, generating a random container cidfile:"
+    echo " - $CIDFILE "
+fi
+
 # It is used to invalidate cache
 TODAY_STR=$(date +%D)
 
