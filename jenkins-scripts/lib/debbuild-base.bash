@@ -176,11 +176,11 @@ mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
 # Copy source package files
-cp ../*.dsc $WORKSPACE/pkgs
-cp ../*.orig.* $WORKSPACE/pkgs
-cp ../*.debian.* $WORKSPACE/pkgs
+# cp ../*.dsc $WORKSPACE/pkgs
+# cp ../*.orig.* $WORKSPACE/pkgs
+# cp ../*.debian.* $WORKSPACE/pkgs
 
-PKGS=\`find .. -name *.deb || true\`
+PKGS=\`find .. -name '*.deb' || true\`
 
 FOUND_PKG=0
 for pkg in \${PKGS}; do
