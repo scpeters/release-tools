@@ -149,9 +149,11 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 ADD gazebo ${WORKSPACE}/gazebo
+RUN echo "${TODAY_STR}"
+RUN apt-get update
+RUN apt-get install -y ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 ADD build.sh build.sh
 RUN chmod +x build.sh
-RUN ./build.sh
 DELIM_DOCKER
 
 sudo docker pull jrivero/gazebo
@@ -163,11 +165,11 @@ sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
                        --cidfile=${CIDFILE} \
-                       -t ${DOCKER_TAG}
+                       -t ${DOCKER_TAG} \
+                       -v ${WORKSPACE}/build:${WORKSPACE}/build \
+                       /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
-sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
-sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 
 sudo docker stop ${CID}
 sudo docker rm ${CID}

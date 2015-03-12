@@ -63,13 +63,10 @@ sudo docker build -t ${DOCKER_TAG} .
 sudo docker run -d  \
             --cidfile=${CIDFILE} \
             -t ${DOCKER_TAG} \
+            -v ${WORKSPACE}/build:${WORKSPACE}/build \
             /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
-sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
-sudo docker cp ${CID}:${WORKSPACE}/build/cppcheck_results ${WORKSPACE}/build
 
 sudo docker stop ${CID}
-sudo docker ps
-sudo docker ps --all
 sudo docker rm ${CID}
