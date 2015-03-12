@@ -58,6 +58,8 @@ ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
 
+mkdir -p ${WORKSPACE}/build
+
 sudo docker pull jrivero/sdformat
 sudo docker build -t ${DOCKER_TAG} .
 sudo docker run -d  \
