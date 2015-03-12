@@ -11,7 +11,7 @@ else
     GZ_CMAKE_BUILD_TYPE="-DCMAKE_BUILD_TYPE=${GZ_BUILD_TYPE}"
 fi
 # Define the name to be used in docker
-DOCKER_JOB_NAME="gazebo/ci"
+DOCKER_JOB_NAME="gazebo_ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -156,11 +156,12 @@ ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
 
+mkdir -p ${WORKSPACE}/build
+
 sudo docker pull jrivero/gazebo
 sudo docker build -t gazebo/dev .
-
-echo "DISPLAY=unix$DISPLAY"
 # --priviledged is essential to make DRI work
+echo "DISPLAY=unix$DISPLAY"
 sudo docker run --privileged \
                        -e "DISPLAY=unix$DISPLAY" \
                        -v="/tmp/.X11-unix:/tmp/.X11-unix:rw" \

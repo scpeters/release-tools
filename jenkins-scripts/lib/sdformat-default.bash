@@ -2,7 +2,7 @@
 set -e
 
 # Define the name to be used in docker
-DOCKER_JOB_NAME="sdformat/ci"
+DOCKER_JOB_NAME="sdformat_ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -64,8 +64,8 @@ sudo docker pull jrivero/sdformat
 sudo docker build -t ${DOCKER_TAG} .
 sudo docker run -d  \
             --cidfile=${CIDFILE} \
-            -t ${DOCKER_TAG} \
             -v ${WORKSPACE}/build:${WORKSPACE}/build \
+            -t ${DOCKER_TAG} \
             /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
