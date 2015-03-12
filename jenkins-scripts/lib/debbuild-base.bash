@@ -117,6 +117,8 @@ fi
 # handled by symlinks (like cmake) in the repository can not be copied directly. 
 # Need special care to copy, using first a --dereference
 cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
+# TODO: remove, debug
+cat debian/rules
 
 echo '# END SECTION'
 
