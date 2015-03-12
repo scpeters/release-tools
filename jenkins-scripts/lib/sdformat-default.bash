@@ -56,7 +56,7 @@ ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
 
-rm -fr ${WORKSPACE}/build
+sudo rm -fr ${WORKSPACE}/build
 mkdir -p ${WORKSPACE}/build
 
 sudo docker pull jrivero/sdformat

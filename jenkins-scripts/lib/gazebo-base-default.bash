@@ -156,6 +156,7 @@ ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
 
+sudo rm -fr ${WORKSPACE}/build
 mkdir -p ${WORKSPACE}/build
 
 sudo docker pull jrivero/gazebo
