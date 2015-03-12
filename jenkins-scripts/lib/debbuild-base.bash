@@ -27,6 +27,9 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
+# Need to run apt-get update to get latest osrf releases
+apt-get update
+
 # Hack to avoid problem with non updated 
 if [ $DISTRO = 'precise' ]; then
   echo "Skipping pbuilder check for outdated info"

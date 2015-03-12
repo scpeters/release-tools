@@ -56,14 +56,14 @@ RUN apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES}
 ADD sdformat ${WORKSPACE}/sdformat
 ADD build.sh build.sh
 RUN chmod +x build.sh
-RUN ./build.sh
 DELIM_DOCKER
 
 sudo docker pull jrivero/sdformat
 sudo docker build -t ${DOCKER_TAG} .
 sudo docker run -d  \
             --cidfile=${CIDFILE} \
-            -t ${DOCKER_TAG}
+            -t ${DOCKER_TAG} \
+            /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
 sudo docker cp ${CID}:${WORKSPACE}/build/test_results     ${WORKSPACE}/build
