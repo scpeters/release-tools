@@ -16,10 +16,8 @@ cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 make -j${MAKE_JOBS}
 make install
-echo "HOME: $HOME"
-echo "HOME2: \$HOME"
 mkdir -p \$HOME
-HOME=\$(pwd) LC_ALL=POSIX make test ARGS="-VV" || true
+make test ARGS="-VV" || true
 
 # Step 3: code check
 cd $WORKSPACE/sdformat
@@ -69,5 +67,7 @@ sudo docker run \
 
 CID=$(cat ${CIDFILE})
 
-sudo docker stop ${CID}
+# Try to stop the container if it is running
+# Do not fail on error, the container is already stoped
+sudo docker stop ${CID} || true
 sudo docker rm ${CID}
