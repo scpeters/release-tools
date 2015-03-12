@@ -62,7 +62,7 @@ mkdir -p ${WORKSPACE}/build
 
 sudo docker pull jrivero/sdformat
 sudo docker build -t ${DOCKER_TAG} .
-sudo docker run -d  \
+sudo docker run \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}/build:${WORKSPACE}/build \
             -t ${DOCKER_TAG} \
