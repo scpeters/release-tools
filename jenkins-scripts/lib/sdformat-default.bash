@@ -12,8 +12,6 @@ cat > build.sh << DELIM
 set -ex
 
 # Step 2: configure and build
-rm -rf $WORKSPACE/build
-mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 make -j${MAKE_JOBS}
@@ -58,6 +56,7 @@ ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
 
+rm -fr ${WORKSPACE}/build
 mkdir -p ${WORKSPACE}/build
 
 sudo docker pull jrivero/sdformat
