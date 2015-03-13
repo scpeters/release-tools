@@ -69,5 +69,6 @@ CID=$(cat ${CIDFILE})
 
 # Try to stop the container if it is running
 # Do not fail on error, the container is already stoped
+sudo docker ps
 sudo docker stop ${CID} || true
-sudo docker rm ${CID}
+sudo docker rm ${CID} || true
