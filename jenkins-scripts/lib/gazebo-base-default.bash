@@ -160,7 +160,7 @@ sudo rm -fr ${WORKSPACE}/build
 mkdir -p ${WORKSPACE}/build
 
 sudo docker pull jrivero/gazebo
-sudo docker build -t gazebo/dev .
+sudo docker build -t ${DOCKER_TAG} .
 # --priviledged is essential to make DRI work
 echo "DISPLAY=unix$DISPLAY"
 sudo docker run --privileged \
