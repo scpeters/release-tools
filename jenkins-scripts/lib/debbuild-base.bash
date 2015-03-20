@@ -122,11 +122,11 @@ cat debian/rules
 
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: install build dependencies'
+echo '# BEGIN SECTION: install build ependencies'
 
 # Build dependencies
 mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
-
+rm *build-deps*.deb
 echo '# END SECTION'
 
 # Step 5: use debuild to create source package
