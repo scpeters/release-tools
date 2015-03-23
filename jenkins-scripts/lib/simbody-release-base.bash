@@ -11,7 +11,7 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-echo '# BEGIN SECTION: prepare the workspace
+echo '# BEGIN SECTION: prepare the workspace'
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
@@ -21,7 +21,7 @@ cd $WORKSPACE/build
 rm -fr $WORKSPACE/"$PACKAGE"_*
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: get simbody source ${VERSION}
+echo '# BEGIN SECTION: get simbody source ${VERSION}'
 # Step 1: Get the source (nightly builds or tarball)
 rm -fr $WORKSPACE/simbody
 git clone https://github.com/simbody/simbody.git $WORKSPACE/simbody
@@ -29,7 +29,7 @@ cd $WORKSPACE/simbody
 git checkout Simbody-${VERSION}
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: modify debian metadata
+echo '# BEGIN SECTION: modify debian metadata'
 # Use current distro
 sed -i -e 's:precise:$DISTRO:g' debian/changelog
 # Use current release version
@@ -44,7 +44,7 @@ if [ $DISTRO = 'trusty' ]; then
 fi
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: generate the .orig file
+echo '# BEGIN SECTION: generate the .orig file'
 # Step 5: use debuild to create source package
 echo | dh_make -s --createorig -p ${PACKAGE}_${VERSION} || true
 echo '# END SECTION'
@@ -55,7 +55,7 @@ mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
 rm *build-deps*.deb
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: generate source pacakge"
+echo '# BEGIN SECTION: generate source pacakge'
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
 debuild --no-tgz-check -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
@@ -110,7 +110,7 @@ RUN mkdir -p ${WORKSPACE}
 # automatic invalidation of the cache if day is different
 RUN echo "${TODAY_STR}"
 RUN apt-get update
-RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
+RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion git
 ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
