@@ -11,12 +11,7 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-# Install deb-building tools
-apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools debhelper wget git
-
-# Step 0: create/update distro-specific pbuilder environment
-pbuilder-dist $DISTRO $ARCH create /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg
-
+echo '# BEGIN SECTION: prepare the workspace
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
@@ -24,13 +19,17 @@ cd $WORKSPACE/build
 
 # Clean from workspace all package related files
 rm -fr $WORKSPACE/"$PACKAGE"_*
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: get simbody source ${VERSION}
 # Step 1: Get the source (nightly builds or tarball)
 rm -fr $WORKSPACE/simbody
 git clone https://github.com/simbody/simbody.git $WORKSPACE/simbody
 cd $WORKSPACE/simbody
 git checkout Simbody-${VERSION}
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: modify debian metadata
 # Use current distro
 sed -i -e 's:precise:$DISTRO:g' debian/changelog
 # Use current release version
@@ -43,16 +42,31 @@ if [ $DISTRO = 'trusty' ]; then
 # Patch for https://github.com/simbody/simbody/issues/157
   sed -i -e 's:CONFIGURE_ARGS=:CONFIGURE_ARGS=-DCMAKE_BUILD_TYPE=RelWithDebInfo:' debian/rules
 fi
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: generate the .orig file
 # Step 5: use debuild to create source package
 echo | dh_make -s --createorig -p ${PACKAGE}_${VERSION} || true
+echo '# END SECTION'
 
-debuild -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+echo '# BEGIN SECTION: install build dependencies'
+# Build dependencies
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
+rm *build-deps*.deb
+echo '# END SECTION'
 
-export DEB_BUILD_OPTIONS="parallel=$MAKE_JOBS"
+echo '# BEGIN SECTION: generate source pacakge"
+# Step 5: use debuild to create source package
+#TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
+debuild --no-tgz-check -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: generate binaries'
 # Step 6: use pbuilder-dist to create binary package(s)
-pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS}
+debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: export packages'
 mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
@@ -69,6 +83,7 @@ for pkg in \${PKGS}; do
 done
 # check at least one upload
 test \$FOUND_PKG -eq 1 || exit 1
+echo '# END SECTION'
 DELIM
 
 #
