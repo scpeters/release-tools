@@ -30,12 +30,6 @@ set -ex
 # Need to run apt-get update to get latest osrf releases
 apt-get update
 
-# Hack to avoid problem with non updated 
-if [ $DISTRO = 'precise' ]; then
-  echo "Skipping pbuilder check for outdated info"
-  sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
-fi
-
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
