@@ -30,8 +30,7 @@ cd %WORKSPACE%/workspace
 mkdir bridgeLibs
 cd bridgeLibs
 call %win_lib% :download_7za
-:: can not use wget function since = symbol expansion is broken on windows args
-bitsadmin /transfer mydownloadjob /download /priority high  'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl=1' bridgeLibs.zip || goto :error
+call %win_lib% :wget 'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl^=1' bridgeLibs.zip || goto :error
 call %win_lib% :unzip_7za bridgeLibs.zip || goto :error
 echo # END SECTION
 
