@@ -30,8 +30,9 @@ cd %WORKSPACE%/workspace
 mkdir bridgeLibs
 cd bridgeLibs
 call %win_lib% :download_7za
-call %win_lib% :wget 'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl=1' bridgeLibs.zip
-call %win_lib% :unzip_7za bridgeLibs.zip
+:: can not use wget function since = symbol expansion is broken on windows args
+bitsadmin /transfer mydownloadjob /download /priority high  'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl=1' bridgeLibs.zip || goto :error
+call %win_lib% :unzip_7za bridgeLibs.zip || goto :error
 echo # END SECTION
 
 echo # BEGIN SECTION: compiling handsim/windows
@@ -47,7 +48,7 @@ echo # BEGIN SECTION: generating the zip
 mkdir %WORKSPACE%\workspace\package || goto %win_lib% :error
 cd %WORKSPACE%\workspace\package || goto %win_lib% :error
 copy %WORKSPACE%\workspace\bridgeLibs\* .
-copy %WORKSPACE%\workspace\handsim\windows\build\*.exe .
+copy %WORKSPACE%\workspace\handsim\windows\build\optitrack*.exe .
 
 cd %WORKSPACE%\workspace\
 call %win_lib% :download_7za
