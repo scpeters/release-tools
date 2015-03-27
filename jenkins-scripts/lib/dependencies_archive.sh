@@ -10,10 +10,12 @@ if [[ -z $ROS_DISTRO ]]; then
 fi
 
 # Dart flags. Enable it by default unless compiled from source
-DART_FROM_PKGS=false
-
 if [ -z ${DART_COMPILE_FROM_SOURCE} ]; then
    DART_COMPILE_FROM_SOURCE=false
+fi
+
+if [ -z ${DART_FROM_PKGS} ]; then
+  DART_FROM_PKGS=false
 fi
 
 if ${DART_COMPILE_FROM_SOURCE}; then
@@ -57,6 +59,8 @@ fi
 
 if ${USE_OLD_SDFORMAT}; then
     sdformat_pkg="sdformat"
+elif [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
+    sdformat_pkg="libsdformat3-dev-prerelease"
 else
     sdformat_pkg="libsdformat2-dev"
 fi
@@ -64,6 +68,10 @@ fi
 # GAZEBO related dependencies
 if [[ -z ${GAZEBO_MAJOR_VERSION} ]]; then
     GAZEBO_MAJOR_VERSION=5
+fi
+
+if [[ -z $GAZEBO_DEB_PACKAGE ]];then
+    GAZEBO_DEB_PACKAGE=libgazebo${GAZEBO_MAJOR_VERSION}-dev
 fi
 
 # Old versions used libogre-dev
@@ -102,6 +110,7 @@ GAZEBO_BASE_DEPENDENCIES="libfreeimage-dev                 \\
                           pkg-config                       \\
                           libqt4-dev                       \\
                           libltdl-dev                      \\
+                          libgts-dev                       \\
                           libboost-thread-dev              \\
                           libboost-signals-dev             \\
                           libboost-system-dev              \\
@@ -109,6 +118,7 @@ GAZEBO_BASE_DEPENDENCIES="libfreeimage-dev                 \\
                           libboost-program-options-dev     \\
                           libboost-regex-dev               \\
                           libboost-iostreams-dev           \\
+                          libignition-math-dev             \\
                           ${bullet_pkg}                    \\
                           libsimbody-dev                   \\
                           ${dart_pkg}                      \\
@@ -116,27 +126,22 @@ GAZEBO_BASE_DEPENDENCIES="libfreeimage-dev                 \\
 
 
 GAZEBO_EXTRA_DEPENDENCIES="robot-player-dev \\
-                           libcegui-mk2-dev \\
                            libavformat-dev  \\
                            libavcodec-dev   \\
                            libswscale-dev   \\
                            ruby-ronn"
+		       
+# cegui is deprecated in gazebo 6
+if [[ ${GAZEBO_MAJOR_VERSION} -le 6 ]]; then
+    GAZEBO_EXTRA_DEPENDENCIES="${GAZEBO_EXTRA_DEPENDENCIES} \\
+                               libcegui-mk2-dev"
+fi
 
 # gdal is not working on precise
 # it was added in gazebo5, which does not support precise
 if [[ ${DISTRO} != 'precise' ]]; then
     GAZEBO_EXTRA_DEPENDENCIES="${GAZEBO_EXTRA_DEPENDENCIES} \\
                                libgdal-dev"
-fi
-
-GAZEBO_DEB_PACKAGE=$GAZEBO_DEB_PACKAGE
-
-if [ -z $GAZEBO_DEB_PACKAGE ]; then
-    GAZEBO_DEB_PACKAGE=libgazebo5-dev
-    # Gazebo5 is not supported in precise, use gazebo4 instead
-    if [[ ${DISTRO} == 'precise' ]]; then
-      GAZEBO_DEB_PACKAGE=libgazebo4-dev
-    fi
 fi
 
 #
