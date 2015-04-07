@@ -18,20 +18,11 @@ mkdir workspace
 cd workspace
 echo # END SECTION
 
-echo # BEGIN SECTION: move sources so we agree with configure.bat layout
+echo # BEGIN SECTION: clone the handsim repository
+:: we are using jenkins checkout for the private repo 
 set HANDSIM_WS=%WORKSPACE%\workspace\handsim
 if exist %HANDSIM_WS% ( rm /s /q %HANDSIM_WS% || goto :error )
-xcopy %WORKSPACE%\handsim %HANDSIM_WS% /s /i /e > xcopy.log || goto :error
-echo # END SECTION
-
-
-echo # BEGIN SECTION: downloading optitrack libraries
-cd %WORKSPACE%/workspace
-mkdir bridgeLibs
-cd bridgeLibs
-call %win_lib% :download_7za
-call %win_lib% :wget 'https://www.dropbox.com/s/tkc25e1pzn4lm8f/bridgeLibs.zip?dl^=1' bridgeLibs.zip || goto :error
-call %win_lib% :unzip_7za bridgeLibs.zip || goto :error
+hg clone https://bitbucket.org/osrf/handsim %HANDSIM_WS%
 echo # END SECTION
 
 echo # BEGIN SECTION: compiling handsim/windows
@@ -46,7 +37,7 @@ echo # END SECTION
 echo # BEGIN SECTION: generating the zip
 mkdir %WORKSPACE%\workspace\package || goto %win_lib% :error
 cd %WORKSPACE%\workspace\package || goto %win_lib% :error
-copy %WORKSPACE%\workspace\bridgeLibs\* .
+copy %WORKSPACE%\nptrackingtools\* .
 copy %WORKSPACE%\workspace\handsim\windows\build\optitrack*.exe .
 
 cd %WORKSPACE%\workspace\
