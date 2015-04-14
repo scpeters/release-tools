@@ -24,22 +24,37 @@ cat > build.sh << DELIM
 #
 set -ex
 
+
+echo '# BEGIN SECTION: configure sdformat ${SDFORMAT_MAJOR_VERSION}'
 # Step 2: configure and build
+cd $WORKSPACE
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: compiling'
 make -j${MAKE_JOBS}
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: installing'
 make install
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: running tests'
 mkdir -p \$HOME
 make test ARGS="-VV" || true
+echo '# END SECTION'
 
-# Step 3: code check
+echo '# BEGIN SECTION: cppcheck'
 cd $WORKSPACE/sdformat
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 cat $WORKSPACE/build/cppcheck_results/*.xml
+echo '# END SECTION'
 DELIM
 
+echo '# BEGIN SECTION: create the Dockerfile'
 cat > Dockerfile << DELIM_DOCKER
 #######################################################
 # Docker file to run build.sh
@@ -72,17 +87,21 @@ ADD sdformat ${WORKSPACE}/sdformat
 ADD build.sh build.sh
 RUN chmod +x build.sh
 DELIM_DOCKER
+echo '# END SECTION'
 
-sudo rm -fr ${WORKSPACE}/build
-mkdir -p ${WORKSPACE}/build
-
+echo '# BEGIN SECTION: Docker: pull image'
 sudo docker pull jrivero/sdformat
+echo '# END SECTION'
+echo "# BEGIN SECTION: Docker: built with tag ${DOCKER_TAG}"
 sudo docker build -t ${DOCKER_TAG} .
+echo '# END SECTION'
+echo "# BEGIN SECTION: Docker: run build.sh"
 sudo docker run \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}/build:${WORKSPACE}/build \
             -t ${DOCKER_TAG} \
             /bin/bash build.sh
+echo '# END SECTION'
 
 CID=$(cat ${CIDFILE})
 
