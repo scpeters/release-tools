@@ -57,10 +57,14 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
 
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
+RUN apt-get install -y wget
+# OSRF needed for ignition math
 RUN \
   echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} main restricted universe multiverse" >> /etc/apt/sources.list && \\
   echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates main restricted universe multiverse" >> /etc/apt/sources.list && \\
-  echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list 
+  echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" >> /etc/apt/sources.list && \\
+  echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list' && \\
+  wget http://packages.osrfoundation.org/drc.key -O - | apt-key add - &&
 RUN echo "${TODAY_STR}"
 RUN apt-get update
 RUN apt-get install -y ${BASE_DEPENDENCIES} ${SDFORMAT_BASE_DEPENDENCIES}
