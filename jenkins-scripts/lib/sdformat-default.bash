@@ -24,12 +24,9 @@ cat > build.sh << DELIM
 #
 set -ex
 
-
 echo '# BEGIN SECTION: configure sdformat ${SDFORMAT_MAJOR_VERSION}'
 # Step 2: configure and build
 cd $WORKSPACE
-rm -rf $WORKSPACE/build
-mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 cmake $WORKSPACE/sdformat
 echo '# END SECTION'
@@ -96,6 +93,8 @@ echo "# BEGIN SECTION: Docker: built with tag ${DOCKER_TAG}"
 sudo docker build -t ${DOCKER_TAG} .
 echo '# END SECTION'
 echo "# BEGIN SECTION: Docker: run build.sh"
+rm -rf $WORKSPACE/build
+mkdir -p $WORKSPACE/build
 sudo docker run \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}/build:${WORKSPACE}/build \
