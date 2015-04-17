@@ -25,35 +25,13 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-# ccache is sometimes broken and has now reason to be used here
-# http://lists.debian.org/debian-devel/2012/05/msg00240.html
-echo "unset CCACHEDIR" >> /etc/pbuilderrc
-
-# Install deb-building tools
-# equivcs for mk-build-depends
-apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools debhelper wget cdbs ca-certificates dh-autoreconf autoconf equivs git
-
-# Also get gazebo repo's key, to be used in getting Gazebo
-sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
-wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+# Need to run apt-get update to get latest osrf releases
 apt-get update
-
-# Hack to avoid problem with non updated 
-if [ $DISTRO = 'precise' ]; then
-  echo "Skipping pbuilder check for outdated info"
-  sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
-fi
-
-# Step 0: create/update distro-specific pbuilder environment
-pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
 
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
-
-# Clean from workspace all package related files
-rm -fr $WORKSPACE/"$PACKAGE"_*
 
 echo '# BEGIN SECTION: clone the git repo'
 rm -fr $WORKSPACE/repo
@@ -86,15 +64,8 @@ fi
 rm -fr debian/*.symbols
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: create source package ${OSRF_VERSION}'
-PACKAGE=\$(dpkg-parsechangelog --show-field Source)
-# Step 5: use debuild to create source package
-echo | dh_make -s --createorig -p \${PACKAGE}_\${VERSION_NO_REVISION} || true
-
-debuild -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
-
-mkdir -p $WORKSPACE/pkgs
-rm -fr $WORKSPACE/pkgs/*
+echo "# BEGIN SECTION: create source package \${OSRF_VERSION}"
+git-buildpackage -j${MAKE_JOBS} --git-ignore-new -S
 
 cp ../*.dsc $WORKSPACE/pkgs
 cp ../*.orig.* $WORKSPACE/pkgs
@@ -104,7 +75,7 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: create deb packages'
 export DEB_BUILD_OPTIONS="parallel=$MAKE_JOBS"
 # Step 6: use pbuilder-dist to create binary package(s)
-pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS}
+git-buildpackage -j${MAKE_JOBS} --git-ignore-new -S
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: export pkgs'
@@ -123,12 +94,24 @@ test \$FOUND_PKG -eq 1 || exit 1
 echo '# END SECTION'
 DELIM
 
+. ${SCRIPT_DIR}/lib/docker_dockerfile_header.bash
+
+cat >> Dockerfile << DELIM_DOCKER
+RUN apt-get update
+RUN apt-get install -y devscripts ubuntu-dev-tools debhelper wget ca-certificates git git-buildpackage
+RUN \
+    echo '# BEGIN SECTION: install base image packages' && \\
+   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list' && \\
+   wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \\
+   apt-get update && \\
+   echo '# END SECTION'
+
+ADD build.sh build.sh
+RUN chmod +x build.sh
+DELIM_DOCKER
+
 #
 # Make project-specific changes here
 ###################################################
 
-sudo mkdir -p /var/packages/gazebo/ubuntu
-sudo pbuilder  --execute \
-    --bindmounts "$WORKSPACE /var/packages/gazebo/ubuntu" \
-    --basetgz $basetgz \
-    -- build.sh
+. ${SCRIPT_DIR}/lib/docker_run.bash
