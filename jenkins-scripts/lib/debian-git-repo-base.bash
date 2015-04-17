@@ -15,6 +15,9 @@ if [[ -z ${MULTIARCH_SUPPORT} ]]; then
   fi
 fi
 
+# Use defaul branch if not sending BRANCH parameter
+[[ -z ${BRANCH} ]] && export BRANCH=default
+
 cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
@@ -31,11 +34,9 @@ echo "unset CCACHEDIR" >> /etc/pbuilderrc
 apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools debhelper wget cdbs ca-certificates dh-autoreconf autoconf equivs git
 
 # Also get gazebo repo's key, to be used in getting Gazebo
-#sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
-#apt-get update
-
-# Needed for pbuilder
+sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
 wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+apt-get update
 
 # Hack to avoid problem with non updated 
 if [ $DISTRO = 'precise' ]; then
@@ -54,12 +55,19 @@ cd $WORKSPACE/build
 # Clean from workspace all package related files
 rm -fr $WORKSPACE/"$PACKAGE"_*
 
-# Step 1: Get the source (nightly builds or tarball)
+echo '# BEGIN SECTION: clone the git repo'
 rm -fr $WORKSPACE/repo
 git clone $GIT_REPOSITORY $WORKSPACE/repo
 cd $WORKSPACE/repo
+git checkout -b ${BRANCH}
+echo '# END SECTION'
 
-# Adjust version
+echo '# BEGIN SECTION: install build dependencies'
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
+rm *build-deps*.deb
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: build version and distribution'
 VERSION=\$(dpkg-parsechangelog  | grep Version | awk '{print \$2}')
 VERSION_NO_REVISION=\$(echo \$VERSION | sed 's:-.*::')
 OSRF_VERSION=\$VERSION\osrf${RELEASE_VERSION}~${DISTRO}${RELEASE_ARCH_VERSION}
@@ -76,9 +84,12 @@ fi
 
 # Do not perform symbol checking
 rm -fr debian/*.symbols
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: create source package ${OSRF_VERSION}'
+PACKAGE=\$(dpkg-parsechangelog --show-field Source)
 # Step 5: use debuild to create source package
-echo | dh_make -s --createorig -p ${PACKAGE}_\${VERSION_NO_REVISION} || true
+echo | dh_make -s --createorig -p \${PACKAGE}_\${VERSION_NO_REVISION} || true
 
 debuild -S -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
 
@@ -88,11 +99,15 @@ rm -fr $WORKSPACE/pkgs/*
 cp ../*.dsc $WORKSPACE/pkgs
 cp ../*.orig.* $WORKSPACE/pkgs
 cp ../*.debian.* $WORKSPACE/pkgs
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: create deb packages'
 export DEB_BUILD_OPTIONS="parallel=$MAKE_JOBS"
 # Step 6: use pbuilder-dist to create binary package(s)
 pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS}
+echo '# END SECTION'
 
+echo '# BEGIN SECTION: export pkgs'
 PKGS=\`find /var/lib/jenkins/pbuilder/*_result* -name *.deb || true\`
 
 FOUND_PKG=0
@@ -105,6 +120,7 @@ for pkg in \${PKGS}; do
 done
 # check at least one upload
 test \$FOUND_PKG -eq 1 || exit 1
+echo '# END SECTION'
 DELIM
 
 #
