@@ -93,7 +93,7 @@ echo "# BEGIN SECTION: Docker: built with tag ${DOCKER_TAG}"
 sudo docker build -t ${DOCKER_TAG} .
 echo '# END SECTION'
 echo "# BEGIN SECTION: Docker: run build.sh"
-rm -rf $WORKSPACE/build
+sudo rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 sudo docker run \
             --cidfile=${CIDFILE} \
