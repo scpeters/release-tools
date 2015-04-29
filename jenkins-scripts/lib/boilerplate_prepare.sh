@@ -53,36 +53,10 @@ fi
 . ${SCRIPT_DIR}/lib/check_graphic_card.bash
 . ${SCRIPT_DIR}/lib/dependencies_archive.sh
 
-# Workaround for precise pbuilder-dist segfault
-# https://bitbucket.org/osrf/release-tools/issue/22
-if [[ -z $WORKAROUND_PBUILDER_BUG ]]; then
-  WORKAROUND_PBUILDER_BUG=false
-fi
-
-if $WORKAROUND_PBUILDER_BUG && [[ $DISTRO == 'precise' ]]; then
-  distro=trusty
-else
-  distro=${DISTRO}
-fi
-
-if [ -z "${ARCH+xxx}" ]; then
-    export ARCH=amd64
-fi
-
-arch=${ARCH}
-base=/var/cache/pbuilder-$distro-$arch
-aptconffile=$WORKSPACE/apt.conf
-
-#increment this value if you have changed something that will invalidate base tarballs. #TODO this will need cleanup eventually.
-basetgz_version=2
-
-rootdir=$base/apt-conf-$basetgz_version
-
-basetgz=$base/base-$basetgz_version.tgz
 output_dir=$WORKSPACE/output
 work_dir=$WORKSPACE/work
 
-NEEDED_HOST_PACKAGES="mercurial pbuilder python-empy debhelper python-setuptools python-psutil"
+NEEDED_HOST_PACKAGES="mercurial docker.io python-setuptools python-psutil qemu-user-static"
 # python-argparse is integrated in libpython2.7-stdlib since raring
 # Check for precise in the HOST system (not valid DISTRO variable)
 if [[ $(lsb_release -sr | cut -c 1-5) == '12.04' ]]; then
@@ -98,68 +72,54 @@ if [[ -n ${QUERY_HOST_PACKAGES} ]]; then
   sudo apt-get install -y ${NEEDED_HOST_PACKAGES}
 fi
 
-# monitor all subprocess and enforce termination (thanks to ROS crew)
-# never failed on this
-if $ENABLE_REAPER; then
-# Hack for not failing when github is down
-download_done=false
-seconds_waiting=0
-while (! $download_done); do
-  wget https://raw.github.com/ros-infrastructure/buildfarm/master/scripts/subprocess_reaper.py -O subprocess_reaper.py && download_done=true
-  sleep 1
-  seconds_waiting=$((seconds_waiting+1))
-  [ $seconds_waiting -gt 60 ] && exit 1
-done
-
-sudo python subprocess_reaper.py $$ &
-sleep 1
+# Some packages will not show as ^un in the previous query but will return false if
+# they are not present
+if [[ ! $(dpkg-query --list ${NEEDED_HOST_PACKAGES}) ]]; then
+  echo "Some needed packages are failing in the host"
+  exit 1
 fi
 
-#setup the cross platform apt environment
-# using sudo since this is shared with pbuilder and if pbuilder is interupted it will leave a sudo only lock file.  Otherwise sudo is not necessary. 
-# And you can't chown it even with sudo and recursive
-cd $WORKSPACE/scripts/catkin-debs/
+# Docker checking
+# Code imported from https://github.com/CognitiveRobotics/omnimapper/tree/master/docker 
+# under the license detailed in https://github.com/CognitiveRobotics/omnimapper/blob/master/LICENSE 
+#version_gt() { 
+#    test "$(echo "$@" | tr " " "\n" | sort -V | tail -n 1)" == "$1"; 
+#}
 
-ubuntu_repo_url="http://us.archive.ubuntu.com/ubuntu"
+#docker_version=$(docker version | grep 'Client version' | awk '{split($0,a,":"); print a[2]}' | tr -d ' ')
 
-# If using a depracted distro, you need to use old-releases from ubuntu
-if [[ $DISTRO == 'raring' ]]; then
-  ubuntu_repo_url="http://old-releases.ubuntu.com/ubuntu/"
+# Docker 1.3.0 or later is required for --device
+#if ! version_gt "${docker_version}" "1.2.0"; then
+#  echo "Docker version 1.3.0 or greater is required"
+#  exit 1
+#fi
+
+# CID file to create
+# - In jenkins we use PROJECT_NAME + BUILD_NUMBER
+# Check if the job define a DOCKER_JOB_NAME or generate one random
+DOCKER_RND_ID=$(( ( RANDOM % 10000 )  + 1 ))
+
+if [[ -z $DOCKER_JOB_NAME ]]; then
+    export DOCKER_JOB_NAME=${DOCKER_RND_ID}
+    echo "Warning: DOCKER_JOB_NAME was not defined"
+    echo " - using ${DOCKER_JOB_NAME}"
 fi
 
-if $ENABLE_ROS; then
-  ros_repository_str="--repo ros@http://packages.ros.org/ros/ubuntu"
-fi
-
-sudo ./setup_apt_root.py $distro $arch $rootdir \
-                          --mirror $ubuntu_repo_url $ros_repository_str \
-			  --local-conf-dir $WORKSPACE 
-sudo rm -rf $output_dir
-mkdir -p $output_dir
-
-sudo rm -rf $work_dir
-mkdir -p $work_dir
-cd $work_dir
-
-sudo apt-get update -c $aptconffile
-
-# Check if trusty exists in the machine (not in precise) and symlink
-if [[ ! -f /usr/share/debootstrap/scripts/trusty ]]; then
-    sudo ln -s /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/trusty
-fi
-
-# Setup the pbuilder environment if not existing, or update
-if [ ! -e $basetgz ] || [ ! -s $basetgz ] 
-then
-  #make sure the base dir exists
-  sudo mkdir -p $base
-  #create the base image
-  sudo pbuilder create \
-    --distribution $distro \
-    --aptconfdir $rootdir/etc/apt \
-    --basetgz $basetgz \
-    --architecture $arch \
-    --mirror $ubuntu_repo_url
+# Check if the job was called from jenkins
+if [[ -n ${BUILD_NUMBER} ]]; then
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}:${BUILD_NUMBER}"
 else
-  sudo pbuilder --update --basetgz $basetgz --mirror $ubuntu_repo_url
+   # Reuse the random id
+   export DOCKER_JOB_NAME="${DOCKER_JOB_NAME}:${DOCKER_RND_ID}"
 fi
+
+echo " - Using DOCKER_JOB_NAME ${DOCKER_JOB_NAME}"
+
+export CIDFILE="${WORKSPACE}/${DOCKER_JOB_NAME}.cid"
+export DOCKER_TAG="${DOCKER_JOB_NAME}"
+
+# It is used to invalidate cache
+TODAY_STR=$(date +%D)
+
+rm -fr Dockerfile
+cd ${WORKSPACE}
