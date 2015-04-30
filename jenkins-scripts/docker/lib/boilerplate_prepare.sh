@@ -122,5 +122,10 @@ export DOCKER_TAG="${DOCKER_JOB_NAME}"
 TODAY_STR=$(date +%D)
 MONTH_YEAR_STR=$(date +%m%y)
 
+# Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
+# string in the moth year str
+if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
+fi
+
 rm -fr Dockerfile
 cd ${WORKSPACE}
