@@ -59,9 +59,7 @@ fi
 # Required stuff for Gazebo
 apt-get update
 apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
-echo '# END SECTION'
 
-echo '# BEGIN SECTION: install graphic card support'
 # Optional stuff. Check for graphic card support
 if ${GRAPHIC_CARD_FOUND}; then
     apt-get install -y ${GRAPHIC_CARD_PKG}
@@ -105,11 +103,7 @@ cmake ${GZ_CMAKE_BUILD_TYPE}         \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
   $WORKSPACE/gazebo
-echo '# END SECTION'
-echo '# BEGIN SECTION: Gazebo compilation'
-make -j${MAKE_JOBS}
-echo '# END SECTION'
-echo '# BEGIN SECTION: Gazebo installation'
+make -j${MAKE_JOBS} UNIT_GpuLaser_TEST 
 make install
 . /usr/share/gazebo/setup.sh
 echo '# END SECTION'
@@ -118,18 +112,11 @@ echo '# END SECTION'
 rm -fr $WORKSPACE/cppcheck_results
 rm -fr $WORKSPACE/test_results
 
+export LIBGL_DEBUG=verbose 
+
 # Run tests
 echo '# BEGIN SECTION: UNIT testing'
 make test ARGS="-VV -R UNIT_*" || true
-echo '# END SECTION'
-echo '# BEGIN SECTION: INTEGRATION testing'
-make test ARGS="-VV -R INTEGRATION_*" || true
-echo '# END SECTION'
-echo '# BEGIN SECTION: REGRESSION testing'
-make test ARGS="-VV -R REGRESSION_*" || true
-echo '# END SECTION'
-echo '# BEGIN SECTION: EXAMPLE testing'
-make test ARGS="-VV -R EXAMPLE_*" || true
 echo '# END SECTION'
 
 # Only run cppcheck on trusty
