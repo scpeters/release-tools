@@ -54,6 +54,13 @@ if [ -n "$(lspci -v | grep "Kernel driver in use: i[0-9][0-9][0-9]")" ]; then
     export GRAPHIC_CARD_FOUND=true
     # Need to run properly DRI on intel
     export EXTRA_PACKAGES="${EXTRA_PACKAGES} libgl1-mesa-dri"
+    # Assume that xvfb is installed and started by jenkins on DISPLAY=11
+    # Check it:
+    if [[ -z $(ps aux | grep Xvfb | grep :11) ]]; then
+	echo "We expect Xvfb running on :11 DISPLAY for intel configurations. Don't find it"
+	exit 1
+    fi
+    export DISPLAY=:11
 fi
 
 # Be sure that we have GPU support

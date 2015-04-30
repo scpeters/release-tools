@@ -116,7 +116,8 @@ export LIBGL_DEBUG=verbose
 
 # Run tests
 echo '# BEGIN SECTION: UNIT testing'
-make test ARGS="-VV -R UNIT_*" || true
+make test ARGS="-VV -R UNIT_GpuLaser_TEST" || true
+DISPLAY=:11 make test ARGS="-VV -R UNIT_GpuLaser_TEST" || true
 echo '# END SECTION'
 
 # Only run cppcheck on trusty
