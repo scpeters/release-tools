@@ -13,6 +13,7 @@ sudo docker build -t ${DOCKER_TAG} .
 if $USE_GPU_DOCKER; then
   GPU_PARAMS_STR="--privileged \
                      -e \"DISPLAY=unix$DISPLAY\" \
+		     -v=\"/sys:/sys:r\" \
                      -v=\"/tmp/.X11-unix:/tmp/.X11-unix:rw\""
 fi
 
