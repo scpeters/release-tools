@@ -62,7 +62,7 @@ fi
 if ${USE_OSRF_REPO}; then
 cat >> Dockerfile << DELIM_DOCKER2
 RUN apt-get update && apt-get install -y wget
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} trusty main" > \\
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/osrf.list && \\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
 DELIM_DOCKER2
