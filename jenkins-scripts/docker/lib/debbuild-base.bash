@@ -119,6 +119,7 @@ debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 
 cp ../*.dsc $WORKSPACE/pkgs
 cp ../*.orig.* $WORKSPACE/pkgs
+cp ../*.tar.gz $WORKSPACE/pkgs
 # debian is only generated in quilt format, native does not have it
 cp ../*.debian.* $WORKSPACE/pkgs || true
 echo '# END SECTION'
