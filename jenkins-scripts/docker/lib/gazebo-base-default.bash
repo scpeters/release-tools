@@ -34,6 +34,8 @@ cat > build.sh << DELIM
 set -ex
 
 echo '# BEGIN SECTION: install graphic card support'
+export DISPLAY=${DISPLAY}
+
 if ${GRAPHIC_CARD_FOUND}; then
     apt-get install -y ${GRAPHIC_CARD_PKG}
     # Check to be sure version of kernel graphic card support is the same.
