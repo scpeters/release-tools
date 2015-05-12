@@ -34,6 +34,10 @@ echo "Returned value from run command: ${ret}"
 sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
+if [[ -z ${KEEP_WORKSPACE} ]]; then
+    rm -fr ${WORKSPACE}/build
+fi
+
 if [[ $ret != 0 ]]; then
     echo "Docker container returned a non zero value"
     exit $ret
