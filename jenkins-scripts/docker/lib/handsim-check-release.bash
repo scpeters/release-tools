@@ -43,7 +43,7 @@ echo '# BEGIN SECTION: test arat.world'
 # our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
 export LC_ALL=C && export LANG=C
-timeout 180 gazebo worlds/arat.world || cat \$HOME/.gazebo/gzserver.log && echo "Failure response in the launch command"
+timeout 180 gazebo worlds/arat.world || cat \$HOME/.gazebo/gzserver.log && echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
 DELIM
