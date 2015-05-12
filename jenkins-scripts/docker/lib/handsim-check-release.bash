@@ -42,7 +42,7 @@ echo '# BEGIN SECTION: test arat.world'
 # Seems like there is no failure in runs on precise pbuilder in
 # our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
-export LC_ALL=C
+export LC_ALL=C && export LANG=C
 timeout 180 gazebo worlds/arat.world || cat \$HOME/.gazebo/gzserver.log && echo "Failure response in the launch command"
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
