@@ -10,7 +10,42 @@ export DISTRO=trusty
 export REPO_DIRECTORY="haptix_comm"
 export PKG_DEPENDENCIES_VAR_NAME="HAPTIX_COMM_DEPENDENCIES"
 
-. ${SCRIPT_DIR}/lib/generic-job.bash
+set -e
+
+. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
+
+eval PROJECT_DEPENDECIES=\$${PKG_DEPENDENCIES_VAR_NAME}
+
+cat > build.sh << DELIM
+###################################################
+# Make project-specific changes here
+#
+set -ex
+
+# OSRF repository to get zmq
+apt-get install -y wget
+sh -c 'echo "deb http://packages.osrfoundation.org/drc/ubuntu ${DISTRO} main" > /etc/apt/sources.list.d/drc-latest.list'
+wget http://packages.osrfoundation.org/drc.key -O - | apt-key add -
+
+# Step 1: install everything you need
+apt-get update
+apt-get install -y ${BASE_DEPENDENCIES} ${PROJECT_DEPENDECIES}
+
+# Step 2: configure and build
+rm -rf $WORKSPACE/build
+mkdir -p $WORKSPACE/build
+cd $WORKSPACE/build
+cmake $WORKSPACE/${REPO_DIRECTORY}
+make -j${MAKE_JOBS}
+make install
+make test ARGS="-VV" || true
+
+# Step 3: code check
+cd $WORKSPACE/${REPO_DIRECTORY}
+sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
+cat $WORKSPACE/build/cppcheck_results/*.xml
+DELIM
+
 
 # Extract the version out of CMakeLists
 PROJECT_VERSION=`\
@@ -24,7 +59,7 @@ PROJECT_VERSION=`\
 # Check if the node was configured to use s3cmd
 # This is done by running s3cmd --configure
 if [ ! -f "${HOME}/.s3cfg" ]; then
-    echo "No $HOME/.s3cfg file found. Please config the software first in your system"
+    echo "No $HOME/.s3cfg file found. Please config the software first in your system using s3cmd --config"
     exit 1
 fi
 
