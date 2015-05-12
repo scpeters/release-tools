@@ -49,7 +49,6 @@ DELIM
 
 USE_OSRF_REPO=true
 USE_GPU_DOCKER=true
-SOFTWARE_DIR="handsim"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
