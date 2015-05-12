@@ -27,6 +27,12 @@ if ${GRAPHIC_CARD_FOUND}; then
 fi
 echo '# END SECTION'
 
+echo '# BEGIN SECTION: configuring"
+mkdir -p $WORKSPACE/build
+cd $WORKSPACE/build
+cmake $WORKSPACE/handsim
+echo '# END SECTION'
+
 echo '# BEGIN SECTION: compiling'
 make -j${MAKE_JOBS}
 echo '# END SECTION'
