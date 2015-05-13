@@ -42,11 +42,13 @@ echo '# BEGIN SECTION: test arat.world'
 # Seems like there is no failure in runs on precise pbuilder in
 # our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
-locale-gen en_US
-dpkg-reconfigure locales
-locale -a
-export LC_ALL=C && export LANG=C
-set
+# Set the locale - see http://jaredmarkell.com/docker-and-locales/
+# a work around for this error when running tilemill:
+# what():  locale::facet::_S_create_c_locale name not valid
+locale-gen en_US.UTF-8  
+export LANG en_US.UTF-8  
+export LANGUAGE en_US:en  
+export LC_ALL en_US.UTF-8 
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
