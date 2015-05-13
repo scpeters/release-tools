@@ -46,9 +46,9 @@ mkdir -p \$HOME/.gazebo
 # a work around for this error when running tilemill:
 # what():  locale::facet::_S_create_c_locale name not valid
 locale-gen en_US.UTF-8  
-export LANG en_US.UTF-8  
-export LANGUAGE en_US:en  
-export LC_ALL en_US.UTF-8 
+export LANG=en_US.UTF-8  
+export LANGUAGE=en_US:en  
+export LC_ALL=en_US.UTF-8 
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
