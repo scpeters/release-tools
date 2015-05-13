@@ -8,8 +8,6 @@ sudo mkdir -p ${WORKSPACE}/build
 
 sudo docker build -t ${DOCKER_TAG} .
 
-[[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=""
-
 if $USE_GPU_DOCKER; then
   GPU_PARAMS_STR="--privileged \
                      -e \"DISPLAY=unix$DISPLAY\" \

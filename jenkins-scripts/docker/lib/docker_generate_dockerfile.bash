@@ -89,12 +89,20 @@ fi
 # Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
 # string in the moth year str
 if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
-  echo 'BEGIN SECTION: invalidate full docker cache'
-  echo "Detecting content in INVALIDATE_DOCKER_CACHE. Invalidating it"
 cat >> Dockerfile << DELIM_DOCKER_INVALIDATE
+RUN echo 'BEGIN SECTION: invalidate full docker cache'
+RUN echo "Detecting content in INVALIDATE_DOCKER_CACHE. Invalidating it"
 RUN echo "Invalidate cache enabled. ${DOCKER_RND_ID}"
+RUN echo 'END SECTION'
 DELIM_DOCKER_INVALIDATE
-  echo 'END SECTION'
+fi
+
+# Packages that will be installed and cached by docker. In a non-cache
+# run below, the docker script will check for the latest updates
+PACKAGES_CACHE_AND_CHECK_UPDATES="${BASE_DEPENDENCIES} ${DEPENDENCY_PKGS}"
+
+if $USE_GPU_DOCKER; then
+  PACKAGES_CACHE_AND_CHECK_UPDATES="${PACKAGES_CACHE_AND_CHECK_UPDATES} ${GRAPHIC_CARD_PKG}"
 fi
 
 cat >> Dockerfile << DELIM_DOCKER3
@@ -104,13 +112,22 @@ cat >> Dockerfile << DELIM_DOCKER3
 # update command below
 RUN echo "${MONTH_YEAR_STR}"
 RUN apt-get update && \
-    apt-get install -y ${BASE_DEPENDENCIES} ${DEPENDENCY_PKGS}
+    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
 
 # This is killing the cache so we should be getting the most recent packages
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
-RUN apt-get update
-RUN apt-get install -y ${BASE_DEPENDENCIES} ${DEPENDENCY_PKGS}
+RUN apt-get update && \
+    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
+ENV DISPLAY ${DISPLAY}
 
+# Check to be sure version of kernel graphic card support is the same.
+# It will kill DRI otherwise
+RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\ " | awk '{ print \$3 }' | sed 's:-.*::') \\
+    if [ "\${CHROOT_GRAPHIC_CARD_PKG_VERSION}" != "${GRAPHIC_CARD_PKG_VERSION}" ]; then \\
+       echo "Package ${GRAPHIC_CARD_PKG} has different version in chroot and host system" \\
+       echo "Maybe you need to update your host" \\
+       exit 1 \\
+   fi
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3

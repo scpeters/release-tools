@@ -130,5 +130,8 @@ export DOCKER_TAG="${DOCKER_JOB_NAME}"
 TODAY_STR=$(date +%D)
 MONTH_YEAR_STR=$(date +%m%y)
 
+# USE_GPU_DOCKER variable
+[[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=false
+
 rm -fr Dockerfile
 cd ${WORKSPACE}
