@@ -57,11 +57,11 @@ DELIM_DOCKER
 
 if [[ ${ARCH} != 'armhf' ]]; then
 cat >> Dockerfile << DELIM_DOCKER_ARCH
-# Note that main and restricted are not here, only universe and multiverse
-# main and restricted are already setup in the original image
-RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} universe multiverse" \\
+# Note that main,restricted and universe are not here, only multiverse
+# main, restricted and unvierse are already setup in the original image
+RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} multiverse" \\
                                                        >> /etc/apt/sources.list && \\
-    echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates universe multiverse" \\
+    echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates multiverse" \\
                                                        >> /etc/apt/sources.list && \\
     echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" && \\
                                                        >> /etc/apt/sources.list
