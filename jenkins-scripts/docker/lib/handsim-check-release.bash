@@ -24,16 +24,14 @@ echo '# BEGIN SECTION: test arat.world'
 # Seems like there is no failure in runs on precise pbuilder in
 # our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
-# Workaround for bug:
-# what():  locale::facet::_S_create_c_locale name not valid
+
+# Workaround to issue:
+# https://bitbucket.org/osrf/handsim/issue/91
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -y locales strace
-locale-gen en_US.UTF-8 en_US 
-export LC_ALL=en_US.UTF-8
-export LC_NUMERIC=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US
-cat /etc/default/locale  || true
+locale-gen en_GB.utf8
+export LC_ALL=en_GB.utf8
+export LANG=en_GB.utf8
+export LANGUAGE=en_GB
 set
 locale -a
 locale
