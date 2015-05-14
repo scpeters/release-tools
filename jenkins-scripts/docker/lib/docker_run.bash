@@ -33,7 +33,7 @@ sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
-    rm -fr ${WORKSPACE}/build
+    sudo rm -fr ${WORKSPACE}/build
 fi
 
 if [[ $ret != 0 ]]; then
