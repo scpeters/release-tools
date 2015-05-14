@@ -27,7 +27,7 @@ mkdir -p \$HOME/.gazebo
 # Workaround for bug:
 # what():  locale::facet::_S_create_c_locale name not valid
 export DEBIAN_FRONTEND=noninteractive
-apt-get install locales strace
+apt-get install -y locales strace
 locale-gen en_US.UTF-8 en_US 
 export LC_ALL=en_US.UTF-8
 export LC_NUMERIC=en_US.UTF-8
