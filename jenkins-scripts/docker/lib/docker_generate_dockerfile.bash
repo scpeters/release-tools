@@ -111,10 +111,12 @@ cat >> Dockerfile << DELIM_DOCKER3
 # The expection of updates is low and anyway it is cathed by the next
 # update command below
 RUN echo "${MONTH_YEAR_STR}"
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
 
-# This is killing the cache so we should be getting the most recent packages
+# This is killing the cache so we getg the most recent packages if there
+# was any update
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
 RUN apt-get update && \
     apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
