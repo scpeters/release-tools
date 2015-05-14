@@ -32,9 +32,10 @@ locale-gen en_US.UTF-8 en_US
 export LC_ALL=en_US.UTF-8
 export LC_NUMERIC=en_US.UTF-8
 export LANG=en_US.UTF-8
+export LANGUAGE=en_US
+cat /etc/default/locale  || true
 set
 locale
-timeout 180 gazebo  
 strace gazebo worlds/arat.world 
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
