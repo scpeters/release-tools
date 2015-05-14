@@ -28,8 +28,10 @@ mkdir -p \$HOME/.gazebo
 # what():  locale::facet::_S_create_c_locale name not valid
 export DEBIAN_FRONTEND=noninteractive
 apt-get install locales
-echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
-locale-gen
+locale-gen en_US.UTF-8 en_US 
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+set
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
