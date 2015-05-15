@@ -31,6 +31,10 @@ locale-gen en_GB.utf8
 export LC_ALL=en_GB.utf8
 export LANG=en_GB.utf8
 export LANGUAGE=en_GB
+
+# Docker has problems with Qt X11 MIT-SHM extension
+export QT_X11_NO_MITSHM=1
+
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
