@@ -27,16 +27,10 @@ mkdir -p \$HOME/.gazebo
 
 # Workaround to issue:
 # https://bitbucket.org/osrf/handsim/issue/91
-export DEBIAN_FRONTEND=noninteractive
 locale-gen en_GB.utf8
 export LC_ALL=en_GB.utf8
 export LANG=en_GB.utf8
 export LANGUAGE=en_GB
-set
-locale -a
-locale
-apt-get install -y strace
-strace gazebo worlds/arat.world 
 timeout 180 gazebo worlds/arat.world || echo "Failure response in the launch command" && exit 1
 echo "180 testing seconds finished successfully"
 echo '# END SECTION'
