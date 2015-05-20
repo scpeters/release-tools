@@ -133,5 +133,9 @@ MONTH_YEAR_STR=$(date +%m%y)
 # USE_GPU_DOCKER variable
 [[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=false
 
+if $USE_GPU_DOCKER; then
+   export GPU_SUPPORT_NEEDED=true
+fi
+
 rm -fr Dockerfile
 cd ${WORKSPACE}
