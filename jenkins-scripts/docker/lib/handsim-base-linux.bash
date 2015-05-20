@@ -1,14 +1,13 @@
 #!/bin/bash -x
 
 echo '# BEGIN SECTION: setup the testing enviroment'
-# Define the name to be used in docker
-DOCKER_JOB_NAME="handsim_ci"
-. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
-
 USE_OSRF_REPO=true
 USE_GPU_DOCKER=true
 SOFTWARE_DIR="handsim"
 DEPENDENCY_PKGS="${HANDSIM_DEPENDENCIES}"
+
+DOCKER_JOB_NAME="handsim_ci"
+. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 echo '# END SECTION'
 
 cat > build.sh << DELIM
