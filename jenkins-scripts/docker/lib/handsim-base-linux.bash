@@ -19,7 +19,7 @@ set -ex
 # Not really needed?
 # export DISPLAY=${DISPLAY}
 
-echo '# BEGIN SECTION: configuring"
+echo '# BEGIN SECTION: configuring'
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
 cmake $WORKSPACE/handsim
