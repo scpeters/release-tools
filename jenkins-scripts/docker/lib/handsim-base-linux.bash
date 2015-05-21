@@ -3,9 +3,6 @@
 echo '# BEGIN SECTION: setup the testing enviroment'
 USE_OSRF_REPO=true
 USE_GPU_DOCKER=true
-SOFTWARE_DIR="handsim"
-DEPENDENCY_PKGS="${HANDSIM_DEPENDENCIES}"
-
 DOCKER_JOB_NAME="handsim_ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 echo '# END SECTION'
@@ -45,5 +42,7 @@ cat $WORKSPACE/build/cppcheck_results/*.xml
 echo '# END SECTION'
 DELIM
 
+SOFTWARE_DIR="handsim"
+DEPENDENCY_PKGS="${HANDSIM_DEPENDENCIES}"
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
