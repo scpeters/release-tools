@@ -46,12 +46,6 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: cppcheck'
 cd $WORKSPACE/handsim
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
-
-# Step 5. Need to clean build/ directory so disk space is under control
-# Move cppcheck and test results out of build
-# Copy the results
-mv $WORKSPACE/build/cppcheck_results $WORKSPACE/cppcheck_results
-mv $WORKSPACE/build/test_results $WORKSPACE/test_results
 echo '# END SECTION'
 DELIM
 
