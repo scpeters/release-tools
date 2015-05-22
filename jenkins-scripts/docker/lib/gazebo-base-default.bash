@@ -103,24 +103,6 @@ else
   mkdir -p $WORKSPACE/build/cppcheck_results/
   echo "<results></results>" >> $WORKSPACE/build/cppcheck_results/empty.xml 
 fi
-
-echo '# BEGIN SECTION: clean build directory and export information'
-# Step 4: copy test log
-# Broken http://build.osrfoundation.org/job/gazebo-any-devel-precise-amd64-gpu-nvidia/6/console
-# Need fix
-# mkdir $WORKSPACE/logs
-# cp $HOME/.gazebo/logs/*.log $WORKSPACE/logs/
-
-# Step 5. Need to clean build/ directory so disk space is under control
-# Move cppcheck and test results out of build
-# Copy the results
-mv $WORKSPACE/build/cppcheck_results $WORKSPACE/cppcheck_results
-mv $WORKSPACE/build/test_results $WORKSPACE/test_results
-
-# To keep backwards compatibility with current configurations keep a copy
-# of tests_results in the build path.
-cp -a $WORKSPACE/cppcheck_results $WORKSPACE/build/cppcheck_results
-cp -a $WORKSPACE/test_results $WORKSPACE/build/test_results
 echo '# END SECTION'
 DELIM
 
