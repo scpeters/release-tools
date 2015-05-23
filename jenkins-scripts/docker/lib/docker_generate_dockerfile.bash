@@ -70,11 +70,12 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} multiverse" \\
 DELIM_DOCKER_ARCH
 fi
 
+# Use curl to avoid problems of wget with SSL github certificate
 if ${USE_OSRF_REPO} || ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_WGET
-# Not really needed to run the apt-get to install wget?
-# RUN apt-get update && apt-get install -y wget
-RUN apt-get install -y wget
+# Not really needed to run the apt-get to install curl?
+# RUN apt-get update && apt-get install -y curl
+RUN apt-get install -y curl
 DELIM_WGET
 fi
 
@@ -82,7 +83,7 @@ if ${USE_OSRF_REPO}; then
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/osrf.list && \\
-    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
+    curl -LsS http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
 DELIM_OSRF_REPO
 fi
 
@@ -90,7 +91,7 @@ if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
 RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list && \\
-   curl -LsS https://raw.githubusercontent.com/ros/rosdistro/master/ros.key - | sudo apt-key add -
+   curl -LsS https://raw.githubusercontent.com/ros/rosdistro/master/ros.key - | apt-key add -
 DELIM_ROS_REPO
 fi
 
