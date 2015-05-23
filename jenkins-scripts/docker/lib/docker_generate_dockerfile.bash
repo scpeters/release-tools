@@ -90,7 +90,7 @@ if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
 RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list && \\
-    wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
+   curl -LsS https://raw.githubusercontent.com/ros/rosdistro/master/ros.key - | sudo apt-key add -
 DELIM_ROS_REPO
 fi
 
