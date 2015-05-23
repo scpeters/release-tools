@@ -88,9 +88,9 @@ fi
 
 if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
-                                                /etc/apt/sources.list.d/osrf.list && \\
-    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
+RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
+                                                /etc/apt/sources.list.d/ros.list && \\
+    wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
 DELIM_ROS_REPO
 fi
 
