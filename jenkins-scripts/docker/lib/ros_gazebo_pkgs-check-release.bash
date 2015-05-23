@@ -54,7 +54,10 @@ if [ $DISTRO = 'precise' ]; then
   # Previous attemps to get GPU acceleration for intel in chroot:
   # http://build.osrfoundation.org/job/ros_gazebo_pkgs-release-testing-broken-intel/
   roslaunch gazebo_ros shapes_world.launch extra_gazebo_args:="--verbose" &
+
   sleep 180
+  # Install psmisc for killall while running
+  apt-get install -y psmisc 
   killall -9 roslaunch || true
   killall -9 gzserver || true 
 else
