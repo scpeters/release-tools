@@ -9,8 +9,7 @@ SCRIPT_DIR="${SCRIPT_DIR%/*}"
 if [[ -z $ROS_DISTRO ]]; then
     [[ $DISTRO = 'precise' ]] && export ROS_DISTRO=hydro
     [[ $DISTRO = 'trusty'  ]] && export ROS_DISTRO=indigo
-else
-    export ROS_DISTRO=jade
+    [[ $DISTRO = 'vivid'   ]] && export ROS_DISTRO=jade
 fi
 
 . ${SCRIPT_DIR}/lib/ros_gazebo_pkgs-check-release.bash
