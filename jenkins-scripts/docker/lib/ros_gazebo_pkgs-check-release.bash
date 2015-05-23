@@ -74,6 +74,7 @@ echo "180 testing seconds finished successfully"
 DELIM
 
 USE_OSRF_REPO=true
+USE_ROS_REPO=true
 USE_GPU_DOCKER=true
 
 # Let's try to install all the packages and check the example
