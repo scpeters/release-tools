@@ -53,12 +53,7 @@ if [ $DISTRO = 'precise' ]; then
   # docker can not run on Precise without altering the base packages
   # Previous attemps to get GPU acceleration for intel in chroot:
   # http://build.osrfoundation.org/job/ros_gazebo_pkgs-release-testing-broken-intel/
-  
-  echo "X Error failed is expected on machines with different distro in host than tested"
-  echo "We run the test anyway to test ABI or segfaults"
-  apt-get install -y psmisc 
-  # roslaunch gazebo_ros shapes_world.launch extra_gazebo_args:="--verbose" &
-
+  roslaunch gazebo_ros shapes_world.launch extra_gazebo_args:="--verbose" &
   sleep 180
   killall -9 roslaunch || true
   killall -9 gzserver || true 

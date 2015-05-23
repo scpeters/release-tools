@@ -159,6 +159,19 @@ COPY ${SOFTWARE_DIR} ${WORKSPACE}/${SOFTWARE_DIR}
 DELIM_DOCKER4
 fi
 
+if $USE_GPU_DOCKER; then
+cat >> Dockerfile << DELIM_WORKAROUND_91
+# Workaround to issue:
+# https://bitbucket.org/osrf/handsim/issue/91
+RUN locale-gen en_GB.utf8
+ENV LC_ALL en_GB.utf8
+ENV LANG en_GB.utf8
+ENV LANGUAGE en_GB
+# Docker has problems with Qt X11 MIT-SHM extension
+ENV QT_X11_NO_MITSHM 1
+DELIM_WORKAROUND_91
+fi
+
 cat >> Dockerfile << DELIM_DOCKER4
 COPY build.sh build.sh
 RUN chmod +x build.sh

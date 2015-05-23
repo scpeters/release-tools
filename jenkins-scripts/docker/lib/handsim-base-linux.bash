@@ -31,14 +31,6 @@ make install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running tests'
-# Workaround to issue:
-# https://bitbucket.org/osrf/handsim/issue/91
-locale-gen en_GB.utf8
-export LC_ALL=en_GB.utf8
-export LANG=en_GB.utf8
-export LANGUAGE=en_GB
-# Docker has problems with Qt X11 MIT-SHM extension
-export QT_X11_NO_MITSHM=1
 mkdir -p \$HOME
 make test ARGS="-VV" || true
 echo '# END SECTION'
