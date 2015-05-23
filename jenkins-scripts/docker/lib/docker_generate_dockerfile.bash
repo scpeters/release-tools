@@ -5,6 +5,7 @@
 #   - DISTRO          : base distribution (ex: vivid)
 #   - ARCH            : [default amd64] base arquitecture (ex: amd64)
 #   - USE_OSRF_REPO   : [default false] true|false if add the packages.osrfoundation.org to the sources.list
+#   - USE_ROS_REPO    : [default false] true|false if add the packages.ros.org to the sources.list
 #   - DEPENDENCY_PKGS : (optional) packages to be installed in the image
 #   - SOFTWARE_DIR    : (optional) directory to copy inside the image
 
@@ -37,6 +38,7 @@ case ${ARCH} in
 esac
 
 [[ -z ${USE_OSRF_REPO} ]] && USE_OSRF_REPO=false
+[[ -z ${USE_ROS_REPO} ]] && USE_ROS_REPO=false
 
 echo '# BEGIN SECTION: create the Dockerfile'
 cat > Dockerfile << DELIM_DOCKER
@@ -68,13 +70,28 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} multiverse" \\
 DELIM_DOCKER_ARCH
 fi
 
+if ${USE_OSRF_REPO} || ${USE_ROS_REPO}; then
+cat >> Dockerfile << DELIM_WGET
+# Not really needed to run the apt-get to install wget?
+# RUN apt-get update && apt-get install -y wget
+RUN apt-get install -y wget
+DELIM_WGET
+fi
+
 if ${USE_OSRF_REPO}; then
-cat >> Dockerfile << DELIM_DOCKER2
-RUN apt-get update && apt-get install -y wget
+cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/osrf.list && \\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
-DELIM_DOCKER2
+DELIM_OSRF_REPO
+fi
+
+if ${USE_ROS_REPO}; then
+cat >> Dockerfile << DELIM_ROS_REPO
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
+                                                /etc/apt/sources.list.d/osrf.list && \\
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - 
+DELIM_ROS_REPO
 fi
 
 # Dart repositories
