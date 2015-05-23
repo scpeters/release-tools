@@ -35,7 +35,7 @@ sudo docker rm ${CID} || true
 if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Export results, if any
     for d in $(find ${WORKSPACE}/build -name *_results -type d); do
-	mv ${d} ${WORKSPACE}/
+	sudo mv ${d} ${WORKSPACE}/
     done
       	
     # Clean the whole build directory
