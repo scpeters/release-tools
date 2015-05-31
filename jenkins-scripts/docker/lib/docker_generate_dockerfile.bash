@@ -53,8 +53,6 @@ MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
 RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
 RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
-  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
-  || echo "No squid-deb-proxy detected on docker host"
 DELIM_DOCKER
 
 if [[ ${ARCH} != 'armhf' ]]; then
@@ -70,19 +68,11 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} multiverse" \\
 DELIM_DOCKER_ARCH
 fi
 
-# Use curl to avoid problems of wget with SSL github certificate
-if ${USE_OSRF_REPO} || ${USE_ROS_REPO}; then
-cat >> Dockerfile << DELIM_WGET
-# The update is needed, do not remove
-RUN apt-get update && apt-get install -y curl
-DELIM_WGET
-fi
-
 if ${USE_OSRF_REPO}; then
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
-                                                /etc/apt/sources.list.d/osrf.list && \\
-    curl -LsS http://packages.osrfoundation.org/gazebo.key | apt-key add - 
+                                                /etc/apt/sources.list.d/osrf.list
+RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743						
 DELIM_OSRF_REPO
 fi
 
@@ -90,7 +80,7 @@ if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
 RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list && \\
-   curl -LsS https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
+RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 DELIM_ROS_REPO
 fi
 
@@ -131,14 +121,17 @@ cat >> Dockerfile << DELIM_DOCKER3
 # update command below
 RUN echo "${MONTH_YEAR_STR}"
 ENV DEBIAN_FRONTEND noninteractive
+# The rm command will minimize the layer size
 RUN apt-get update && \
-    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
+    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} && \
+    rm -rf /var/lib/apt/lists/*
 
 # This is killing the cache so we getg the most recent packages if there
 # was any update
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
 RUN apt-get update && \
-    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
+    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} && \
+    rm -rf /var/lib/apt/lists/*
 ENV DISPLAY ${DISPLAY}
 
 # Check to be sure version of kernel graphic card support is the same.
