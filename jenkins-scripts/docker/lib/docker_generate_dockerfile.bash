@@ -74,7 +74,7 @@ if ${USE_OSRF_REPO}; then
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/osrf.list
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D5332FF8693D40DDB5C4E2BAC4D0E34E9443F10F
+RUN apt-key adv --keyserver pgp.mit.edu --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
 DELIM_OSRF_REPO
 fi
 
@@ -82,7 +82,7 @@ if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
 RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list && \\
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 DELIM_ROS_REPO
 fi
 
