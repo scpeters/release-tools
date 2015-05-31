@@ -74,7 +74,7 @@ if ${USE_OSRF_REPO}; then
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/osrf.list
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743						
+RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D5332FF8693D40DDB5C4E2BAC4D0E34E9443F10F
 DELIM_OSRF_REPO
 fi
 
