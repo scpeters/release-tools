@@ -19,7 +19,8 @@ set -ex
 echo '# BEGIN SECTION: configuring'
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
-cmake $WORKSPACE/handsim
+cmake $WORKSPACE/handsim \
+    -DCMAKE_INSTALL_PREFIX=/usr
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: compiling'
