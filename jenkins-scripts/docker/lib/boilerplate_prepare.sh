@@ -137,5 +137,13 @@ export DOCKER_TAG="${DOCKER_JOB_NAME}"
 TODAY_STR=$(date +%D)
 MONTH_YEAR_STR=$(date +%m%y)
 
+# Clean previous results in the workspace if any
+if [[ -z ${KEEP_WORKSPACE} ]]; then
+    # Clean previous results, need to next mv command not to fail
+    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+        sudo rm -fr ${d}
+    done
+fi
+
 rm -fr Dockerfile
 cd ${WORKSPACE}

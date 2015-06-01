@@ -32,17 +32,12 @@ echo "Returned value from run command: ${ret}"
 sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
+# Export results out of build directory, to WORKSPACE
+for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
+    sudo mv ${d} ${WORKSPACE}/
+done
+
 if [[ -z ${KEEP_WORKSPACE} ]]; then
-    # Clean previous results, need to next mv command not to fail
-    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
-        sudo rm -fr ${d}
-    done
-
-    # Export results, if any
-    for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
-	sudo mv ${d} ${WORKSPACE}/
-    done
-
     # Clean the whole build directory
     sudo rm -fr ${WORKSPACE}/build
 fi
