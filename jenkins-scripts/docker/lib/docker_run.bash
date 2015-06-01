@@ -33,13 +33,16 @@ sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
+    # Clean previous results, need to next mv command not to fail
+    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+        sudo rm -fr ${d}
+    done
+
     # Export results, if any
     for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
-        # Clean previous results, need to next mv command not to fail
-        sudo rm -fr ${d}
-	# Export result to the workspace
-	sudo bash -c '[[ -d ${d} ]] && mv ${d} ${WORKSPACE}/'
+	sudo mv ${d} ${WORKSPACE}/
     done
+
     # Clean the whole build directory
     sudo rm -fr ${WORKSPACE}/build
 fi
