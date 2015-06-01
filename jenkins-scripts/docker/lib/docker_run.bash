@@ -37,7 +37,8 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
         # Clean previous results, need to next mv command not to fail
         sudo rm -fr ${d}
-	sudo mv ${d} ${WORKSPACE}/
+	# Export result to the workspace
+	sudo bash -c '[[ -d ${d} ]] && mv ${d} ${WORKSPACE}/'
     done
     # Clean the whole build directory
     sudo rm -fr ${WORKSPACE}/build
