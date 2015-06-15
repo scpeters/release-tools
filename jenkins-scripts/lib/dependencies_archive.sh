@@ -304,4 +304,5 @@ HAPTIX_COMM_DEPENDENCIES="pkg-config                \\
 # HANDSIM
 #
 HANDSIM_DEPENDENCIES="libgazebo6-dev-prerelease \\
+                      liboctave-dev \\
                       libhaptix-comm-dev"
