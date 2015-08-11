@@ -8,11 +8,15 @@ sudo mkdir -p ${WORKSPACE}/build
 
 sudo docker build -t ${DOCKER_TAG} .
 
+echo '# BEGIN SECTION: see build.sh script'
+cat build.sh
+echo '# END SECTION'
+
 if $USE_GPU_DOCKER; then
   GPU_PARAMS_STR="--privileged \
-                     -e \"DISPLAY=unix$DISPLAY\" \
-		     -v=\"/sys:/sys:ro\" \
-                     -v=\"/tmp/.X11-unix:/tmp/.X11-unix:rw\""
+                  -e DISPLAY=unix$DISPLAY \
+		          -v /sys:/sys:ro         \
+                  -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
 fi
 
 sudo docker run $GPU_PARAMS_STR  \

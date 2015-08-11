@@ -4,6 +4,10 @@
 [[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
-export DISTRO=trusty
+export GPU_SUPPORT_NEEDED=true
 
-. ${SCRIPT_DIR}/lib/gazebo-api_checker-default.bash
+export DISTRO=trusty
+export COVERAGE_ENABLED=true
+export DART_USE_4_VERSION=true
+
+. ${SCRIPT_DIR}/lib/gazebo-base-default.bash
