@@ -28,11 +28,6 @@ sudo docker run $GPU_PARAMS_STR  \
 
 CID=$(cat ${CIDFILE})
 
-# Not all versions of docker handle return values in a right way
-# https://github.com/docker/docker/issues/354 
-ret=$(sudo docker inspect --format='{{.State.ExitCode}}' ${CID})
-echo "Returned value from run command: ${ret}"
-
 sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
@@ -44,7 +39,13 @@ done
 if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Clean the whole build directory
     sudo rm -fr ${WORKSPACE}/build
+    # Mimic old layout of exported test results
+    mkdir ${WORKSPACE}/build
+    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+       mv ${d} ${WORKSPACE}/build/
+    done
 fi
+
 
 if [[ $ret != 0 ]]; then
     echo "Docker container returned a non zero value"
