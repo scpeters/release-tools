@@ -32,13 +32,15 @@ sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
 # Export results out of build directory, to WORKSPACE
+ls -las ${d}
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
-    sudo mv ${d} ${WORKSPACE}/
+    ls -las ${d}
+    mv ${d} ${WORKSPACE}/
 done
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Clean the whole build directory
-    sudo rm -fr ${WORKSPACE}/build
+    rm -fr ${WORKSPACE}/build
     # Mimic old layout of exported test results
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
