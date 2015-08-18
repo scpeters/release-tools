@@ -85,7 +85,7 @@ DEPENDENCY_PKGS="devscripts \
 		 dh-make \
 		 mercurial \
 		 git \
-		 cbds"
+		 cdbs"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
