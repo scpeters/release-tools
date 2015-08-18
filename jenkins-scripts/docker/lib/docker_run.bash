@@ -35,10 +35,12 @@ sudo docker rm ${CID} || true
 ls -las ${d}
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
     ls -las ${d}
+    sudo chown -R jenkins ${d}
     mv ${d} ${WORKSPACE}/
 done
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
+    sudo chown -R jenkins ${WORKSPACE}/build ${d}
     # Clean the whole build directory
     rm -fr ${WORKSPACE}/build
     # Mimic old layout of exported test results
@@ -47,7 +49,6 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
        mv ${d} ${WORKSPACE}/build/
     done
 fi
-
 
 if [[ $ret != 0 ]]; then
     echo "Docker container returned a non zero value"
