@@ -36,6 +36,7 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: create the orig/source package'
 echo | dh_make -s --createorig -p ros-$ROS_DISTRO-${PACKAGE}_${VERSION} || true
+ls ../*
 debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 echo '# END SECTION'
 
