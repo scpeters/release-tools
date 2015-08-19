@@ -34,12 +34,17 @@ git checkout release/$ROS_DISTRO/$PACKAGE_UNDERSCORE_NAME/\$FULL_VERSION
 git checkout debian/\$FULL_DEBIAN_BRANCH_NAME
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: create the orig package'
+echo '# BEGIN SECTION: create the orig/source package'
 echo | dh_make -s --createorig -p ros-$ROS_DISTRO-${PACKAGE}_${VERSION} || true
+debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
+cat debian/control
 mk-build-deps -r -i debian/control --tool 'apt-get --no-install-recommends --yes'
+mk-build-deps -r -i debian/control
+ar p *.deb data.tar.gz | tar zx
+cat DEBIAN/control
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running rosdep'
