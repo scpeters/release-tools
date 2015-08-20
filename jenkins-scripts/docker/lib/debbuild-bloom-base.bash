@@ -43,7 +43,6 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 cat debian/control
 mk-build-deps -r -i debian/control --tool 'apt-get --no-install-recommends --yes'
-mk-build-deps -r -i debian/control
 ar p *.deb data.tar.gz | tar zx
 cat DEBIAN/control
 echo '# END SECTION'
