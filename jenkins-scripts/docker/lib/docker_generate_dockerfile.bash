@@ -89,6 +89,17 @@ RUN apt-add-repository -y ppa:dartsim
 DELIM_DOCKER_DART_PKGS
 fi
 
+# Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
+# string in the moth year str
+if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
+cat >> Dockerfile << DELIM_DOCKER_INVALIDATE
+RUN echo 'BEGIN SECTION: invalidate full docker cache'
+RUN echo "Detecting content in INVALIDATE_DOCKER_CACHE. Invalidating it"
+RUN echo "Invalidate cache enabled. ${DOCKER_RND_ID}"
+RUN echo 'END SECTION'
+DELIM_DOCKER_INVALIDATE
+fi
+
 cat >> Dockerfile << DELIM_DOCKER3
 # Invalidate cache monthly
 # This is the firt big installation of packages on top of the raw image. 
