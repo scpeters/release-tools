@@ -41,8 +41,9 @@ debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
+dpkg -l | grep ros
 cat debian/control
-mk-build-deps -r -i debian/control --tool 'apt-get --no-install-recommends --yes'
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
 ar p *.deb data.tar.gz | tar zx
 cat DEBIAN/control
 echo '# END SECTION'
