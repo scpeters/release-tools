@@ -16,6 +16,8 @@ fi
 # testing jobs and seems to be slow at the end of jenkins jobs
 export ENABLE_REAPER=false
 
+# Define the name to be used in docker
+DOCKER_JOB_NAME="${PACKAGE}_debbuild"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
@@ -25,42 +27,15 @@ cat > build.sh << DELIM
 #!/usr/bin/env bash
 set -ex
 
-# ccache is sometimes broken and has now reason to be used here
-# http://lists.debian.org/debian-devel/2012/05/msg00240.html
-echo "unset CCACHEDIR" >> /etc/pbuilderrc
-
-# Install deb-building tools
-apt-get install -y pbuilder fakeroot debootstrap devscripts dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
-
-if $ENABLE_ROS; then
-# get ROS repo's key, to be used in creating the pbuilder chroot (to allow it to install packages from that repo)
-sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list'
-wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
-fi
-
-# Also get gazebo repo's key, to be used in getting Gazebo
-sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list'
-wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+# Need to run apt-get update to get latest osrf releases
 apt-get update
-
-# Hack to avoid problem with non updated 
-if [ $DISTRO = 'precise' ]; then
-  echo "Skipping pbuilder check for outdated info"
-  sed -i -e 's:UbuntuDistroInfo().devel():self.target_distro:g' /usr/bin/pbuilder-dist
-fi
-
-# Step 0: create/update distro-specific pbuilder environment
-# Fix segfault when using two repositories by setting OTHERMIRROR env variable
-if $ENABLE_ROS; then
-OTHERMIRROR='deb http://packages.ros.org/ros/ubuntu $DISTRO main|deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse' pbuilder-dist $DISTRO $ARCH create --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
-else
-pbuilder-dist $DISTRO $ARCH create --othermirror "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main|deb $ubuntu_repo_url $DISTRO-updates main restricted universe multiverse" --keyring /etc/apt/trusted.gpg --debootstrapopts --keyring=/etc/apt/trusted.gpg --mirror $ubuntu_repo_url
-fi
 
 # Step 0: Clean up
 rm -rf $WORKSPACE/build
 mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
+
+echo '# BEGIN SECTION: import the debian metadata'
 
 # Hack to support gazebo-current and friends
 # REAL_PACKAGE_NAME is used to refer to code directory name
@@ -136,6 +111,17 @@ fi
 # handled by symlinks (like cmake) in the repository can not be copied directly. 
 # Need special care to copy, using first a --dereference
 cp -a --dereference /tmp/$PACKAGE-release/${RELEASE_REPO_DIRECTORY}/* .
+# TODO: remove, debug
+cat debian/rules
+
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: install build ependencies'
+
+# Build dependencies
+mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
+rm *build-deps*.deb
+echo '# END SECTION'
 
 # Step 5: use debuild to create source package
 #TODO: create non-passphrase-protected keys and remove the -uc and -us args to debuild
@@ -187,7 +173,9 @@ echo "HOOKDIR=\$PBUILD_DIR" > \$HOME/.pbuilderrc
 export DEB_BUILD_OPTIONS=parallel=${MAKE_JOBS}
 
 # Step 6: use pbuilder-dist to create binary package(s)
-pbuilder-dist $DISTRO $ARCH build ../*.dsc -j${MAKE_JOBS} --mirror $ubuntu_repo_url
+pwd
+debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
+ls ..
 
 # Set proper package names
 if $NIGHTLY_MODE; then
@@ -201,7 +189,12 @@ fi
 mkdir -p $WORKSPACE/pkgs
 rm -fr $WORKSPACE/pkgs/*
 
-PKGS=\`find /var/lib/jenkins/pbuilder/*_result* -name *.deb || true\`
+# Copy source package files
+# cp ../*.dsc $WORKSPACE/pkgs
+# cp ../*.orig.* $WORKSPACE/pkgs
+# cp ../*.debian.* $WORKSPACE/pkgs
+
+PKGS=\`find .. -name '*.deb' || true\`
 
 FOUND_PKG=0
 for pkg in \${PKGS}; do
@@ -216,12 +209,68 @@ done
 test \$FOUND_PKG -eq 1 || exit 1
 DELIM
 
+cat > Dockerfile << DELIM_DOCKER
+#######################################################
+# Docker file to run build.sh
+
+FROM osrf/ubuntu_armhf:${DISTRO}
+MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
+
+# If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
+# By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
+RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
+RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
+  && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
+  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
+  || echo "No squid-deb-proxy detected on docker host"
+
+# Map the workspace into the container
+RUN mkdir -p ${WORKSPACE}
+# automatic invalidation of the cache if day is different
+RUN echo "${TODAY_STR}"
+RUN apt-get update
+RUN apt-get install -y fakeroot debootstrap devscripts equivs dh-make ubuntu-dev-tools mercurial debhelper wget pkg-kde-tools bash-completion
+
+RUN \
+    echo '# BEGIN SECTION: install base image packages' && \\
+
+    if $ENABLE_ROS; then \\
+       sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > /etc/apt/sources.list.d/ros-latest.list' && \\
+       wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add - ; \\
+   fi && \\
+
+   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu $DISTRO main" > /etc/apt/sources.list.d/gazebo.list' && \\
+   wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \\
+   apt-get update && \\
+
+   echo '# END SECTION'
+
+ADD build.sh build.sh
+RUN chmod +x build.sh
+DELIM_DOCKER
+
 #
 # Make project-specific changes here
 ###################################################
 
-sudo mkdir -p /var/packages/gazebo/ubuntu
-sudo pbuilder  --execute \
-    --bindmounts "$WORKSPACE /var/packages/gazebo/ubuntu" \
-    --basetgz $basetgz \
-    -- build.sh
+sudo rm -fr ${WORKSPACE}/pkgs
+sudo mkdir -p ${WORKSPACE}/pkgs
+
+if [[ $ARCH == armhf ]]; then
+  sudo docker pull osrf/ubuntu_armhf
+  sudo docker build -t ${DOCKER_TAG} .
+else
+  echo "Architecture still unsupported"
+  exit 1
+fi
+
+sudo docker run  \
+            --cidfile=${CIDFILE} \
+            -v ${WORKSPACE}/pkgs:${WORKSPACE}/pkgs \
+            -t ${DOCKER_TAG} \
+            /bin/bash build.sh
+
+CID=$(cat ${CIDFILE})
+
+sudo docker stop ${CID} || true
+sudo docker rm ${CID} || true

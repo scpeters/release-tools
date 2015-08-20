@@ -303,3 +303,10 @@ HAPTIX_COMM_DEPENDENCIES="pkg-config                \\
 			  libprotobuf-dev           \\
 			  protobuf-compiler         \\
                 	  liboctave-dev"
+
+#
+# HANDSIM
+#
+HANDSIM_DEPENDENCIES="libgazebo6-dev-prerelease \\
+                      liboctave-dev \\
+                      libhaptix-comm-dev"

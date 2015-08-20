@@ -1,6 +1,13 @@
 # Common instructions to create the building enviroment
 set -e
 
+# USE_GPU_DOCKER variable
+[[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=false
+
+if $USE_GPU_DOCKER; then
+   export GPU_SUPPORT_NEEDED=true
+fi
+
 # Default values - Provide them is prefered
 if [ -z ${DISTRO} ]; then
     DISTRO=trusty
@@ -28,6 +35,12 @@ fi
 # By default, do not need to use C++11 compiler
 if [ -z ${NEED_C11_COMPILER} ]; then
   NEED_C11_COMPILER=false
+fi
+
+# Transition for 4.8 -> 4.9 makes some optimization in the linking
+# which can break some software. Use it as a workaround in this case
+if [ -z ${NEED_GCC48_COMPILER} ]; then
+  NEED_GCC48_COMPILER=false
 fi
 
 # Only precise needs to install a C++11 compiler. Trusty on
@@ -129,6 +142,14 @@ export DOCKER_TAG="${DOCKER_JOB_NAME}"
 # It is used to invalidate cache
 TODAY_STR=$(date +%D)
 MONTH_YEAR_STR=$(date +%m%y)
+
+# Clean previous results in the workspace if any
+if [[ -z ${KEEP_WORKSPACE} ]]; then
+    # Clean previous results, need to next mv command not to fail
+    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+        sudo rm -fr ${d}
+    done
+fi
 
 rm -fr Dockerfile
 cd ${WORKSPACE}
