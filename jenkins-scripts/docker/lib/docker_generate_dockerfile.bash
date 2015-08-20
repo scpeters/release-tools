@@ -151,6 +151,21 @@ RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
 RUN apt-get update && \
     apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} && \
     rm -rf /var/lib/apt/lists/*
+# Map the workspace into the container
+RUN mkdir -p ${WORKSPACE}
+DELIM_DOCKER3
+
+cat >> Dockerfile << DELIM_DISPLAY
+DELIM_DISPLAY
+
+if [[ -n ${SOFTWARE_DIR} ]]; then
+cat >> Dockerfile << DELIM_DOCKER4
+COPY ${SOFTWARE_DIR} ${WORKSPACE}/${SOFTWARE_DIR}
+DELIM_DOCKER4
+fi
+
+if $USE_GPU_DOCKER; then
+cat >> Dockerfile << DELIM_DISPLAY
 ENV DISPLAY ${DISPLAY}
 
 # Check to be sure version of kernel graphic card support is the same.
@@ -161,17 +176,8 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
        echo "Maybe you need to update your host" \\
        exit 1 \\
    fi
-# Map the workspace into the container
-RUN mkdir -p ${WORKSPACE}
-DELIM_DOCKER3
+DELIM_DISPLAY
 
-if [[ -n ${SOFTWARE_DIR} ]]; then
-cat >> Dockerfile << DELIM_DOCKER4
-COPY ${SOFTWARE_DIR} ${WORKSPACE}/${SOFTWARE_DIR}
-DELIM_DOCKER4
-fi
-
-if $USE_GPU_DOCKER; then
 cat >> Dockerfile << DELIM_WORKAROUND_91
 # Workaround to issue:
 # https://bitbucket.org/osrf/handsim/issue/91
