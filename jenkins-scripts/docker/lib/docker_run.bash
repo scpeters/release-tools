@@ -34,19 +34,16 @@ sudo docker rm ${CID} || true
 # Export results out of build directory, to WORKSPACE
 ls -las ${d}
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
-    ls -las ${d}
-    sudo chown -R jenkins ${d}
-    mv ${d} ${WORKSPACE}/
+    sudo mv ${d} ${WORKSPACE}/
 done
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
-    sudo chown -R jenkins ${WORKSPACE}/build ${d}
     # Clean the whole build directory
-    rm -fr ${WORKSPACE}/build
+    sudo rm -fr ${WORKSPACE}/build
     # Mimic old layout of exported test results
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
-       mv ${d} ${WORKSPACE}/build/
+       sudo mv ${d} ${WORKSPACE}/build/
     done
 fi
 
