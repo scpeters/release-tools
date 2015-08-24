@@ -35,7 +35,7 @@ sudo docker rm ${CID} || true
 ls -las ${d}
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
     sudo mv ${d} ${WORKSPACE}/
-    sudo chown -R jenkins ${WORKSPACE}/${d}
+    sudo chown -R jenkins ${d}
 done
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
@@ -45,7 +45,7 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
        sudo mv ${d} ${WORKSPACE}/build/
-       chown jenkins -R ${WORKSPACE}/build/${d}
+       chown jenkins -R ${d}
     done
 fi
 
