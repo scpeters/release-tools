@@ -45,8 +45,9 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
        sudo mv ${d} ${WORKSPACE}/build/
-       chown jenkins -R ${d}
     done
+    
+    chown jenkins -R ${WORKSPACE}/build/
 fi
 
 if [[ $ret != 0 ]]; then
