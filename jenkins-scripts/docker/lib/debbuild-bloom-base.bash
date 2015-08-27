@@ -43,8 +43,8 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 dpkg -l | grep ros
 cat debian/control
-mk-build-deps -i debian/control --tool 'apt-get --no-install-recommends --yes'
-ar p *.deb data.tar.gz | tar zx
+mk-build-deps -i --tool 'apt-get --no-install-recommends --yes'
+mkdir -p $WORKSPACE/pkgs && cp *.deb $WORKSPACE/pkgs
 cat DEBIAN/control
 echo '# END SECTION'
 
