@@ -43,8 +43,9 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 dpkg -l | grep ros
 cat debian/control
-DEBIAN_FRONTEND=noninteractive mk-build-deps -i -r -t 'apt-get -y' debian/control 
+mk-build-deps -i --tool 'apt-get --no-install-recommends --yes'
 mkdir -p $WORKSPACE/pkgs && cp *.deb $WORKSPACE/pkgs
+sudo apt-get install ros-indigo-catkinros-indigo-geometry-msgsros-indigo-message-generationros-indigo-message-runtimeros-indigo-sensor-msgsros-indigo-std-msgsros-indigo-std-srvsros-indigo-trajectory-msgs
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running rosdep'
