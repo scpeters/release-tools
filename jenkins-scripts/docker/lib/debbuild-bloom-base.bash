@@ -56,22 +56,21 @@ echo '# BEGIN SECTION: create deb packages'
 debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
 echo '# END SECTION'
 
-# Set proper package names
-PKG_NAME=ros-${ROS_DISTRO}-${PACKAGE}_${VERSION}-${RELEASE_VERSION}${DISTRO}_${ARCH}.deb
-
-mkdir -p $WORKSPACE/pkgs
-rm -fr $WORKSPACE/pkgs/*
-
-PKGS=\`find /var/lib/jenkins/pbuilder/*_result* -name *.deb || true\`
+echo '# BEGIN SECTION: export pkgs'
+PKGS=\`find .. -name '*.deb' || true\`
 
 FOUND_PKG=0
 for pkg in \${PKGS}; do
     echo "found \$pkg"
+    # Check for correctly generated packages size > 3Kb
+    test -z \$(find \$pkg -size +3k) && echo "WARNING: empty package?" 
+    # && exit 1
     cp \${pkg} $WORKSPACE/pkgs
     FOUND_PKG=1
 done
 # check at least one upload
 test \$FOUND_PKG -eq 1 || exit 1
+echo '# END SECTION'
 DELIM
 
 #

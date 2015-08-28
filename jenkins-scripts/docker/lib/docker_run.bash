@@ -32,7 +32,6 @@ sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
 
 # Export results out of build directory, to WORKSPACE
-ls -las ${d}
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
     ls -las ${d}
     sudo chown -R jenkins ${d}
