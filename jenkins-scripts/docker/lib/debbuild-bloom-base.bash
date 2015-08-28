@@ -45,7 +45,7 @@ dpkg -l | grep ros
 cat debian/control
 mk-build-deps -i --tool 'apt-get --no-install-recommends --yes'
 mkdir -p $WORKSPACE/pkgs && cp *.deb $WORKSPACE/pkgs
-sudo apt-get install ros-indigo-catkinros-indigo-geometry-msgsros-indigo-message-generationros-indigo-message-runtimeros-indigo-sensor-msgsros-indigo-std-msgsros-indigo-std-srvsros-indigo-trajectory-msgs
+sudo apt-get install ros-indigo-catkin ros-indigo-geometry-msgs ros-indigo-message-generation ros-indigo-message-runtime ros-indigo-sensor-msgs ros-indigo-std-msgs ros-indigo-std-srvs ros-indigo-trajectory-msgs
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running rosdep'
