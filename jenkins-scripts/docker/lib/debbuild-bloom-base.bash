@@ -43,9 +43,8 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: install build dependencies'
 dpkg -l | grep ros
 cat debian/control
-mk-build-deps -i --tool 'apt-get --no-install-recommends --yes'
+DEBIAN_FRONTEND=noninteractive mk-build-deps -i -r -t 'apt-get -y' debian/control 
 mkdir -p $WORKSPACE/pkgs && cp *.deb $WORKSPACE/pkgs
-cat DEBIAN/control
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running rosdep'
