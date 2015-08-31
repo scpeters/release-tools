@@ -1,12 +1,13 @@
 # Common instructions to create the building enviroment
 set -e
 
-# USE_GPU_DOCKER variable
-[[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=false
-
-if $USE_GPU_DOCKER; then
-   export GPU_SUPPORT_NEEDED=true
+# GPU_SUPPORT_NEEDED to be use by the scripts.
+# USE_GPU_DOCKER by internal lib/ scripts
+if ${GPU_SUPPORT_NEEDED}; then
+    export USE_GPU_DOCKER=true
 fi
+
+[[ -z $USE_GPU_DOCKER ]] && export USE_GPU_DOCKER=false
 
 # Default values - Provide them is prefered
 if [ -z ${DISTRO} ]; then
