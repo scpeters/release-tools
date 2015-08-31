@@ -155,9 +155,6 @@ RUN apt-get update && \
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3
 
-cat >> Dockerfile << DELIM_DISPLAY
-DELIM_DISPLAY
-
 if [[ -n ${SOFTWARE_DIR} ]]; then
 cat >> Dockerfile << DELIM_DOCKER4
 COPY ${SOFTWARE_DIR} ${WORKSPACE}/${SOFTWARE_DIR}
