@@ -252,10 +252,16 @@ ROS_GAZEBO_PKGS_DEPENDENCIES="libtinyxml-dev                            \\
                               ros-${ROS_DISTRO}-joint-limits-interface  \\
                               ros-${ROS_DISTRO}-transmission-interface"
 
+
+
+if [[ ${ROS_DISTRO} == 'indigo' ]]; then
 # These dependencies are for testing the ros_gazebo_pkgs
-ROS_GAZEBO_PKGS_EXAMPLE_DEPS="ros-${ROS_DISTRO}-xacro                   \\
-                              ros-${ROS_DISTRO}-effort-controllers      \\
+ROS_GAZEBO_PKGS_EXAMPLE_DEPS="ros-${ROS_DISTRO}-effort-controllers      \\
                               ros-${ROS_DISTRO}-joint-state-controller"
+fi
+
+ROS_GAZEBO_PKGS_EXAMPLE_DEPS="ros-${ROS_DISTRO}-xacro \\
+                             ${ROS_GAZEBO_PKGS_EXAMPLE_DEPS}"
 
 #
 # DART dependencies

@@ -410,6 +410,12 @@ def go(argv):
 
     for d in distros:
         for a in UBUNTU_ARCHS:
+            if (NIGHTLY and a == 'i386'):
+                # only keep i386 for sdformat in nightly,
+                # just to test CI infrastructure
+                if (not args.package[:-1] == 'sdformat'):
+                    continue
+
             if (a == 'armhf'):
                 # Only release armhf in trusty for now
                 if (d != 'trusty'):
