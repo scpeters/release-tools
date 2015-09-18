@@ -31,8 +31,15 @@ export LANGUAGE=en_GB
 # Docker has problems with Qt X11 MIT-SHM extension
 export QT_X11_NO_MITSHM=1
 
-timeout 180 gazebo worlds/arat.world || { echo "Failure response in the launch command" ; exit 1 ; }
-echo "180 testing seconds finished successfully"
+TEST_START=\`date +%s\`
+sleep 1 && timeout --preserve-status 180 gazebo --verbose worlds/arat.world
+TEST_END=\`date +%s\`
+DIFF=\`echo "\$TEST_END - \$TEST_START" | bc\`
+
+if [ \$DIFF -lt 180 ]; then
+   echo "The test took less than 180s. Something bad happened"
+   exit 1
+fi
 echo '# END SECTION'
 DELIM
 
