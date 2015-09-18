@@ -1,8 +1,6 @@
 #!/bin/bash -x
 
 echo '# BEGIN SECTION: setup the testing enviroment'
-USE_OSRF_REPO=true
-USE_GPU_DOCKER=true
 DOCKER_JOB_NAME="handsim_ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 echo '# END SECTION'
@@ -12,9 +10,6 @@ cat > build.sh << DELIM
 # Make project-specific changes here
 #
 set -ex
-
-# Not really needed?
-# export DISPLAY=${DISPLAY}
 
 echo '# BEGIN SECTION: configuring'
 mkdir -p $WORKSPACE/build
@@ -43,6 +38,8 @@ echo '# END SECTION'
 DELIM
 
 SOFTWARE_DIR="handsim"
+USE_OSRF_REPO=true
 DEPENDENCY_PKGS="${HANDSIM_DEPENDENCIES}"
+
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash

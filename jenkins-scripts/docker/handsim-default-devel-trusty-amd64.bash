@@ -5,5 +5,6 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 export DISTRO=trusty
+export GPU_SUPPORT_NEEDED=true
 
 . ${SCRIPT_DIR}/lib/handsim-base-linux.bash

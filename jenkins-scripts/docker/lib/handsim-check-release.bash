@@ -1,13 +1,9 @@
 #!/bin/bash -x
 
-# Use always GPU in drcsim project
-export GPU_SUPPORT_NEEDED=true
-
-# Do not use the subprocess_reaper in debbuild. Seems not as needed as in
-# testing jobs and seems to be slow at the end of jenkins jobs
-export ENABLE_REAPER=false
-
+echo '# BEGIN SECTION: setup the testing enviroment'
+DOCKER_JOB_NAME="handsim_check_release"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
+echo '# END SECTION'
 
 cat > build.sh << DELIM
 ###################################################
@@ -41,7 +37,10 @@ echo '# END SECTION'
 DELIM
 
 USE_OSRF_REPO=true
-USE_GPU_DOCKER=true
+# Install gazebo dependencies to reduce the installation time
+# Don't install handsim dependencies to be sure that package manager
+# pulls all needed packages
+DEPENDENCY_PKGS="${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES}"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
