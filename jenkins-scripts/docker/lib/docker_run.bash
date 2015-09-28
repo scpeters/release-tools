@@ -1,10 +1,8 @@
 # TODO: run inside docker as a normal user and replace the sudo calls
-# This are usually for debbuilders
-sudo rm -fr ${WORKSPACE}/pkgs
-sudo mkdir -p ${WORKSPACE}/pkgs
-# This are usually for continous integration jobs
-sudo rm -fr ${WORKSPACE}/build
-sudo mkdir -p ${WORKSPACE}/build
+# Clean up relevant directories in the workspace
+for d in "pkgs build test_resuls"; do
+  sudo rm -fr ${WORKSPACE}/${d}
+done
 
 sudo docker build -t ${DOCKER_TAG} .
 
