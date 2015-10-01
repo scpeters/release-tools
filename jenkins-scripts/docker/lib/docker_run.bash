@@ -2,6 +2,7 @@
 # Clean up relevant directories in the workspace
 for d in "pkgs build test_resuls"; do
   sudo rm -fr ${WORKSPACE}/${d}
+  sudo mkdir -p ${WORKSPACE}/${d}
 done
 
 sudo docker build -t ${DOCKER_TAG} .
