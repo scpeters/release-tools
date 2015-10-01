@@ -1,6 +1,6 @@
 # TODO: run inside docker as a normal user and replace the sudo calls
 # Clean up relevant directories in the workspace
-for d in "pkgs build test_resuls"; do
+for d in pkgs build test_resuls; do
   sudo rm -fr ${WORKSPACE}/${d}
   sudo mkdir -p ${WORKSPACE}/${d}
 done
