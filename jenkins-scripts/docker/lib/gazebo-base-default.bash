@@ -43,6 +43,11 @@ if $DART_COMPILE_FROM_SOURCE; then
   else
      git clone https://github.com/dartsim/dart.git $WORKSPACE/dart
   fi
+
+  cd $WORKSPACE/dart
+  [[ -z ${DART_COMPILE_FROM_SOURCE_BRANCH} ]] && DART_COMPILE_FROM_SOURCE_BRANCH="default"
+  git checkout ${DART_COMPILE_FROM_SOURCE_BRANCH}
+
   rm -fr $WORKSPACE/dart/build
   mkdir -p $WORKSPACE/dart/build
   cd $WORKSPACE/dart/build
