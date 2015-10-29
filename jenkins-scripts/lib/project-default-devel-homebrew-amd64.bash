@@ -99,21 +99,4 @@ ${RUN_DIR}/bin/cmake ${WORKSPACE}/${PROJECT_PATH} \
 make -j${MAKE_JOBS} ${MAKE_VERBOSE_STR} install
 ${RUN_DIR}/bin/brew link ${PROJECT}
 
-cat > test_run.sh << DELIM
-cd $WORKSPACE/build/
-export PKG_CONFIG_PATH=${RUN_DIR}/lib/pkgconfig
-export DYLD_FALLBACK_LIBRARY_PATH=${RUN_DIR}/lib
-export BOOST_ROOT=${RUN_DIR}
-export PATH="${PATH}:${RUN_DIR}/bin"
-export CMAKE_PREFIX_PATH=${RUN_DIR}
-
-# Need to clean up models before run tests (issue 27)
-rm -fr \$HOME/.gazebo/models
-make test ARGS="-VV" || true
-DELIM
-
-chmod +x test_run.sh
-sudo  ./test_run.sh
-
-# Step 5. Clean up
-rm -fr ${RUN_DIR}
+# IMPORTANT: do not merge this removal
