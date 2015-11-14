@@ -3,7 +3,6 @@ ENABLEEXTENSIONS
 
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
 set TEST_RESULT_PATH2=%WORKSPACE%\test_results
-set TEST_RESULT_PATH=%WORKSPACE%\test_results
 
 :: Call vcvarsall and all the friends
 echo # BEGIN SECTION: configure the MSVC compiler
@@ -52,14 +51,7 @@ cd %WORKSPACE%\workspace\ign-transport || goto :error
 mkdir build
 cd build
 call "..\configure.bat" %BUILD_TYPE% %BITNESS% || goto :error
-
-nmake || goto :error
 echo # END SECTION
-
-echo # BEGIN SECTION: ign-transport installation
-nmake install || goto :error
-echo # END SECTION
-
 
 if NOT "%IGN_TEST_DISABLE%" == "TRUE" (
   echo # BEGIN SECTION: run tests
@@ -70,6 +62,7 @@ if NOT "%IGN_TEST_DISABLE%" == "TRUE" (
   
   echo # BEGIN SECTION: export testing results
   set TEST_RESULT_PATH_LEGACY=%WORKSPACE%\build\test_results
+  set TEST_RESULT_PATH=%WORKSPACE%\test_results
   echo "PATH: %TEST_RESULT_PATH%"
   echo "PATH2: %TEST_RESULT_PATH2%"
   rmdir /q /s %TEST_RESULT_PATH%
