@@ -64,7 +64,7 @@ if NOT "%IGN_TEST_DISABLE%" == "TRUE" (
   echo # BEGIN SECTION: run tests
   REM nmake test is not working test/ directory exists and nmake is not
   REM able to handle it.
-  ctest -C "%BUILD_TYPE%" --force-new-ctest-process -VV  || echo "tests failed"
+  REM ctest -C "%BUILD_TYPE%" --force-new-ctest-process -VV  || echo "tests failed"
   echo # END SECTION
   
   echo # BEGIN SECTION: export testing results
