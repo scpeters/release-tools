@@ -1,6 +1,8 @@
+ENABLEEXTENSIONS
 :echo on
 
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
+set TEST_RESULT_PATH2=%WORKSPACE%\test_results
 
 :: Call vcvarsall and all the friends
 echo # BEGIN SECTION: configure the MSVC compiler
@@ -66,9 +68,10 @@ if NOT "%IGN_TEST_DISABLE%" == "TRUE" (
   echo # END SECTION
   
   echo # BEGIN SECTION: export testing results
-  set TEST_RESULT_PATH="%WORKSPACE%\test_results"
+  set TEST_RESULT_PATH=%WORKSPACE%\test_results
   set TEST_RESULT_PATH_LEGACY=%WORKSPACE%\build\test_results
   echo "PATH: %TEST_RESULT_PATH%"
+  echo "PATH2: %TEST_RESULT_PATH2%"
   rmdir /q /s %TEST_RESULT_PATH%
   rmdir /q /s "%WORKSPACE%\test_results"
   set TEST_RESULT_PATH_LEGACY=%WORKSPACE%\build\test_results
