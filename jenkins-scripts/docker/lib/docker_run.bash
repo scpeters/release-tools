@@ -28,9 +28,6 @@ sudo docker run $GPU_PARAMS_STR  \
 
 CID=$(cat ${CIDFILE})
 
-sudo docker stop ${CID} || true
-sudo docker rm ${CID} || true
-
 # Export results out of build directory, to WORKSPACE
 for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
     sudo mv ${d} ${WORKSPACE}/
@@ -38,13 +35,17 @@ for d in $(find ${WORKSPACE}/build -name '*_results' -type d); do
 done
 
 if [[ -z ${KEEP_WORKSPACE} ]]; then
+    # Clean docker_container
+    sudo docker stop ${CID} || true
+    sudo docker rm ${CID} || true
     # Clean the whole build directory
     sudo rm -fr ${WORKSPACE}/build
-    # Mimic old layout of exported test results
-    mkdir ${WORKSPACE}/build
-    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
-       sudo mv ${d} ${WORKSPACE}/build/
-    done
-    
-    sudo chown jenkins -R ${WORKSPACE}/build/
 fi
+
+# Mimic old layout of exported test results
+mkdir -p ${WORKSPACE}/build
+for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+   sudo mv ${d} ${WORKSPACE}/build/
+done
+
+sudo chown jenkins -R ${WORKSPACE}/build/
