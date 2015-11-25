@@ -228,3 +228,53 @@ ci_distro.each { distro ->
   }
 }
 
+// INSTALL LINUX -DEV PACKAGES ALL PLATFORMS @ CRON/DAILY
+sdformat_supported_branches.each { branch ->
+  ci_distro.each { distro ->
+    supported_arches.each { arch ->
+      // --------------------------------------------------------------
+      def install_default_job = job("sdformat-install-${branch}_pkg-${distro}-${arch}")
+      OSRFLinuxInstall.create(install_default_job)
+      install_default_job.with
+      {
+         triggers {
+           cron('@daily')
+         }
+
+         def dev_package = "lib${branch}-dev"
+
+         steps {
+          shell("""\
+                #!/bin/bash -xe
+
+                export DISTRO=${distro}
+                export ARCH=${arch}
+                export INSTALL_JOB_PKG=${dev_package}
+                export INSTALL_JOB_REPOS=stable
+                /bin/bash -x ./scripts/jenkins-scripts/docker/generic-install-test-job.bash
+                """.stripIndent())
+
+      }
+    } // end of arch
+  } // end of distro
+} // end of branch
+
+// --------------------------------------------------------------
+// DEBBUILD: linux package builder
+
+all_debbuild_branches = sdformat_supported_branches + nightly_sdformat_branch
+all_debbuild_branches.each { branch ->
+  def build_pkg_job = job("${branch}-debbuilder")
+  OSRFLinuxBuildPkg.create(build_pkg_job)
+
+  build_pkg_job.with
+  {
+      steps {
+        shell("""\
+              #!/bin/bash -xe
+
+              /bin/bash -x ./scripts/jenkins-scripts/docker/multidistribution-sdformat-debbuild.bash
+              """.stripIndent())
+      }
+  }
+}
