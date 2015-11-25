@@ -195,7 +195,6 @@ sdformat_supported_branches.each { branch ->
     } // end of arch
   } // end of distro
 } // end of distro
-//
 
 // EXPERIMENTAL ARCHES @ SCM/WEEKLY
 ci_distro.each { distro ->
@@ -260,41 +259,6 @@ sdformat_supported_branches.each { branch ->
   } // end of distro
 } // end of branch
 
-/*
-// --------------------------------------------------------------
-// PERFORMANCE: linux performance test
-ci_distro.each { distro ->
-  supported_arches.each { arch ->
-    def performance_job = job("sdformat-performance-default-${distro}-${arch}")
-    OSRFLinuxPerformance.create(performance_job)
-    performance_job.with
-    {
-      scm
-      {
-        hg("http://bitbucket.org/osrf/sdformat") {
-          branch('default')
-          subdirectory("sdformat")
-        }
-      }
-
-      triggers {
-        scm('@daily')
-      }
-
-      steps {
-        shell("""\
-              #!/bin/bash -xe
-
-              export DISTRO=${distro}
-              export ARCH=${arch}
-              /bin/bash -xe ./scripts/jenkins-scripts/docker/sdformat-compilation.bash
-              """.stripIndent())
-      } // end of steps
-    } // end of with
-  } // end of arch
-} // end of distro
-*/
-
 // --------------------------------------------------------------
 // DEBBUILD: linux package builder
 
@@ -357,49 +321,6 @@ all_branches.each { branch ->
               #!/bin/bash -xe
 
               /bin/bash -xe ./scripts/jenkins-scripts/sdformat-default-devel-homebrew-amd64.bash
-              """.stripIndent())
-      }
-  }
-}
-
-// --------------------------------------------------------------
-// WINDOWS: CI job
-
-// 1. any
-  def sdformat_win_ci_any_job = job("sdformat-ci-pr_any-windows7-amd64")
-  OSRFWinCompilationAny.create(sdformat_win_ci_any_job,
-                                "http://bitbucket.org/osrf/sdformat")
-  sdformat_win_ci_any_job.with
-  {
-      steps {
-        batchFile("""\
-              call "./scripts/jenkins-scripts/sdformat-default-devel-windows-amd64.bat"
-              """.stripIndent())
-      }
-  }
-
-// 2. default / @ SCM/Daily
-all_branches = sdformat_supported_branches + 'default'
-all_branches.each { branch ->
-  def sdformat_win_ci_job = job("sdformat-ci-${branch}-windows7-amd64")
-  OSRFWinCompilation.create(sdformat_win_ci_job)
-
-  sdformat_win_ci_job.with
-  {
-      scm
-      {
-        hg("http://bitbucket.org/osrf/sdformat",
-           'default',
-           { node -> node / subdir << "sdformat" })
-      }
-
-      triggers {
-        scm('@daily')
-      }
-
-      steps {
-        batchFile("""\
-              call "./scripts/jenkins-scripts/sdformat-default-devel-windows-amd64.bat"
               """.stripIndent())
       }
   }
