@@ -22,10 +22,6 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: compiling'
 init_stopwatch COMPILATION
 make -j${MAKE_JOBS}
-echo '# END SECTION'
-
-echo '# BEGIN SECTION: installing'
-make install
 stop_stopwatch COMPILATION
 echo '# END SECTION'
 
@@ -34,6 +30,10 @@ init_stopwatch TEST
 mkdir -p \$HOME
 make test ARGS="-VV" || true
 stop_stopwatch TEST
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: installing'
+make install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: cppcheck'
