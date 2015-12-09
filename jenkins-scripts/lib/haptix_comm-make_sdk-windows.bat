@@ -9,8 +9,11 @@ set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
 
 :: remove previous packages
 del %WORKSPACE%\pkgs\*.zip
-:: Default branches
-@if "%IGN_TRANSPORT_BRANCH%" == "" set IGN_TRANSPORT_BRANCH=default
+
+:: TODO: modified just for the release of handsim with an old ign-transport
+:: API. Never merge please.
+@if "%IGN_TRANSPORT_BRANCH%" == "" set IGN_TRANSPORT_BRANCH=ign_transport_for_haptix_comm_sdk
+
 @if "%HAPTIX_COMM_BRANCH%" == "" set HAPTIX_COMM_BRANCH=default
 
 @set PLATFORM_TO_BUILD=x86
