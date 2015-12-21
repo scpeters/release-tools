@@ -42,12 +42,12 @@ add_skip_headers()
 {
   local file=\$1 install_path=\$2
 
-  if [[ -n ${ABI_JOB_SKIP_HEADERS} ]];then
+  if [[ -n ${ABI_JOB_SKIP_HEADERS} ]]; then
     SKIP_HEADER_STR='<skip_headers>\n'
     for p in ${ABI_JOB_SKIP_HEADERS}; do
       SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}"
     done
-    SKIP_HEADER_STR="\${SKIP_HEADER_STR} <skip_headers>\n'
+    SKIP_HEADER_STR="\${SKIP_HEADER_STR} </skip_headers>\n'
 
     echo -e \${SKIP_HEADER_STR} >> pkg.xml
   fi
