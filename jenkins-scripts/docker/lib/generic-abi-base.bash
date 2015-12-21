@@ -42,7 +42,7 @@ add_skip_headers()
 {
   local file=\$1 install_path=\$2
 
-  if [[ -n ${ABI_JOB_SKIP_HEADERS} ]]; then
+  if [ `expr length "${ABI_JOB_SKIP_HEADERS}"` -gt 1 ]; then
     SKIP_HEADER_STR='<skip_headers>\n'
     for p in ${ABI_JOB_SKIP_HEADERS}; do
       SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}"
