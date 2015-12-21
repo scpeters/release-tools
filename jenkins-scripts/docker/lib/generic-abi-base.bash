@@ -47,7 +47,7 @@ add_skip_headers()
     for p in ${ABI_JOB_SKIP_HEADERS}; do
       SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}"
     done
-    SKIP_HEADER_STR="\${SKIP_HEADER_STR} </skip_headers>\n'
+    SKIP_HEADER_STR="\${SKIP_HEADER_STR} </skip_headers>\n"
 
     echo -e \${SKIP_HEADER_STR} >> pkg.xml
   fi
