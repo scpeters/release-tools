@@ -7,8 +7,9 @@
 # ABI_JOB_POSTCHECKER_HOOK (optional) code to run after checking
 # ABI_JOB_REPOS: OSRF repositories to use
 # ABI_JOB_PKG_DEPENDENCIES: (optional) list (space separated) of pkg dependencies
-# ABI_JOB_PKG_DEPENDENCIES_VAR_NAME: (option) variable in archive to get dependencies from
-# ABI_JOB_CMAKE_PARAMS: (option) cmake parameters to be pased to cmake configuration
+# ABI_JOB_PKG_DEPENDENCIES_VAR_NAME: (optional) variable in archive to get dependencies from
+# ABI_JOB_CMAKE_PARAMS: (optional) cmake parameters to be pased to cmake configuration
+# ABI_JOB_SKIP_HEADERS: (optional) relative path from the root of project of headers to ignore
 
 # Jenkins variables:
 # ORIGIN_BRANCH
@@ -27,6 +28,7 @@ if [[ "${ABI_JOB_PKG_DEPENDENCIES_VAR_NAME}" != "" ]]; then
   eval ABI_JOB_PKG_DEPENDENCIES="\$${ABI_JOB_PKG_DEPENDENCIES_VAR_NAME} ${ABI_JOB_PKG_DEPENDENCIES}"
 fi
 
+
 cat > build.sh << DELIM
 #!/bin/bash
 
@@ -34,6 +36,22 @@ cat > build.sh << DELIM
 # Make project-specific changes here
 #
 set -ex
+
+# helper function to get abi config skip headers option (if set)
+add_skip_headers()
+{
+  local file=\$1 install_path=\$2
+
+  if [[ -n ${ABI_JOB_SKIP_HEADERS} ]];then
+    SKIP_HEADER_STR='<skip_headers>\n'
+    for p in ${ABI_JOB_SKIP_HEADERS}; do
+      SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}"
+    done
+    SKIP_HEADER_STR="\${SKIP_HEADER_STR} <skip_headers>\n'
+
+    echo -e \${SKIP_HEADER_STR} >> pkg.xml
+  fi
+}
 
 if [ `expr length "${ABI_JOB_PRECHECKER_HOOK} "` -gt 1 ]; then
 echo '# BEGIN SECTION: running pre ABI hook'
@@ -99,6 +117,9 @@ cat > pkg.xml << CURRENT_DELIM
  </libs>
 CURRENT_DELIM
 
+# Add skip headers when needed
+add_skip_headers pkg.xml /usr/local/origin_branch/include/\$ORIGIN_DIR
+
 cat > devel.xml << DEVEL_DELIM
  <version>
      branch: $TARGET_BRANCH
@@ -116,6 +137,9 @@ cat > devel.xml << DEVEL_DELIM
      -std=c++11
  </gcc_options>
 DEVEL_DELIM
+
+# Add skip headers when needed
+add_skip_headers pkg.xml /usr/local/origin_branch/include/\$TARGET_DIR
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: run the ABI checker'
