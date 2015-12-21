@@ -45,7 +45,7 @@ add_skip_headers()
   if [ `expr length "${ABI_JOB_SKIP_HEADERS}"` -gt 1 ]; then
     SKIP_HEADER_STR='<skip_headers>\n'
     for p in ${ABI_JOB_SKIP_HEADERS}; do
-      SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}"
+      SKIP_HEADER_STR="\${SKIP_HEADER_STR} \${install_path}/\${p}\n"
     done
     SKIP_HEADER_STR="\${SKIP_HEADER_STR} </skip_headers>\n"
 
@@ -139,7 +139,7 @@ cat > devel.xml << DEVEL_DELIM
 DEVEL_DELIM
 
 # Add skip headers when needed
-add_skip_headers pkg.xml /usr/local/origin_branch/include/\$TARGET_DIR
+add_skip_headers devel.xml /usr/local/origin_branch/include/\$TARGET_DIR
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: run the ABI checker'
