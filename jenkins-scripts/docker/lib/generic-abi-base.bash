@@ -49,7 +49,7 @@ add_skip_headers()
     done
     SKIP_HEADER_STR="\${SKIP_HEADER_STR} </skip_headers>\n"
 
-    echo -e \${SKIP_HEADER_STR} >> pkg.xml
+    echo -e \${SKIP_HEADER_STR} >> ${file}
   fi
 }
 
