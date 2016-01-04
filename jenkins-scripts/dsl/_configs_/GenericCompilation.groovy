@@ -10,18 +10,28 @@ import javaposse.jobdsl.dsl.Job
 */
 class GenericCompilation
 {
-   static void create(Job job)
+
+   static String get_compilation_mail_content()
    {
-     def mail_content ='''\
+      return '''\
      $DEFAULT_CONTENT
+
+     ${BUILD_LOG_REGEX, regex="^.*: (fatal ){0,1}error.*$",  linesBefore="5", linesAfter="5", maxMatches=0, showTruncatedLines=false}
 
      Test summary:
      -------------
-      * Total of ${TEST_COUNTS, var="total"} tests : ${TEST_COUNTS, var="fail"} failed and ${TEST_COUNTS, var="skip"
+      * Total of ${TEST_COUNTS, var="total"} tests : ${TEST_COUNTS, var="fail"} failed and ${TEST_COUNTS, var="skip"}
 
      Data log:
      ${FAILED_TESTS}
      '''.stripIndent()
+   }
+
+   static void create(Job job)
+   {
+
+     GenericMail.update_field(job, 'defaultContent',
+                              GenericCompilation.get_compilation_mail_content())
 
      job.with
      {
@@ -33,35 +43,14 @@ class GenericCompilation
 
         publishers
         {
-           // remove the existing 'extendedEmail' element
+           // junit plugin is not implemented. Use configure for it
            configure { project ->
-                project.remove(project / publishers << 'hudson.plugins.emailext.ExtendedEmailPublisher')
-           }
-
-           // special content with testing failures
-           extendedEmail('$DEFAULT_RECIPIENTS, scpeters@osrfoundation.org',
-                         '$DEFAULT_SUBJECT',
-                          mail_content)
-           {
-              trigger(triggerName: 'Failure',
-                      subject: null, body: null, recipientList: null,
-                      sendToDevelopers: true,
-                      sendToRequester: true,
-                      includeCulprits: false,
-                      sendToRecipientList: true)
-              trigger(triggerName: 'Unstable',
-                      subject: null, body: null, recipientList: null,
-                      sendToDevelopers: true,
-                      sendToRequester: true,
-                      includeCulprits: false,
-                      sendToRecipientList: true)
-              trigger(triggerName: 'Fixed',
-                      subject: null, body: null, recipientList: null,
-                      sendToDevelopers: true,
-                      sendToRequester: true,
-                      includeCulprits: false,
-                      sendToRecipientList: true)
-           }
+              project / publishers << 'hudson.tasks.junit.JUnitResultArchiver' {
+                   testResults('build/test_results/*.xml')
+                   keepLongStdio false
+                   testDataPublishers()
+              }
+          }
         } // end of publishers
       } // end of job
    } // end of create

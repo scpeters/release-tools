@@ -1,10 +1,10 @@
-import _configs_.OSRFLinuxCompilation
-import _configs_.OSRFLinuxInstall
-import _configs_.OSRFLinuxBuildPkg
+import _configs_.*
 import javaposse.jobdsl.dsl.Job
 
 def supported_distros = [ 'trusty' ]
 def supported_arches = [ 'amd64' ]
+
+Globals.extra_emails = "ichen@osrfoundation.org"
 
 supported_distros.each { distro ->
   supported_arches.each { arch ->
@@ -62,7 +62,9 @@ supported_distros.each { distro ->
         steps {
           shell("""#!/bin/bash -xe
 
-                /bin/bash -x ./scripts/jenkins-scripts/docker/sdformat-default-devel-trusty-amd64.bash
+                export DISTRO=${distro}
+                export ARCH=${arch}
+                /bin/bash -xe ./scripts/jenkins-scripts/docker/sdformat-compilation.bash
                 """.stripIndent())
         }
     }
@@ -105,7 +107,7 @@ supported_distros.each { distro ->
     install_default_job.with
     {
         triggers {
-          scm('@daily')
+          cron('@daily')
         }
 
         steps {

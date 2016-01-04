@@ -3,10 +3,12 @@ package _configs_
 import javaposse.jobdsl.dsl.Job
 
 /*
+  -> OSRFLinuxBase
+  -> GenericRemoteToken
+
   Implements:
     - priorioty 300
     - keep only 10 last artifacts
-    - concurrent builds
     - parameters:
         - PACKAGE
         - VERSION
@@ -23,21 +25,10 @@ import javaposse.jobdsl.dsl.Job
 class OSRFLinuxBuildPkg extends OSRFLinuxBase
 
 {  
-  // FIXME getEnvVars can not be called in a static scope. Hardcoded by now.
-  // static File token_file = new File(build.getEnvVars()['HOME'] + '/remote_token')
-  static File token_file = new File('/var/lib/jenkins/remote_token')
-
   static void create(Job job)
   {
     OSRFLinuxBase.create(job)
-
-    if (! token_file.exists()) {
-      println("!!! token file was not found for setting the remote password")
-      println("check your filesystem in the jenkins node for: ")
-      println(token_file)
-      // We can not use exit here, DSL job hangs
-      buildUnstable()
-    }
+    GenericRemoteToken.create(job)
 
     job.with
     {
@@ -47,23 +38,16 @@ class OSRFLinuxBuildPkg extends OSRFLinuxBase
         artifactNumToKeep(10)
       }
 
-      concurrentBuild(true)
-
-      throttleConcurrentBuilds {
-	maxPerNode(1)
-	maxTotal(5)
-      }
-
       parameters {
-        textParam("PACKAGE",null,"Package name to be built")
-        textParam("VERSION",null,"Packages version to be built")
-        textParam("RELEASE_VERSION", null, "Packages release version")
-        textParam("DISTRO", null, "Ubuntu distribution to build packages for")
-        textParam("ARCH", null, "Architecture to build packages for")
-        textParam("SOURCE_TARBALL_URI", null, "URL to the tarball containing the package sources")
-        textParam("RELEASE_REPO_BRANCH", null, "Branch from the -release repo to be used")
-        textParam("PACKAGE_ALIAS", null, "If not empty, package name to be used instead of PACKAGE")
-        textParam("UPLOAD_TO_REPO", null, "OSRF repo name to upload the package to")
+        stringParam("PACKAGE",null,"Package name to be built")
+        stringParam("VERSION",null,"Packages version to be built")
+        stringParam("RELEASE_VERSION", null, "Packages release version")
+        stringParam("DISTRO", null, "Ubuntu distribution to build packages for")
+        stringParam("ARCH", null, "Architecture to build packages for")
+        stringParam("SOURCE_TARBALL_URI", null, "URL to the tarball containing the package sources")
+        stringParam("RELEASE_REPO_BRANCH", null, "Branch from the -release repo to be used")
+        stringParam("PACKAGE_ALIAS", null, "If not empty, package name to be used instead of PACKAGE")
+        stringParam("UPLOAD_TO_REPO", null, "OSRF repo name to upload the package to")
       }
 
       steps {
@@ -95,12 +79,6 @@ class OSRFLinuxBuildPkg extends OSRFLinuxBase
 	  }
         }
       }
-
-      // remote calls don't have DSL implementation
-      configure { project ->
-        project / authToken(token_file.text.replaceAll("[\n\r]", ""))
-      }
-
     } // end of job
   } // end of method createJob
 } // end of class

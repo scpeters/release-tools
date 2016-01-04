@@ -124,7 +124,7 @@ fi
 # Dart repositories
 if ${DART_FROM_PKGS} || ${DART_COMPILE_FROM_SOURCE}; then
 cat >> Dockerfile << DELIM_DOCKER_DART_PKGS
-# Install dart from pkgs 
+# Install dart from pkgs
 RUN apt-get install -y apt-utils software-properties-common
 RUN apt-add-repository -y ppa:libccd-debs
 RUN apt-add-repository -y ppa:fcl-debs

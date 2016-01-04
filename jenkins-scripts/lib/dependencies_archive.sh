@@ -30,14 +30,18 @@ if $DART_FROM_PKGS; then
     fi
 fi
 
-# mesa-utils for dri checks and xsltproc for qtest->junit conversion
+# mesa-utils for dri checks, xsltproc for qtest->junit conversion and
+# python-psutil for memory testing
 BASE_DEPENDENCIES="build-essential \\
                    cmake           \\
                    debhelper       \\
                    mesa-utils      \\
                    cppcheck        \\
                    xsltproc        \\
-                   python"
+                   python-psutil   \\
+                   python          \\
+                   bc              \\
+                   netcat-openbsd"
 
 # 1. SDFORMAT
 # ruby for xml_schemas generation and libxml2-utils for xmllint used in tests
@@ -48,21 +52,18 @@ SDFORMAT_BASE_DEPENDENCIES="python                       \\
                             libboost-regex-dev           \\
                             libboost-iostreams-dev       \\
                             libtinyxml-dev               \\
-                            ruby1.9.1-dev                \\
-                            ruby1.9.1                    \\
-			    libxml2-utils"
+                            libxml2-utils"
 
-# Need to explicit define to use old sdformat package
-if [[ -z ${USE_OLD_SDFORMAT} ]]; then
-    USE_OLD_SDFORMAT=false
-fi
-
-if ${USE_OLD_SDFORMAT}; then
-    sdformat_pkg="sdformat"
-elif [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
-    sdformat_pkg="libsdformat3-dev"
+if [[ ${DISTRO} == 'precise' ]] ||
+   [[ ${DISTRO} == 'vivid'   ]] ||
+   [[ ${DISTRO} == 'trusty'  ]]; then
+  SDFORMAT_BASE_DEPENDENCIES="${SDFORMAT_BASE_DEPENDENCIES} \\
+                            ruby1.9.1-dev                   \\
+                            ruby1.9.1"
 else
-    sdformat_pkg="libsdformat2-dev"
+  SDFORMAT_BASE_DEPENDENCIES="${SDFORMAT_BASE_DEPENDENCIES} \\
+                            ruby-dev                        \\
+                            ruby"
 fi
 
 # SDFORMAT related dependencies
@@ -78,11 +79,26 @@ fi
 
 # GAZEBO related dependencies
 if [[ -z ${GAZEBO_MAJOR_VERSION} ]]; then
-    GAZEBO_MAJOR_VERSION=5
+    GAZEBO_MAJOR_VERSION=6
 fi
 
 if [[ -z $GAZEBO_DEB_PACKAGE ]];then
     GAZEBO_DEB_PACKAGE=libgazebo${GAZEBO_MAJOR_VERSION}-dev
+fi
+
+# Need to explicit define to use old sdformat package
+if [[ -z ${USE_OLD_SDFORMAT} ]]; then
+    USE_OLD_SDFORMAT=false
+fi
+
+if ${USE_OLD_SDFORMAT}; then
+    sdformat_pkg="sdformat"
+elif [[ ${GAZEBO_MAJOR_VERSION} -ge 7 ]]; then
+    sdformat_pkg="libsdformat4-dev"
+elif [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
+    sdformat_pkg="libsdformat3-dev"
+else
+    sdformat_pkg="libsdformat2-dev"
 fi
 
 # Old versions used libogre-dev
@@ -107,9 +123,7 @@ if [[ ${DISTRO} == 'precise' ]] || \
     bullet_pkg="libbullet2.82-dev"
 fi
 
-# tinyxml2-dev should deprecate libtinyxml-dev as soon as the
-# support is merged. To be removed.
-GAZEBO_BASE_DEPENDENCIES="libfreeimage-dev                 \\
+GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="libfreeimage-dev     \\
                           libprotoc-dev                    \\
                           libprotobuf-dev                  \\
                           protobuf-compiler                \\
@@ -134,20 +148,27 @@ GAZEBO_BASE_DEPENDENCIES="libfreeimage-dev                 \\
                           libboost-iostreams-dev           \\
                           ${bullet_pkg}                    \\
                           libsimbody-dev                   \\
-                          ${dart_pkg}                      \\
-                          ${sdformat_pkg}"
-
+                          ${dart_pkg}"
+                   
 if [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
-    GAZEBO_BASE_DEPENDENCIES="${GAZEBO_BASE_DEPENDENCIES} \\
-                              libignition-math2-dev"
+    GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
+                                         libignition-math2-dev"
+fi
+
+if [[ ${GAZEBO_MAJOR_VERSION} -ge 7 ]]; then
+    GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
+                              libignition-transport0-dev"
 fi
 
 # libtinyxml2-dev is not on precise
 # it is needed by gazebo7, which isn't supported on precise
 if [[ ${DISTRO} != 'precise' ]]; then
-    GAZEBO_BASE_DEPENDENCIES="${GAZEBO_BASE_DEPENDENCIES} \\
+    GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
                               libtinyxml2-dev"
 fi
+
+GAZEBO_BASE_DEPENDENCIES="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
+                          ${sdformat_pkg}"
 
 GAZEBO_EXTRA_DEPENDENCIES="robot-player-dev \\
                            libavformat-dev  \\
@@ -210,7 +231,7 @@ fi
 
 DRCSIM_FULL_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES}       \\
                           sandia-hand${ROS_POSTFIX}         \\
-    	                  osrf-common${ROS_POSTFIX}         \\
+                          osrf-common${ROS_POSTFIX}         \\
                           ros-${ROS_DISTRO}-laser-assembler \\
                           ros-${ROS_DISTRO}-gazebo4-plugins \\
                           ros-${ROS_DISTRO}-gazebo4-ros     \\
@@ -220,43 +241,43 @@ DRCSIM_FULL_DEPENDENCIES="${DRCSIM_BASE_DEPENDENCIES}       \\
 #
 SANDIA_HAND_BASE_DEPENDENCIES="ros-${ROS_DISTRO}-xacro              \\
                                ros-${ROS_DISTRO}-ros                \\
-			       ros-${ROS_DISTRO}-image-common       \\
-			       ros-${ROS_DISTRO}-ros-comm           \\
-			       ros-${ROS_DISTRO}-common-msgs        \\
-			       ros-${ROS_DISTRO}-message-generation \\
-			       libboost-dev                         \\
-			       libqt4-dev                           \\
-			       osrf-common${ROS_POSTFIX}"
+                               ros-${ROS_DISTRO}-image-common       \\
+                               ros-${ROS_DISTRO}-ros-comm           \\
+                               ros-${ROS_DISTRO}-common-msgs        \\
+                               ros-${ROS_DISTRO}-message-generation \\
+                               libboost-dev                         \\
+                               libqt4-dev                           \\
+                               osrf-common${ROS_POSTFIX}"
 
 #
 # ROS_GAZEBO_PKGS DEPENDECIES
 #
 ROS_GAZEBO_PKGS_DEPENDENCIES="libtinyxml-dev                            \\
                               ros-${ROS_DISTRO}-catkin                  \\
-			      ros-${ROS_DISTRO}-pluginlib               \\
-			      ros-${ROS_DISTRO}-roscpp                  \\
-			      ros-${ROS_DISTRO}-driver-base             \\
-			      ros-${ROS_DISTRO}-angles                  \\
-			      ros-${ROS_DISTRO}-cv-bridge               \\
-			      ros-${ROS_DISTRO}-diagnostic-updater      \\
-			      ros-${ROS_DISTRO}-dynamic-reconfigure     \\
-			      ros-${ROS_DISTRO}-geometry-msgs           \\
-			      ros-${ROS_DISTRO}-image-transport         \\
-			      ros-${ROS_DISTRO}-message-generation      \\
-			      ros-${ROS_DISTRO}-nav-msgs                \\
-			      ros-${ROS_DISTRO}-nodelet                 \\
-			      ros-${ROS_DISTRO}-pcl-conversions         \\
-			      ros-${ROS_DISTRO}-pcl-ros                 \\
-			      ros-${ROS_DISTRO}-polled-camera           \\
-			      ros-${ROS_DISTRO}-rosconsole              \\
-			      ros-${ROS_DISTRO}-rosgraph-msgs           \\
-			      ros-${ROS_DISTRO}-sensor-msgs             \\
-			      ros-${ROS_DISTRO}-std-srvs                \\
-			      ros-${ROS_DISTRO}-tf                      \\
-			      ros-${ROS_DISTRO}-trajectory-msgs         \\
-			      ros-${ROS_DISTRO}-urdf                    \\
-			      ros-${ROS_DISTRO}-xacro                   \\
-			      ros-${ROS_DISTRO}-cmake-modules           \\
+                              ros-${ROS_DISTRO}-pluginlib               \\
+                              ros-${ROS_DISTRO}-roscpp                  \\
+                              ros-${ROS_DISTRO}-driver-base             \\
+                              ros-${ROS_DISTRO}-angles                  \\
+                              ros-${ROS_DISTRO}-cv-bridge               \\
+                              ros-${ROS_DISTRO}-diagnostic-updater      \\
+                              ros-${ROS_DISTRO}-dynamic-reconfigure     \\
+                              ros-${ROS_DISTRO}-geometry-msgs           \\
+                              ros-${ROS_DISTRO}-image-transport         \\
+                              ros-${ROS_DISTRO}-message-generation      \\
+                              ros-${ROS_DISTRO}-nav-msgs                \\
+                              ros-${ROS_DISTRO}-nodelet                 \\
+                              ros-${ROS_DISTRO}-pcl-conversions         \\
+                              ros-${ROS_DISTRO}-pcl-ros                 \\
+                              ros-${ROS_DISTRO}-polled-camera           \\
+                              ros-${ROS_DISTRO}-rosconsole              \\
+                              ros-${ROS_DISTRO}-rosgraph-msgs           \\
+                              ros-${ROS_DISTRO}-sensor-msgs             \\
+                              ros-${ROS_DISTRO}-std-srvs                \\
+                              ros-${ROS_DISTRO}-tf                      \\
+                              ros-${ROS_DISTRO}-trajectory-msgs         \\
+                              ros-${ROS_DISTRO}-urdf                    \\
+                              ros-${ROS_DISTRO}-xacro                   \\
+                              ros-${ROS_DISTRO}-cmake-modules           \\
                               ros-${ROS_DISTRO}-controller-manager      \\
                               ros-${ROS_DISTRO}-joint-limits-interface  \\
                               ros-${ROS_DISTRO}-transmission-interface"
@@ -277,17 +298,17 @@ ROS_GAZEBO_PKGS_EXAMPLE_DEPS="ros-${ROS_DISTRO}-xacro \\
 #
 DART_DEPENDENCIES="libflann-dev            \\
                    libgtest-dev            \\
-		   libeigen3-dev           \\
-		   libassimp-dev           \\
-		   freeglut3-dev           \\
-		   libxi-dev               \\
-		   libxmu-dev              \\
-		   libtinyxml-dev          \\
-		   libtinyxml2-dev         \\
-		   libfcl-dev              \\
-		   liburdfdom-dev          \\
-		   libboost-system-dev     \\
-		   libboost-filesystem-dev"
+                   libeigen3-dev           \\
+                   libassimp-dev           \\
+                   freeglut3-dev           \\
+                   libxi-dev               \\
+                   libxmu-dev              \\
+                   libtinyxml-dev          \\
+                   libtinyxml2-dev         \\
+                   libfcl-dev              \\
+                   liburdfdom-dev          \\
+                   libboost-system-dev     \\
+                   libboost-filesystem-dev"
 
 if ${DART_COMPILE_FROM_SOURCE}; then
     GAZEBO_EXTRA_DEPENDENCIES="$GAZEBO_EXTRA_DEPENDENCIES \\
@@ -299,31 +320,32 @@ fi
 #
 
 IGN_TRANSPORT_DEPENDENCIES="pkg-config           \\
-			    python               \\
-			    ruby-ronn            \\
-			    libprotoc-dev        \\
-			    libprotobuf-dev      \\
-			    protobuf-compiler    \\
-			    uuid-dev             \\
-			    libzmq3-dev          \\
-			    libczmq-dev"
+                            python               \\
+                            ruby-ronn            \\
+                            libprotoc-dev        \\
+                            libprotobuf-dev      \\
+                            protobuf-compiler    \\
+                            uuid-dev             \\
+                            libzmq3-dev          \\
+                            libczmq-dev"
 
 #
 # HAPTIX
 #
-HAPTIX_COMM_DEPENDENCIES="pkg-config                \\
-                          libignition-transport-dev \\
-                          libboost-system-dev       \\
-			  libprotoc-dev             \\
-			  libprotobuf-dev           \\
-			  protobuf-compiler         \\
-                	  liboctave-dev"
-
+HAPTIX_COMM_DEPENDENCIES_WITHOUT_IGN="pkg-config  \\
+                          libboost-system-dev     \\
+                          libprotoc-dev           \\
+                          libprotobuf-dev         \\
+                          protobuf-compiler       \\
+                          liboctave-dev"
+HAPTIX_COMM_DEPENDENCIES="${HAPTIX_COMM_DEPENDENCIES_WITHOUT_IGN} \\
+                          libignition-transport0-dev"
 #
 # HANDSIM
 #
-HANDSIM_DEPENDENCIES="libgazebo7-haptix-dev \\
-                      liboctave-dev \\
+HANDSIM_DEPENDENCIES_WITHOUT_HAPTIX="libgazebo7-haptix-dev \\
+                                     liboctave-dev"
+HANDSIM_DEPENDENCIES="${HANDSIM_DEPENDENCIES_WITHOUT_HAPTIX} \\
                       libhaptix-comm-dev"
 
 #
@@ -331,6 +353,7 @@ HANDSIM_DEPENDENCIES="libgazebo7-haptix-dev \\
 #
 MENTOR2_DEPENDENCIES="libgazebo6-dev    \\
                       protobuf-compiler \\
-	              libprotobuf-dev   \\
+                      libprotobuf-dev   \\
                       libboost1.54-dev  \\
                       libqt4-dev"
+

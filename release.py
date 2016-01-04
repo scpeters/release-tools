@@ -14,6 +14,7 @@ USAGE = 'release.py <package> <version> <jenkinstoken>'
 JENKINS_URL = 'http://build.osrfoundation.org'
 JOB_NAME_PATTERN = '%s-debbuilder'
 JOB_NAME_UPSTREAM_PATTERN = 'upstream-%s-debbuilder'
+GENERIC_BREW_PULLREQUEST_JOB='generic-release-homebrew_pull_request_updater'
 UPLOAD_DEST_PATTERN = 's3://osrf-distributions/%s/releases/'
 DOWNLOAD_URI_PATTERN = 'http://gazebosim.org/distributions/%s/releases/'
 
@@ -219,6 +220,12 @@ def sanity_project_package_in_stable(version, repo_name):
 
     error("Detected stable repo upload using project versioning scheme (include '+' in the version)")
 
+def sanity_use_prerelease_branch(release_branch):
+    if release_branch == 'prerelease':
+        error("The use of prerelease branch is now deprecated. Please check internal wiki instructions")
+
+    return
+
 def check_s3cmd_configuration():
     # Need to check if s3cmd is installed
     try:
@@ -239,6 +246,7 @@ def sanity_checks(args, repo_dir):
     sanity_package_name_underscore(args.package, args.package_alias)
     sanity_package_name(repo_dir, args.package, args.package_alias)
     sanity_check_repo_name(args.upload_to_repository)
+    sanity_use_prerelease_branch(args.release_repo_branch)
 
     if not NIGHTLY:
         sanity_package_version(repo_dir, args.version, str(args.release_version))
@@ -328,6 +336,8 @@ def generate_upload_tarball(args):
     # TODO: we're assuming a particular naming scheme and a particular compression tool
     tarball_fname = '%s-%s.tar.bz2'%(tarball_name, args.version)
     tarball_path = os.path.join(builddir, tarball_fname)
+    shasum_out_err = check_call(['shasum', '--algorithm', '256', tarball_path])
+    tarball_sha = shasum_out_err[0].split(' ')[0]
     # If we're releasing under a different name, then rename the tarball (the
     # package itself doesn't know anything about this).
     if args.package != args.package_alias:
@@ -371,7 +381,7 @@ def generate_upload_tarball(args):
     # TODO: Consider auto-updating the Ubuntu changelog.  It requires
     # cloning the <package>-release repo, making a change, and pushing it back.
     # Until we do that, the user must have first updated it manually.
-    return source_tarball_uri
+    return source_tarball_uri, tarball_sha
 
 
 def go(argv):
@@ -391,10 +401,11 @@ def go(argv):
             sanity_checks(args, repo_dir)
 
     source_tarball_uri = ''
+    source_tarball_sha = ''
 
     # Do not generate source file if not needed or impossible
     if not args.no_source_file:
-        source_tarball_uri = generate_upload_tarball(args)
+        source_tarball_uri, source_tarball_sha = generate_upload_tarball(args)
 
     # Kick off Jenkins jobs
     params = {}
@@ -402,6 +413,7 @@ def go(argv):
     params['PACKAGE'] = args.package
     params['VERSION'] = args.version
     params['SOURCE_TARBALL_URI'] = source_tarball_uri
+    params['SOURCE_TARBALL_SHA'] = source_tarball_sha
     params['RELEASE_REPO_BRANCH'] = args.release_repo_branch
     params['PACKAGE_ALIAS'] = args.package_alias
     params['RELEASE_VERSION'] = args.release_version
@@ -423,6 +435,16 @@ def go(argv):
             UBUNTU_ARCHS.append('armhf')
 
     params_query = urllib.urlencode(params)
+
+    # RELEASING FOR BREW
+    brew_url = '%s/job/%s/buildWithParameters?%s'%(JENKINS_URL,
+                                                   GENERIC_BREW_PULLREQUEST_JOB,
+                                                   params_query)
+    print('- Brew: %s'%(brew_url))
+    if not DRY_RUN:
+        urllib.urlopen(brew_url)
+
+    # RELEASING FOR LINUX
     distros = UBUNTU_DISTROS
     if UBUNTU_DISTROS_EXTRA:
         distros.extend(UBUNTU_DISTROS_EXTRA)
@@ -446,7 +468,7 @@ def go(argv):
 
             if not DRCSIM_MULTIROS:
                 url = '%s&ARCH=%s&DISTRO=%s'%(base_url, a, d)
-                print('Accessing: %s'%(url))
+                print('- Linux: %s'%(url))
 
                 if not DRY_RUN:
                     urllib.urlopen(url)
