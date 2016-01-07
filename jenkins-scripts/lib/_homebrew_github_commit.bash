@@ -53,7 +53,7 @@ ${GIT} show HEAD
 echo
 # If branch exists, pull it and rebase for this new commit.
 # Do nothing if this is the first commit
-if [[ -n $(git ls-remote fork | grep ${GITHUB_FORK_BRANCH}) ]]; then
+if [[ -n $(${GIT} ls-remote fork | grep ${GITHUB_FORK_BRANCH}) ]]; then
   ${GIT} pull --rebase fork ${GITHUB_FORK_BRANCH}
 fi
 ${GIT} push -u fork ${GITHUB_FORK_BRANCH}
