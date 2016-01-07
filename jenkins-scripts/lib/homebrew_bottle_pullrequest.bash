@@ -49,4 +49,5 @@ sed -i -e 's/sha256.*=>.*'"${DISTRO}/${NEW_HASH_LINE}/"'g' ${FORMULA_PATH}
 cat ${FORMULA_PATH}
 echo '# END SECTION'
 
+# At this point, commit to existing pull request created by homebrew_bottle_pullrequest.bash
 . ${SCRIPT_LIBDIR}/_homebrew_github_commit.bash
