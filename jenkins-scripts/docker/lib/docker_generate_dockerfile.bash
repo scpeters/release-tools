@@ -49,6 +49,9 @@ if [[ -z ${OSRF_REPOS_TO_USE} ]]; then
      OSRF_REPOS_TO_USE="stable"
   fi
 fi
+if ${NEED_PRERELEASE}; then
+  OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE} prerelease"
+fi
 
 echo '# BEGIN SECTION: create the Dockerfile'
 cat > Dockerfile << DELIM_DOCKER
