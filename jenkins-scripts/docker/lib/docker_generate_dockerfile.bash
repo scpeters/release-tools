@@ -13,6 +13,9 @@
 
 #   - USE_OSRF_REPO     : deprecated! [default false] true|false if true, add the stable osrf repo to sources.list
 
+# FIXME hack to get mentor2 versions of debs to build_pkg_job
+OSRF_REPOS_TO_USE="mentor2"
+
 if [[ -z ${ARCH} ]]; then
   echo "Arch undefined, default to amd64"
   export ARCH="amd64"
@@ -27,7 +30,7 @@ case ${LINUX_DISTRO} in
   'ubuntu')
     SOURCE_LIST_URL="http://archive.ubuntu.com/ubuntu"
     ;;
-    
+
   'debian')
     # Currently not needed
     # SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
