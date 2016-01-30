@@ -149,10 +149,13 @@ RUN dpkg-divert --rename --add /usr/sbin/invoke-rc.d \\
 DELIM_DOCKER_PAM_BUG
 fi
 
+#FIXME hack - manually added stable repo for mentor2
 for repo in ${OSRF_REPOS_TO_USE}; do
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/${LINUX_DISTRO}-${repo} ${DISTRO} main" >\\
                                                 /etc/apt/sources.list.d/osrf.${repo}.list
+RUN echo "deb http://packages.osrfoundation.org/gazebo/${LINUX_DISTRO}-stable ${DISTRO} main" >\\
+                                                /etc/apt/sources.list.d/osrf.stable.list
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
 DELIM_OSRF_REPO
 done
