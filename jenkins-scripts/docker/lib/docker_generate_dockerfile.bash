@@ -14,7 +14,7 @@
 #   - USE_OSRF_REPO     : deprecated! [default false] true|false if true, add the stable osrf repo to sources.list
 
 # FIXME hack to get mentor2 versions of debs to build_pkg_job
-OSRF_REPOS_TO_USE="mentor2"
+#OSRF_REPOS_TO_USE="mentor2"
 
 if [[ -z ${ARCH} ]]; then
   echo "Arch undefined, default to amd64"

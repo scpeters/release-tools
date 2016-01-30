@@ -354,7 +354,7 @@ HANDSIM_DEPENDENCIES="${HANDSIM_DEPENDENCIES_WITHOUT_HAPTIX} \\
 #
 # MENTOR2
 #
-MENTOR2_DEPENDENCIES="libgazebo6-dev    \\
+MENTOR2_DEPENDENCIES="libgazebo7-mentor2-dev    \\
                       protobuf-compiler \\
                       libprotobuf-dev   \\
                       libboost1.54-dev  \\
