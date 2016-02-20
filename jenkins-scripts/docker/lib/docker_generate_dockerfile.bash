@@ -23,6 +23,11 @@ if [[ -z ${LINUX_DISTRO} ]]; then
   export LINUX_DISTRO="ubuntu"
 fi
 
+# squid seems to be sometimes broken returning 503
+if [[ -z ${USE_SQUID_PROXY} ]]; then
+  USE_SQUID_PROXY=false
+fi
+
 case ${LINUX_DISTRO} in
   'ubuntu')
     SOURCE_LIST_URL="http://archive.ubuntu.com/ubuntu"
@@ -211,15 +216,19 @@ RUN apt-get update && \
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3
 
+if $USE_SQUID_PROXY; then
 cat >> Dockerfile << DELIM_DOCKER_SQUID
 # If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
 # By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
+RUN route -n
+RUN route -n | awk '/^0.0.0.0/ {print \$2}'
 RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
 RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
   && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
   || echo "No squid-deb-proxy detected on docker host"
 DELIM_DOCKER_SQUID
+fi
 
 if [[ -n ${SOFTWARE_DIR} ]]; then
 cat >> Dockerfile << DELIM_DOCKER4
