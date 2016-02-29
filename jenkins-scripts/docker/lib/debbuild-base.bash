@@ -30,10 +30,10 @@ echo '# BEGIN SECTION: import the debian metadata'
 REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 if $ENABLE_ROS; then
-sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" >
+sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $DISTRO main" > \
                                 /etc/apt/sources.list.d/ros-latest.list'
-wget --no-check-certificate https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - |
-      apt-key add -
+wget --no-check-certificate \
+    https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -
 fi
 
 # Step 1: Get the source (nightly builds or tarball)
