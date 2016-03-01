@@ -7,7 +7,7 @@ if [[ "$#" -ne 1 ]]; then
     exit 1
 fi
 
-if [[ -f $BITBUCKET_BUILD_STATUS_FILE ]]; then
+if [[ ! -f $BITBUCKET_BUILD_STATUS_FILE ]]; then
     echo "BITBUCKET_BUILD_STATUS_FILE does not correspond to a file"
     echo "content: ${BITBUCKET_BUILD_STATUS_FILE}"
     exit 1
