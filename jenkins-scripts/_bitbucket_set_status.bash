@@ -31,6 +31,6 @@ ${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
     --user osrf_jenkins  \
     --pass ${BITBUCKET_USER_PASS} \
     --status ${STATUS} \
-    --load_from_file ${CONFIG_FILE_PATH} >& pybitbucket.log
+    --load_from_file ${BITBUCKET_BUILD_STATUS_FILE} >& pybitbucket.log
 set -x # back to debug
 echo '# END SECTION'
