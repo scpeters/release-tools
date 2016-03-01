@@ -43,22 +43,12 @@ class OSRFLinuxCompilationAny
             steps {
                 shell("""\
                     #!/bin/bash -xe
+                    set | grep -i status
+                    set
 
                     ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
                     """.stripIndent())
             }
-            onlyIfBuildSucceeds()
-        }
-
-        postBuildScripts {
-            steps {
-                shell("""\
-                    #!/bin/bash -xe
-
-                    ./scripts/jenkins-scripts/_bitbucket_set_status.bash failed
-                    """.stripIndent())
-            }
-            onlyIfBuildFails(true)
         }
       }
     }
