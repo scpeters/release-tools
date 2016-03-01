@@ -28,18 +28,10 @@ fi
 echo "BEGIN SECTION: build status in bitbucket: ${STATUS} (hidden)"
 set +x # keep password secret
 BITBUCKET_USER_PASS=$(cat ${BITBUCKET_USER_PASS_FILE})
-cat > ${WORKSPACE}/debug.log <<-LIMIT
 ${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
     --user osrf_jenkins  \
     --pass ${BITBUCKET_USER_PASS} \
     --status ${STATUS} \
-    --load_from_file ${BITBUCKET_BUILD_STATUS_FILE} >& pybitbucket.log
-LIMIT
-
-${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
-    --user osrf_jenkins  \
-    --pass ${BITBUCKET_USER_PASS} \
-    --status ${STATUS} \
-    --load_from_file ${BITBUCKET_BUILD_STATUS_FILE} >& pybitbucket.log
+    --load_from_file ${BITBUCKET_BUILD_STATUS_FILE} >& ${WORKSPACE}/pybitbucket.log
 set -x # back to debug
 echo '# END SECTION'
