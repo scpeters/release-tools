@@ -1,9 +1,13 @@
 #!/bin/bash -xe
 
+# Knowing Script dir beware of symlink
+[[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
+SCRIPT_DIR="${SCRIPT_DIR%/*}"
+
 STATUS=${1}
 
 # Source bitbucket configs
-. ${SCRIPT_DIR}/lib/_bitbucket_configs.bash
+. ${SCRIPT_DIR}/_bitbucket_configs.bash
 
 if [[ "$#" -ne 1 ]]; then
     echo "Usage: $0 [inprogress|ok|failed]"

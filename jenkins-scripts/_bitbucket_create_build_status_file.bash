@@ -1,11 +1,15 @@
 #!/bin/bash -xe
 
+# Knowing Script dir beware of symlink
+[[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
+SCRIPT_DIR="${SCRIPT_DIR%/*}"
+
 echo '# BEGIN SECTION: sending bitbucket status: inprogress'
 NEEDED_HOST_PACKAGES="python-yaml python-six python-uritemplate python-requests python-requests-oauthlib python-pip"
 REPO_SHORT_NAME=`echo ${SRC_REPO} | sed s:.*\.org/::`
 
 # Source bitbucket configs
-. _bitbucket_configs.bash
+. ${SCRIPT_DIR}/_bitbucket_configs.bash
 
 if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   echo "Bitbucket user pass not found in file \${BITBUCKET_USER_PASS_FILE}"
