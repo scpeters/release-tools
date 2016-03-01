@@ -58,7 +58,7 @@ class OSRFLinuxCompilationAny
                     ./scripts/jenkins-scripts/_bitbucket_set_status.bash failed
                     """.stripIndent())
             }
-            onlyIfBuildFails()
+            onlyIfBuildFails(true)
         }
       }
     }
