@@ -5,7 +5,7 @@ NEEDED_HOST_PACKAGES="python-yaml python-six python-uritemplate python-requests 
 REPO_SHORT_NAME=`echo ${SRC_REPO} | sed s:.*\.org/::`
 
 # Source bitbucket configs
-. ${SCRIPTS_DIR}/lib/_bitbucket_configs.bash
+. ${SCRIPT_DIR}/lib/_bitbucket_configs.bash
 
 if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   echo "Bitbucket user pass not found in file \${BITBUCKET_USER_PASS_FILE}"
