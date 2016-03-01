@@ -4,9 +4,8 @@ echo '# BEGIN SECTION: sending bitbucket status: inprogress'
 NEEDED_HOST_PACKAGES="python-yaml python-six python-uritemplate python-requests python-requests-oauthlib python-pip"
 REPO_SHORT_NAME=`echo ${SRC_REPO} | sed s:.*\.org/::`
 
-# Variables exported by the system
-export BITBUCKET_BUILD_STATUS_FILE="$WORKSPACE/config_pybitbucket.yml"
-export BITBUCKET_USER_PASS_FILE="/var/lib/jenkins/osrf_jenkins_bitbucket_user_pass"
+# Source bitbucket configs
+. ${SCRIPTS_DIR}/lib/_bitbucket_configs.bash
 
 if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   echo "Bitbucket user pass not found in file \${BITBUCKET_USER_PASS_FILE}"

@@ -2,6 +2,9 @@
 
 STATUS=${1}
 
+# Source bitbucket configs
+. ${SCRIPTS_DIR}/lib/_bitbucket_configs.bash
+
 if [[ "$#" -ne 1 ]]; then
     echo "Usage: $0 [inprogress|ok|failed]"
     exit 1
