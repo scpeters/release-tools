@@ -25,8 +25,8 @@ class OSRFLinuxCompilationAny
         shell("""\
         #!/bin/bash -xe
 
-        ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
-        ./scripts/jenkins-scripts/_bitbucket_set_status.bash inprogress
+        /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
+        /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash inprogress
         """.stripIndent())
       }
 
@@ -46,7 +46,7 @@ class OSRFLinuxCompilationAny
                     set | grep -i status
                     set
 
-                    ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
+                    ./bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
                     """.stripIndent())
             }
         }
