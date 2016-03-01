@@ -25,7 +25,8 @@ class OSRFLinuxCompilationAny
         shell("""\
         #!/bin/bash -xe
 
-        /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash
+        ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
+        ./scripts/jenkins-scripts/_bitbucket_set_status.bash inprogress
         """.stripIndent())
       }
 
@@ -34,6 +35,31 @@ class OSRFLinuxCompilationAny
         stringParam('DEST_BRANCH','default',
                     'Destination branch where the pull request will be merged.' +
                     'Mostly used to decide if calling to ABI checker')
+      }
+
+      publishers
+      {
+        postBuildScripts {
+            steps {
+                shell("""\
+                    #!/bin/bash -xe
+
+                    ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
+                    """.stripIndent())
+            }
+            onlyIfBuildSucceeds()
+        }
+
+        postBuildScripts {
+            steps {
+                shell("""\
+                    #!/bin/bash -xe
+
+                    ./scripts/jenkins-scripts/_bitbucket_set_status.bash failed
+                    """.stripIndent())
+            }
+            onlyIfBuildFails()
+        }
       }
     }
   }
