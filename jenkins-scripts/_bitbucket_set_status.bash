@@ -2,7 +2,7 @@
 
 STATUS=${1}
 
-if [[ $? -lt 1 ]]; then
+if [[ "$#" -ne 1 ]]; then
     echo "Usage: $0 [inprogress|ok|failed]"
     exit 1
 fi
