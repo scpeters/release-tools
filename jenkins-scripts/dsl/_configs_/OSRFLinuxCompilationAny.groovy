@@ -85,7 +85,7 @@ class OSRFLinuxCompilationAny
             shell("""\
             #!/bin/bash -xe
 
-            /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok')
+            /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
             """.stripIndent())
           }
           onlyIfBuildSucceeds(true)
