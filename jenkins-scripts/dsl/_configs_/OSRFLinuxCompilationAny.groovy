@@ -39,16 +39,13 @@ class OSRFLinuxCompilationAny
 
       publishers
       {
-        postBuildScripts {
-            steps {
-                shell("""\
-                    #!/bin/bash -xe
-                    set | grep -i status
-                    set
-
-                    ./bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
-                    """.stripIndent())
-            }
+        postBuildTask {
+            /* Set aborts, failures and unstable as a failure in bitbucket */
+            task('marked build as failure', '/bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failure  ', false, false)
+            task('Build was aborted', '/bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failure  ', false, false)
+            task('result to UNSTABLE', '/bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failure  ', false, false)
+            /* Set the success builds (true in the last argument) not unstable as ok */
+            task('(?!result to UNSTABLE)', '/bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok  ', false, true)
         }
       }
     }
