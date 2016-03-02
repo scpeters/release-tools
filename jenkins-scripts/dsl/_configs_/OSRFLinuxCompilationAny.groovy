@@ -54,19 +54,19 @@ class OSRFLinuxCompilationAny
             "hudson.plugins.postbuildtask.TaskProperties"
             {
               logTexts {
-                "<hudson.plugins.postbuildtask.LogProperties>" {
+                "hudson.plugins.postbuildtask.LogProperties" {
                   logText('marked build as failure')
                   operator('OR')
                 }
-                "<hudson.plugins.postbuildtask.LogProperties>" {
+                "hudson.plugins.postbuildtask.LogProperties" {
                   logText('Build was aborted')
                   operator('OR')
                 }
-                "<hudson.plugins.postbuildtask.LogProperties>" {
+                "hudson.plugins.postbuildtask.LogProperties" {
                               logText('result to UNSTABLE')
                   operator('OR')
                 }
-                "<hudson.plugins.postbuildtask.LogProperties>" {
+                "hudson.plugins.postbuildtask.LogProperties" {
                   logText('result is FAILURE')
                   operator('OR')
                  }
