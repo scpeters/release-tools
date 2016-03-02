@@ -48,8 +48,7 @@ class OSRFLinuxCompilationAny
            - PostBuildScript to implement the ok status
       */
       configure { project ->
-        project / publishers << 'hudson.plugins.postbuildtask.PostbuildTask'
-        {
+        project / publishers << 'hudson.plugins.postbuildtask.PostbuildTask' {
           tasks
           {
             "hudson.plugins.postbuildtask.TaskProperties"
