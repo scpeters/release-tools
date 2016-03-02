@@ -32,7 +32,7 @@ class OSRFLinuxCompilationAny
 
       parameters
       {
-        stringParam('DEST_BRANCH','default',
+        stringParam('DEST_BRANCH','default2',
                     'Destination branch where the pull request will be merged.' +
                     'Mostly used to decide if calling to ABI checker')
       }
