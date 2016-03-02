@@ -71,10 +71,10 @@ class OSRFLinuxCompilationAny
                   operator('OR')
                  }
                }
-            } // end of TaskProperties
             EscalateStatus(false)
             RunIfJobSuccessful(false)
             script('/bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failure')
+            } // end of TaskProperties
           } // end of tasks
         } // end of project
       } // end of configure
