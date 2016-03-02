@@ -81,11 +81,13 @@ class OSRFLinuxCompilationAny
 
       publishers {
         postBuildScripts {
-          shell("""\
-              #!/bin/bash -xe
+          steps {
+            shell("""\
+            #!/bin/bash -xe
 
-               /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok')
-              """.stripIndent())
+            /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok')
+            """.stripIndent())
+          }
         }
         onlyIfBuildSucceeds(true)
       } // end of publishers
