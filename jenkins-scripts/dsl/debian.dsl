@@ -37,12 +37,17 @@ packages.each { repo_name, pkgs ->
 
   // --------------------------------------------------------------
   // 2. Create the job that tries to build the package and run lintian
+
+  if (${repo_name} == 'debian-science') {
+    def git_repo = "git://anonscm.debian.org/${repo_name}/packages/${pkg}.git"
+  } else {
+    def git_repo = "git://anonscm.debian.org/${repo_name}/${pkg}.git"
+  }
+
   def ci_job = job("${pkg}-pkg_builder-master-debian_sid-amd64")
   OSRFLinuxBase.create(ci_job)
   ci_job.with
   {
-      def git_repo = "git://anonscm.debian.org/${repo_name}/packages/${pkg}.git"
-
       scm {
 	git("${git_repo}") {
 	  branch('master')
