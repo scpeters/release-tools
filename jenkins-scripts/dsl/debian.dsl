@@ -94,6 +94,7 @@ packages.each { repo_name, pkgs ->
               parsingRulesPath('/var/lib/jenkins/logparser_lintian')
            }
          }
-       }
+      }
+    }
   }
 }
