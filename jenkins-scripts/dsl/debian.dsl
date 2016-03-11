@@ -4,9 +4,19 @@ import javaposse.jobdsl.dsl.Job
 Globals.default_emails = "jrivero@osrfoundation.org"
 
 packages = [:]
-packages['debian-science'] = ['console-bridge', 'gazebo', 'fcl', 'ignition-math2', 
-                              'ignition-transport', 'kido', 'libccd', 'robot-player',
-                              'sdformat', 'simbody', 'urdfdom', 'urdfdom-headers' ]
+packages['debian-science'] = ['console-bridge',
+                              'gazebo',
+                              'fcl',
+                              'ignition-math2',
+                              'ignition-transport',
+                              'kido',
+                              'libccd',
+                              'robot-player',
+                              'sdformat',
+                              'simbody',
+                              'urdfdom',
+                              'urdfdom-headers' ]
+
 packages['collab-maint']   = ['peak-linux-driver']
 
 packages.each { repo_name, pkgs ->
