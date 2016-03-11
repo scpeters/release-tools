@@ -3,9 +3,14 @@ import javaposse.jobdsl.dsl.Job
 
 Globals.default_emails = "jrivero@osrfoundation.org"
 
-packages = [ 'console-bridge', 'gazebo', 'fcl', 'ignition-math2', 'ignition-transport', 'kido', 'libccd', 'robot-player', 'sdformat', 'simbody', 'urdfdom', 'urdfdom-headers' ]
+packages = [ debian-science : ['console-bridge', 'gazebo', 'fcl',
+                               'ignition-math2', 'ignition-transport',
+                               'kido', 'libccd', 'robot-player', 'sdformat',
+                               'simbody', 'urdfdom', 'urdfdom-headers' ],
+             collab-maint   : ['peak-linux-driver']]
 
-packages.each { pkg ->
+packages.each { repo_name, pkgs ->
+ pkgs.each { pkg ->
   // --------------------------------------------------------------
   // 1. Create the job that tries to install packages
   def install_job = job("${pkg}-install-pkg-debian_sid-amd64")
@@ -36,7 +41,7 @@ packages.each { pkg ->
   OSRFLinuxBase.create(ci_job)
   ci_job.with
   {
-      def git_repo = "git://anonscm.debian.org/debian-science/packages/${pkg}.git"
+      def git_repo = "git://anonscm.debian.org/${repo_name}/packages/${pkg}.git"
 
       scm {
 	git("${git_repo}") {
