@@ -49,7 +49,10 @@ class OSRFLinuxCompilationAny
               /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
               """.stripIndent())
           }
+        }
 
+        conditionalSteps 
+        {
           condition {
             not {
               status("SUCCESS", "SUCCESS")
