@@ -20,6 +20,13 @@ class OSRFLinuxCompilationAny
 
     job.with
     {
+      parameters
+      {
+        stringParam('DEST_BRANCH','default',
+                    'Destination branch where the pull request will be merged.' +
+                    'Mostly used to decide if calling to ABI checker')
+      }
+
       steps
       {
         shell("""\
@@ -28,40 +35,35 @@ class OSRFLinuxCompilationAny
         /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
         /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash inprogress
         """.stripIndent())
-      }
 
-      parameters
-      {
-        stringParam('DEST_BRANCH','default',
-                    'Destination branch where the pull request will be merged.' +
-                    'Mostly used to decide if calling to ABI checker')
-      }
-
-      conditionalSteps {
-        condition {
-          status("Success", "Success")
-        }
-        steps {
-          shell("""\
-            #!/bin/bash -xe
-
-            /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
-            """.stripIndent())
-        }
-
-        condition {
-          not {
-            status("Success", "Success")
+      
+        conditionalSteps 
+        {
+          condition {
+            status("SUCCESS", "SUCCESS")
           }
-        }
-        steps {
-          shell("""\
-            #!/bin/bash -xe
+          steps {
+            shell("""\
+              #!/bin/bash -xe
 
-            /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failed
-            """.stripIndent())
-        }
-      } // end of conditional steps
+              /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash ok
+              """.stripIndent())
+          }
+
+          condition {
+            not {
+              status("SUCCESS", "SUCCESS")
+            }
+          }
+          steps {
+            shell("""\
+              #!/bin/bash -xe
+
+              /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash failed
+              """.stripIndent())
+          }
+        } // end of conditional steps
+      } // end of steps
     } // end of with
   } // end of create method
 } // end of class
