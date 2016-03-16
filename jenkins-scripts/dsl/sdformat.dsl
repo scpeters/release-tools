@@ -108,22 +108,29 @@ ci_distro.each { distro ->
           // run script in sandbox groovy
           sandbox()
           script("""\
+ 
+                 currentBuild.description =  \$JOB_DESCRIPTION
+
                  stage 'checkout for the mercurial hash'
-                 node {
-                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO"]) 
-                 }
+                  node {
+                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO"]),
+                             propagate: false, wait: true])
+                    sh 'echo `hg id -i` > SCM_hash'
+                    env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
+                  }
+
                  stage 'create bitbucket status file'
-                 node {
-                   build job: '_bitbucket_create_build_status_file',
-                   parameters:
+                  node {
+                    build job: '_bitbucket_create_build_status_file',
+                    parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]],
                          propagate: false, wait: true,
-                   archive: '${build_status_file_name}'
-                 }
+                    archive: '${build_status_file_name}'
+                  }
 
                  parallel 'start the build': {
                    stage 'set bitbucket status: in progress'
@@ -150,12 +157,9 @@ ci_distro.each { distro ->
       steps
       {
          systemGroovyCommand("""\
-              job_description = build.buildVariableResolver.resolve('JOB_DESCRIPTION')
 
               if (job_description == "")
               {
-                job_description = 'branch: <b>' + build.buildVariableResolver.resolve('SRC_BRANCH') + '</b><br />' +
-                                  'repo: ' + build.buildVariableResolver.resolve('SRC_REPO')
               }
 
               build.setDescription(job_description)
