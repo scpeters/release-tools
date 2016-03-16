@@ -113,7 +113,7 @@ ci_distro.each { distro ->
 
                  stage 'checkout for the mercurial hash'
                   node {
-                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO"]),
+                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO",
                              propagate: false, wait: true])
                     sh 'echo `hg id -i` > SCM_hash'
                     env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
