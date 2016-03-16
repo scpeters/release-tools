@@ -4,27 +4,26 @@
 [[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
-echo '# BEGIN SECTION: sending bitbucket status: inprogress'
+echo '# BEGIN SECTION: create bitbucket build status file'
 NEEDED_HOST_PACKAGES="python-pip"
 
 # Source bitbucket configs
 . ${SCRIPT_DIR}/_bitbucket_configs.bash
 
-if [[ ! -f ${BITBUCKET_BUILD_STATUS_FILE} ]]; then
+if [[ ! -z ${BITBUCKET_BUILD_STATUS_FILE} ]]; then
   echo "BITBUCKET_BUILD_STATUS_FILE variable missing"
   exit 1
 fi
 
-if [[ ! -f ${JENKINS_BUILD_HG_HASH} ]]; then
+if [[ ! -z ${JENKINS_BUILD_HG_HASH} ]]; then
   echo "JENKINS_BUILD_HG_HASH variable missing"
   exit 1
 fi
 
-if [[ ! -f ${JENKINS_BUILD_REPO} ]]; then
+if [[ ! -z ${JENKINS_BUILD_REPO} ]]; then
   echo "JENKINS_BUILD_REPO variable missing"
   exit 1
 fi
-
 
 if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   echo "Bitbucket user pass not found in file \${BITBUCKET_USER_PASS_FILE}"
@@ -66,3 +65,4 @@ jenkins_job:
   url: ${JENKINS_BUILD_URL}
 DELIM_CONFIG
 cat $BITBUCKET_BUILD_STATUS_FILE
+echo '# END SECTION'
