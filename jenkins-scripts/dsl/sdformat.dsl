@@ -109,6 +109,7 @@ ci_distro.each { distro ->
                    build job: '_bitbucket_create_build_status_file.bash',
                    parameters:
                         [[\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: 'env.SRC_REPO'],
+                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: 'env.MERCURIAL_REVISION_SHORT'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
                          propagate: false, wait: false
