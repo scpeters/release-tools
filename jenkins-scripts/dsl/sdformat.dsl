@@ -108,8 +108,7 @@ ci_distro.each { distro ->
           // run script in sandbox groovy
           sandbox()
           script("""\
- 
-                 currentBuild.description =  \$JOB_DESCRIPTION
+                 currentBuild.description =  "\$JOB_DESCRIPTION"
 
                  stage 'checkout for the mercurial hash'
                   node {
@@ -121,7 +120,7 @@ ci_distro.each { distro ->
 
                  stage 'create bitbucket status file'
                   node {
-                    build job: '_bitbucket_create_build_status_file',
+                    build job: '_bitbucket-create_build_status_file',
                     parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
@@ -135,7 +134,10 @@ ci_distro.each { distro ->
                  parallel 'start the build': {
                    stage 'set bitbucket status: in progress'
                    node {
-                     build job: '_bitbucket-set-status', propagate: false, wait: false
+                     build job: '_bitbucket-set_status', propagate: false, wait: false
+                     parameters:
+                        [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
+                        [[\$class: 'StringParameterValue', name: 'STATUS',        value: "inprogress"],
                    }
                  }, 'run compilation': {
                     stage 'building software'
