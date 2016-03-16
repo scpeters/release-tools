@@ -101,10 +101,10 @@ ci_distro.each { distro ->
     {
       definition
       {
-        // run script in sandbox groovy
-        sandbox()
         cps
         {
+          // run script in sandbox groovy
+          sandbox()
           script("""\
                  stage 'create bitbucket status file'
                  node {
