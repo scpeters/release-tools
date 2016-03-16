@@ -51,10 +51,9 @@ release_job.with
 // -------------------------------------------------------------------
 def create_status_name = '_bitbucket_create_build_status_file'
 def create_status = job(create_status_name)
+OSRFLinuxBase.create(create_status)
 create_status.with
 {
-  label "docker"
-
   parameters
   {
      stringParam('JENKINS_BUILD_REPO','',
@@ -91,10 +90,9 @@ create_status.with
 
 // -------------------------------------------------------------------
 def set_status = job("_bitbucket-set-status")
+OSRFLinuxBase.create(set_status)
 set_status.with
 {
-  label "docker"
-
   parameters
   {
      stringParam('STATUS','', 'inprogress | fail | ok')
