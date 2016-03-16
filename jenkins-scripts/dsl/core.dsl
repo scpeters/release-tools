@@ -3,6 +3,8 @@ import javaposse.jobdsl.dsl.Job
 
 Globals.default_emails = "jrivero@osrfoundation.org, scpeters@osrfoundation.org"
 
+def build_status_path  = Globals.bitbucket_build_status_file_path
+
 // -------------------------------------------------------------------
 // BREW pull request SHA updater
 def release_job = job("generic-release-homebrew_pull_request_updater")
@@ -44,4 +46,35 @@ release_job.with
               /bin/bash -xe ./scripts/jenkins-scripts/lib/homebrew_formula_pullrequest.bash
               """.stripIndent())
    }
+}
+
+// -------------------------------------------------------------------
+def create_status = job("_bitbucket-create-status-file")
+create_status.with
+{
+  label "docker"
+
+  parameters
+  {
+     stringParam('JENKINS_BUILD_REPO',''
+                 'Repo to test')
+     stringParam('JENKINS_BUILD_JOB_NAME','',
+                 'Branch of SRC_REPO to test')
+     stringParam('JENKINS_BUILD_URL','',
+                 'Branch of SRC_REPO to test')
+  }
+
+  wrappers {
+     preBuildCleanup()
+  }
+
+  steps
+  {
+    shell("""\
+          #!/bin/bash -xe
+
+          export BITBUCKET_BUILD_STATUS_FILE="${build_status_path}"
+          /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
+          """.stripIndent())
+  }
 }

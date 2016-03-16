@@ -15,6 +15,8 @@ def all_supported_distros   = Globals.get_all_supported_distros()
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 
+def build_status_path       = Globals.bitbucket_build_status_file_path
+
 // Need to be used in ci_pr
 String abi_job_name = ''
 
@@ -92,9 +94,63 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 2. Create the any job
+    sdf_repo = "http://bitbucket.org/osrf/sdformat"
+
+    def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
+    sdformat_ci_main.with
+    {
+      definition
+      {
+        cps
+        {
+          script("""\
+                 stage 'create bitbucket status file'
+                 build = node {
+                   build job: '_bitbucket_create_build_status_file.bash',
+                   parameters:
+                        [[\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: 'env.SRC_REPO'],
+                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
+                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
+                         propagate: false, wait: false
+                 }
+
+                 step([\$class: 'ArtifactArchiver', artifacts:'**/${build_status_path}', fingerprint: true])
+                 """.stripIndent()
+        }
+      }
+
+      parameters {
+        stringParam('SRC_REPO', repo,'URL pointing to repository')
+        stringParam('SRC_BRANCH','default','Branch of SRC_REPO to test')
+        stringParam('JOB_DESCRIPTION','','Description of the job in course. For information proposes.')
+      }
+
+      steps
+      {
+         systemGroovyCommand("""\
+              job_description = build.buildVariableResolver.resolve('JOB_DESCRIPTION')
+
+              if (job_description == "")
+              {
+                job_description = 'branch: <b>' + build.buildVariableResolver.resolve('SRC_BRANCH') + '</b><br />' +
+                                  'repo: ' + build.buildVariableResolver.resolve('SRC_REPO')
+              }
+
+              build.setDescription(job_description)
+              """.stripIndent()
+         )
+      }
+
+      scm {
+        hg('${SRC_REPO}') {
+          branch('${SRC_BRANCH}')
+          subdirectory(subdirectoy)
+        }
+      }
+    }
+
     def sdformat_ci_any_job = job("sdformat-ci-pr_any-${distro}-${arch}")
-    OSRFLinuxCompilationAny.create(sdformat_ci_any_job,
-				  "http://bitbucket.org/osrf/sdformat")
+    OSRFLinuxCompilationAny.create(sdformat_ci_any_job, sdf_repo)
     sdformat_ci_any_job.with
     {
       steps

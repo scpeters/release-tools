@@ -9,6 +9,8 @@ class Globals
    static gpu_by_distro  = [ trusty : [ 'nvidia', 'intel' ],
                              vivid  : [ 'intel' ] ]
 
+   static bitbucket_build_status_file_path = '$WORKSPACE/config_pybitbucket.yml'
+
    static String get_emails()
    {
       if (extra_emails != '')

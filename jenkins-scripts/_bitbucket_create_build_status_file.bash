@@ -11,6 +11,11 @@ REPO_SHORT_NAME=`echo ${SRC_REPO} | sed s:.*\.org/::`
 # Source bitbucket configs
 . ${SCRIPT_DIR}/_bitbucket_configs.bash
 
+if [[ ! -f ${BITBUCKET_BUILD_STATUS_FILE} ]]; then
+  echo "BITBUCKET_BUILD_STATUS_FILE variable missing"
+  exit 1
+fi
+
 if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   echo "Bitbucket user pass not found in file \${BITBUCKET_USER_PASS_FILE}"
   exit 1
@@ -45,7 +50,7 @@ bitbucket_origin:
   repository_name: ${REPO_SHORT_NAME}
   sha: ${MERCURIAL_REVISION_SHORT}
 jenkins_job:
-  name: ${JOB_NAME}
-  url: ${BUILD_URL}
+  name: ${JENKINS_BUILD_JOB_NAME}
+  url: ${JENKINS_BUILD_URL}
 DELIM_CONFIG
 cat $BITBUCKET_BUILD_STATUS_FILE
