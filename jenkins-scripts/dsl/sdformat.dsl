@@ -134,10 +134,12 @@ ci_distro.each { distro ->
                  parallel 'start the build': {
                    stage 'set bitbucket status: in progress'
                    node {
+                     unarchive mapping: [${build_status_file_name}' : '.']
                      build job: '_bitbucket-set_status', propagate: false, wait: false
                      parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                        [[\$class: 'StringParameterValue', name: 'STATUS',        value: "inprogress"],
+                        [\$class: 'StringParameterValue', name: 'STATUS', value: "inprogress"]],
+                        propagate: false, wait: true
                    }
                  }, 'run compilation': {
                     stage 'building software'
