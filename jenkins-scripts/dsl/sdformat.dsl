@@ -101,6 +101,8 @@ ci_distro.each { distro ->
     {
       definition
       {
+        // run script in sandbox groovy
+        sandbox()
         cps
         {
           script("""\
@@ -131,8 +133,6 @@ ci_distro.each { distro ->
                  }
                  """.stripIndent())
         }
-        // run script in sandbox groovy
-        sandbox()
       }
 
       parameters {
