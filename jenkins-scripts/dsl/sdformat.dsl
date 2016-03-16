@@ -15,7 +15,7 @@ def all_supported_distros   = Globals.get_all_supported_distros()
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 
-def build_status_path       = Globals.bitbucket_build_status_file_path
+def build_status_file_name  = Globals.bitbucket_build_status_file_name
 
 // Need to be used in ci_pr
 String abi_job_name = ''
@@ -113,6 +113,7 @@ ci_distro.each { distro ->
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
                          propagate: false, wait: false
+                   archive: ${build_status_file_name}
                  }
 
                  stage 'set bitbucket status: in progress'
