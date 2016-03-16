@@ -144,7 +144,6 @@ ci_distro.each { distro ->
       scm {
         hg('${SRC_REPO}') {
           branch('${SRC_BRANCH}')
-          subdirectory(subdirectoy)
         }
       }
     }
