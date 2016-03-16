@@ -105,7 +105,7 @@ ci_distro.each { distro ->
         {
           script("""\
                  stage 'create bitbucket status file'
-                 build = node {
+                 node {
                    build job: '_bitbucket_create_build_status_file.bash',
                    parameters:
                         [[\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: 'env.SRC_REPO'],
@@ -114,7 +114,10 @@ ci_distro.each { distro ->
                          propagate: false, wait: false
                  }
 
-                 step([\$class: 'ArtifactArchiver', artifacts:'**/${build_status_path}', fingerprint: true])
+                 stage 'set bitbucket status: in progress'
+                 node {
+                   build job: '_bitbucket-set-status', propagate: false, wait: false
+                 }
                  """.stripIndent())
         }
       }

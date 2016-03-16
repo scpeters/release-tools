@@ -49,7 +49,8 @@ release_job.with
 }
 
 // -------------------------------------------------------------------
-def create_status = job("_bitbucket-create-status-file")
+def create_status_name = '_bitbucket_create_build_status_file'
+def create_status = job(create_status_name)
 create_status.with
 {
   label "docker"
@@ -80,7 +81,52 @@ create_status.with
 
   publishers
   {
-    archiveArtifacts 
+    archiveArtifacts
+    {
+      pattern("${build_status_path}")
+      onlyIfSuccessful()
+    }
+  }
+}
+
+// -------------------------------------------------------------------
+def set_status = job("_bitbucket-set-status")
+create_status.with
+{
+  label "docker"
+
+  parameters
+  {
+     stringParam('STATUS',''
+                 'inprogress | fail | ok')
+  }
+
+  wrappers {
+     preBuildCleanup()
+  }
+
+  steps
+  {
+    copyArtifacts(create_status_name)
+    {
+      includePatterns('')
+      flatten()
+      buildSelector {
+        upstreamBuild()
+      }
+    }
+
+    shell("""\
+          #!/bin/bash -xe
+
+          export BITBUCKET_BUILD_STATUS_FILE="${build_status_path}"
+          /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
+          """.stripIndent())
+  }
+
+  publishers
+  {
+    archiveArtifacts
     {
       pattern("${build_status_path}")
       onlyIfSuccessful()
