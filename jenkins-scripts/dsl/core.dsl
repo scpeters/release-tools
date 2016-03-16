@@ -77,4 +77,13 @@ create_status.with
           /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
           """.stripIndent())
   }
+
+  publishers
+  {
+    archiveArtifacts 
+    {
+      pattern("${build_status_path}")
+      onlyIfSuccessful()
+    }
+  }
 }
