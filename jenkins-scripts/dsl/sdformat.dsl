@@ -112,7 +112,7 @@ ci_distro.each { distro ->
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: 'env.MERCURIAL_REVISION_SHORT'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
-                         propagate: false, wait: false
+                         propagate: false, wait: false,
                    archive: ${build_status_file_name}
                  }
 
