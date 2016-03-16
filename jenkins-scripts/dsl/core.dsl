@@ -3,7 +3,7 @@ import javaposse.jobdsl.dsl.Job
 
 Globals.default_emails = "jrivero@osrfoundation.org, scpeters@osrfoundation.org"
 
-def build_status_file_name  = Globals.bitbucket_build_status_file_path
+def build_status_file_name  = Globals.bitbucket_build_status_file_name
 def build_status_file_path  = Globals.bitbucket_build_status_file_path
 
 // -------------------------------------------------------------------
