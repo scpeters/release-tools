@@ -121,25 +121,25 @@ ci_distro.each { distro ->
                  stage 'create bitbucket status file'
                   node {
                     build job: '_bitbucket-create_build_status_file',
+                    propagate: false, wait: true,
                     parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]],
-                         propagate: false, wait: true,
                     archive: '${build_status_file_name}'
                   }
 
                  parallel 'start the build': {
                    stage 'set bitbucket status: in progress'
                    node {
-                     unarchive mapping: [${build_status_file_name}' : '.']
-                     build job: '_bitbucket-set_status', propagate: false, wait: false
+                     unarchive mapping: ['${build_status_file_name}' : '.']
+                     build job: '_bitbucket-set_status',
+                     propagate: false, wait: true,
                      parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                        [\$class: 'StringParameterValue', name: 'STATUS', value: "inprogress"]],
-                        propagate: false, wait: true
+                         [\$class: 'StringParameterValue', name: 'STATUS',        value: "inprogress"]]
                    }
                  }, 'run compilation': {
                     stage 'building software'
