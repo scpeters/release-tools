@@ -101,12 +101,6 @@ ci_distro.each { distro ->
     {
       label "master || docker"
 
-      scm {
-        hg('${SRC_REPO}') {
-          branch('${SRC_BRANCH}')
-        }
-      }
-
       definition
       {
         cps
@@ -114,13 +108,17 @@ ci_distro.each { distro ->
           // run script in sandbox groovy
           sandbox()
           script("""\
+                 stage 'checkout for the mercurial hash'
+                 node {
+                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO"]) 
+                 }
                  stage 'create bitbucket status file'
                  node {
                    build job: '_bitbucket_create_build_status_file',
                    parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
-                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: "\$MERCURIAL_REVISION_SHORT"],
+                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]],
                          propagate: false, wait: true,
