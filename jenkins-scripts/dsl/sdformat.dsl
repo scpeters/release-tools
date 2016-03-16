@@ -111,7 +111,7 @@ ci_distro.each { distro ->
                  currentBuild.description =  "\$JOB_DESCRIPTION"
 
                  stage 'checkout for the mercurial hash'
-                  node {
+                  node("docker") {
                    checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO",
                              propagate: false, wait: true])
                     sh 'echo `hg id -i` > SCM_hash'
