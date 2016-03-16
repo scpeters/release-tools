@@ -117,7 +117,7 @@ set_status.with
     shell("""\
           #!/bin/bash -xe
 
-          export BITBUCKET_BUILD_STATUS_FILE="${build_status_path}"
+          export BITBUCKET_BUILD_STATUS_FILE="${build_status_file_path}"
           /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
           """.stripIndent())
   }
