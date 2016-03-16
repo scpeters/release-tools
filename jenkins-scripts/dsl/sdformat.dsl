@@ -113,8 +113,18 @@ ci_distro.each { distro ->
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: 'env.MERCURIAL_REVISION_SHORT'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
-                         propagate: false, wait: false,
+                         propagate: false, wait: true,
                    archive: '${build_status_file_name}'
+                 }
+
+                 parallel 'set bitbucket status: in progress': {
+                   node {
+                     build job: '_bitbucket-set-status', propagate: false, wait: false
+                   }
+                 }, 'run compilation': {
+                    node {
+                       sh 'echo build'
+                    }
                  }
 
                  stage 'set bitbucket status: in progress'
@@ -123,6 +133,8 @@ ci_distro.each { distro ->
                  }
                  """.stripIndent())
         }
+        // run script in sandbox groovy
+        sandbox()
       }
 
       parameters {
