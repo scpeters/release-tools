@@ -90,8 +90,8 @@ create_status.with
 }
 
 // -------------------------------------------------------------------
-def set_status = job("_bitbucket-set-status")
-create_status.with
+def et_status = job("_bitbucket-set-status")
+set_status.with
 {
   label "docker"
 
