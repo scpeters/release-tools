@@ -117,19 +117,17 @@ ci_distro.each { distro ->
                    archive: '${build_status_file_name}'
                  }
 
-                 parallel 'set bitbucket status: in progress': {
+
+                 parallel 'start the buil': {
+                   stage 'set bitbucket status: in progress'
                    node {
                      build job: '_bitbucket-set-status', propagate: false, wait: false
                    }
                  }, 'run compilation': {
+                    stage 'building software'
                     node {
                        sh 'echo build'
                     }
-                 }
-
-                 stage 'set bitbucket status: in progress'
-                 node {
-                   build job: '_bitbucket-set-status', propagate: false, wait: false
                  }
                  """.stripIndent())
         }
