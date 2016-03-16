@@ -115,7 +115,7 @@ ci_distro.each { distro ->
                  }
 
                  step([\$class: 'ArtifactArchiver', artifacts:'**/${build_status_path}', fingerprint: true])
-                 """.stripIndent()
+                 """.stripIndent())
         }
       }
 
