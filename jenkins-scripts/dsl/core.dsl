@@ -57,7 +57,7 @@ create_status.with
 
   parameters
   {
-     stringParam('JENKINS_BUILD_REPO',''
+     stringParam('JENKINS_BUILD_REPO','',
                  'Repo to test')
      stringParam('JENKINS_BUILD_JOB_NAME','',
                  'Branch of SRC_REPO to test')
