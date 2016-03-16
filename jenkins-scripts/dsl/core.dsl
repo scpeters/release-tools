@@ -97,8 +97,7 @@ create_status.with
 
   parameters
   {
-     stringParam('STATUS',''
-                 'inprogress | fail | ok')
+     stringParam('STATUS','', 'inprogress | fail | ok')
   }
 
   wrappers {
