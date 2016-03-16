@@ -120,7 +120,7 @@ ci_distro.each { distro ->
       }
 
       parameters {
-        stringParam('SRC_REPO', repo,'URL pointing to repository')
+        stringParam('SRC_REPO',sdf_repo,'URL pointing to repository')
         stringParam('SRC_BRANCH','default','Branch of SRC_REPO to test')
         stringParam('JOB_DESCRIPTION','','Description of the job in course. For information proposes.')
       }
