@@ -106,14 +106,15 @@ ci_distro.each { distro ->
           script("""\
                  stage 'create bitbucket status file'
                  node {
-                   build job: '_bitbucket_create_build_status_file.bash',
+                   build job: '_bitbucket_create_build_status_file',
                    parameters:
-                        [[\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: 'env.SRC_REPO'],
+                        [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: 'env.RTOOLS_BRANCH'],
+                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: 'env.SRC_REPO'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: 'env.MERCURIAL_REVISION_SHORT'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: 'env.BUILD_JOB'],
                          [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: 'env.BUILD_URL']],
                          propagate: false, wait: false,
-                   archive: ${build_status_file_name}
+                   archive: '${build_status_file_name}'
                  }
 
                  stage 'set bitbucket status: in progress'
@@ -125,6 +126,7 @@ ci_distro.each { distro ->
       }
 
       parameters {
+        stringParam('RTOOLS_BRANCH','default','release-tools branch to send to jobs')
         stringParam('SRC_REPO',sdf_repo,'URL pointing to repository')
         stringParam('SRC_BRANCH','default','Branch of SRC_REPO to test')
         stringParam('JOB_DESCRIPTION','','Description of the job in course. For information proposes.')
