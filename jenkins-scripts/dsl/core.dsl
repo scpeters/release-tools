@@ -3,7 +3,8 @@ import javaposse.jobdsl.dsl.Job
 
 Globals.default_emails = "jrivero@osrfoundation.org, scpeters@osrfoundation.org"
 
-def build_status_path  = Globals.bitbucket_build_status_file_path
+def build_status_file_name  = Globals.bitbucket_build_status_file_path
+def build_status_file_path  = Globals.bitbucket_build_status_file_path
 
 // -------------------------------------------------------------------
 // BREW pull request SHA updater
@@ -73,7 +74,7 @@ create_status.with
     shell("""\
           #!/bin/bash -xe
 
-          export BITBUCKET_BUILD_STATUS_FILE="${build_status_path}"
+          export BITBUCKET_BUILD_STATUS_FILE="${build_status_file_path}"
           /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
           """.stripIndent())
   }
@@ -82,7 +83,7 @@ create_status.with
   {
     archiveArtifacts
     {
-      pattern("${build_status_path}")
+      pattern("${build_status_file_name}")
       onlyIfSuccessful()
     }
   }
@@ -125,7 +126,7 @@ set_status.with
   {
     archiveArtifacts
     {
-      pattern("${build_status_path}")
+      pattern("${build_status_file_name}")
       onlyIfSuccessful()
     }
   }
