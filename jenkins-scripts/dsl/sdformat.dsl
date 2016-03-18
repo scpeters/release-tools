@@ -124,11 +124,11 @@ ci_distro.each { distro ->
                     build job: '${create_status_name}',
                     propagate: false, wait: true,
                     parameters:
-                        [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
-                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
-                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
-                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
-                         [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
+                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
+                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
+                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
+                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
+                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
                   }
 
                  parallel 'start the build': {
@@ -144,12 +144,39 @@ ci_distro.each { distro ->
                            [\$class: 'StringParameterValue', name: 'STATUS',        value: "inprogress"]]
                    }
                  }, 'run compilation': {
-                    stage 'building software'
-                    node {
-                       sh 'echo build'
+                  stage 'compiling sdformat + QA'
+                  node {
+                    build job: 'sdformat-ci-pr_any-trusty-amd64', 
+                      propagate: true, wait: true,
+                      parameters: 
+                       [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
+                        [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false], 
+                        [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
+                        [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
+                        [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
+                        [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
+
+                    echo build.getResult()
+
+                    publish_result = 'failed'
+                    if (build.getResult() == 'SUCCESS')
+                    {
+                      publish_result = 'ok'
                     }
-                 }
-                 """.stripIndent())
+ 
+                    stage 'publish bitbucket status'
+                      node {
+                       step ([\$class: 'CopyArtifact',
+                              projectName: '${create_status_name}',
+                              fingerprintArtifacts: true,
+                              filter: '${build_status_file_name}']);
+                       build job: '_bitbucket-set_status',
+                         parameters:
+                            [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
+                             [\$class: 'StringParameterValue', name: 'STATUS',        value: "\$publish_result"]]
+                      }
+                }
+                """.stripIndent())
         }
       }
 
@@ -158,6 +185,7 @@ ci_distro.each { distro ->
         stringParam('SRC_REPO',sdf_repo,'URL pointing to repository')
         stringParam('SRC_BRANCH','default','Branch of SRC_REPO to test')
         stringParam('JOB_DESCRIPTION','','Description of the job in course. For information proposes.')
+        stringParam('DEST_BRANCH','default','Branch to merge in')
       }
 
       steps
