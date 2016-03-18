@@ -28,7 +28,7 @@ if [[ ! -f ${BITBUCKET_USER_PASS_FILE} ]]; then
   exit 1
 fi
 
-echo "BEGIN SECTION: build BITBUCKET_STATUS in bitbucket: ${BITBUCKET_STATUS} (hidden)"
+echo "BEGIN SECTION: build status in bitbucket: ${BITBUCKET_STATUS} (hidden)"
 set +x # keep password secret
 BITBUCKET_USER_PASS=$(cat ${BITBUCKET_USER_PASS_FILE})
 BITBUCKET_API_RESULT=true
