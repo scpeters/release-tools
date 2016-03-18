@@ -140,8 +140,8 @@ ci_distro.each { distro ->
                             filter: '${build_status_file_name}']);
                      build job: '_bitbucket-set_status',
                        parameters:
-                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                           [\$class: 'StringParameterValue', name: 'STATUS',        value: "inprogress"]]
+                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',    value: "\$RTOOLS_BRANCH"],
+                           [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS', value: "inprogress"]]
                    }
                  }, 'run compilation': {
                   stage 'compiling sdformat + QA'
