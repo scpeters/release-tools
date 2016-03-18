@@ -146,11 +146,11 @@ ci_distro.each { distro ->
                  }, 'run compilation': {
                   stage 'compiling sdformat + QA'
                   node {
-                    build job: 'sdformat-ci-pr_any-trusty-amd64', 
+                    build job: 'sdformat-ci-pr_any-trusty-amd64',
                       propagate: true, wait: true,
-                      parameters: 
+                      parameters:
                        [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
-                        [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false], 
+                        [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
                         [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
                         [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
                         [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
