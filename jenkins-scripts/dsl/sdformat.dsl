@@ -175,7 +175,7 @@ ci_distro.each { distro ->
                  build job: '_bitbucket-set_status',
                    parameters:
                       [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                       [\$class: 'StringParameterValue', name: 'STATUS',        value: "\$publish_result"]]
+                       [\$class: 'StringParameterValue', name: 'STATUS',        value: "${publish_result}"]]
                 }
               """.stripIndent())
         }
