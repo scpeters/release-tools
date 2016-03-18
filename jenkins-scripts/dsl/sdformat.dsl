@@ -121,7 +121,7 @@ ci_distro.each { distro ->
 
                  stage 'create bitbucket status file'
                   node {
-                    build job: '${create_status_name}'
+                    build job: '${create_status_name}',
                     propagate: false, wait: true,
                     parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
