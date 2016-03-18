@@ -133,7 +133,7 @@ ci_distro.each { distro ->
                  parallel 'start the build': {
                    stage 'set bitbucket status: in progress'
                    node {
-                     step ([$class: 'CopyArtifact',
+                     step ([\$class: 'CopyArtifact',
                             projectName: '_test_sleep_job',
                             fingerprintArtifacts: true,
                             filter: '${build_status_file_name}']);
