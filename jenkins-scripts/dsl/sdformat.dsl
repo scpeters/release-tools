@@ -94,7 +94,8 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 2. Create the any job
-    sdf_repo = "http://bitbucket.org/osrf/sdformat"
+    sdf_repo           = "http://bitbucket.org/osrf/sdformat"
+    create_status_name = Globals.bitbucket_build_status_job_name
 
     def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
     sdformat_ci_main.with
@@ -120,7 +121,7 @@ ci_distro.each { distro ->
 
                  stage 'create bitbucket status file'
                   node {
-                    build job: '_bitbucket-create_build_status_file',
+                    build job: '${create_status_name}'
                     propagate: false, wait: true,
                     parameters:
                         [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
@@ -134,7 +135,7 @@ ci_distro.each { distro ->
                    stage 'set bitbucket status: in progress'
                    node {
                      step ([\$class: 'CopyArtifact',
-                            projectName: '_test_sleep_job',
+                            projectName: '${create_status_name}',
                             fingerprintArtifacts: true,
                             filter: '${build_status_file_name}']);
                      build job: '_bitbucket-set_status',

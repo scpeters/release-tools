@@ -50,7 +50,7 @@ release_job.with
 }
 
 // -------------------------------------------------------------------
-def create_status_name = '_bitbucket-create_build_status_file'
+def create_status_name = Globals.bitbucket_build_status_job_name
 def create_status = job(create_status_name)
 OSRFLinuxBase.create(create_status)
 create_status.with
