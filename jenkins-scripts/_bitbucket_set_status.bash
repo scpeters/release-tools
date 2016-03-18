@@ -4,7 +4,9 @@
 [[ -L ${0} ]] && SCRIPT_DIR=$(readlink ${0}) || SCRIPT_DIR=${0}
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
-STATUS=${1}
+# STATUS can be taken an env variable or via the first argument 
+# when calling the script
+STATUS=${STATUS:-$1}
 
 # Source bitbucket configs
 . ${SCRIPT_DIR}/_bitbucket_configs.bash
