@@ -155,28 +155,29 @@ ci_distro.each { distro ->
                         [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
                         [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
                         [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
-
-                    echo build.getResult()
-
-                    publish_result = 'failed'
-                    if (build.getResult() == 'SUCCESS')
-                    {
-                      publish_result = 'ok'
-                    }
- 
-                    stage 'publish bitbucket status'
-                      node {
-                       step ([\$class: 'CopyArtifact',
-                              projectName: '${create_status_name}',
-                              fingerprintArtifacts: true,
-                              filter: '${build_status_file_name}']);
-                       build job: '_bitbucket-set_status',
-                         parameters:
-                            [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                             [\$class: 'StringParameterValue', name: 'STATUS',        value: "\$publish_result"]]
-                      }
+                  }
                 }
-                """.stripIndent())
+
+                echo currentBuild.getResult()
+
+                publish_result = 'failed'
+                if (currentBuild.getResult() == 'SUCCESS')
+                {
+                  publish_result = 'ok'
+                }
+
+                stage 'publish bitbucket status'
+                node {
+                 step ([\$class: 'CopyArtifact',
+                        projectName: '${create_status_name}',
+                        fingerprintArtifacts: true,
+                        filter: '${build_status_file_name}']);
+                 build job: '_bitbucket-set_status',
+                   parameters:
+                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
+                       [\$class: 'StringParameterValue', name: 'STATUS',        value: "\$publish_result"]]
+                }
+              """.stripIndent())
         }
       }
 
