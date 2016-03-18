@@ -50,7 +50,7 @@ release_job.with
 }
 
 // -------------------------------------------------------------------
-def create_status_name = Globals.bitbucket_build_status_job_name
+def create_status_name = '_bitbucket-create_build_status_file'
 def create_status = job(create_status_name)
 OSRFLinuxBase.create(create_status)
 create_status.with
@@ -111,7 +111,7 @@ set_status.with
           #!/bin/bash -xe
 
           export BITBUCKET_BUILD_STATUS_FILE="${build_status_file_path}"
-          /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_create_build_status_file.bash
+          /bin/bash -xe ./scripts/jenkins-scripts/_bitbucket_set_status.bash
           """.stripIndent())
   }
 }
