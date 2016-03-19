@@ -15,6 +15,7 @@
 #   - USE_OSRF_REPO     : deprecated! [default false] true|false if true, add the stable osrf repo to sources.list
 
 echo "DOCKER_POSTINSTALL_HOOK: ${DOCKER_POSTINSTALL_HOOK}"
+`expr length "${DOCKER_POSTINSTALL_HOOK}"`
 
 if [[ -z ${ARCH} ]]; then
   echo "Arch undefined, default to amd64"
@@ -237,7 +238,7 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
    fi
 DELIM_DISPLAY
 
-if [ `expr length "${DOCKER_POSTINSTALL_HOOK} "` -gt 1 ]; then
+if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
 cat >> Dockerfile << DELIM_WORKAROUND_POST_HOOK
 RUN ${DOCKER_POSTINSTALL_HOOK}
 DELIM_WORKAROUND_POST_HOOK
