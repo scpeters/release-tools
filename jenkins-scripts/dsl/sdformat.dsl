@@ -110,7 +110,7 @@ ci_distro.each { distro ->
           sandbox()
           script("""\
                  currentBuild.description =  "\$JOB_DESCRIPTION"
-                 archive_number = ""
+                 def archive_number = ""
 
                  stage 'checkout for the mercurial hash'
                   node("docker") {
@@ -130,7 +130,7 @@ ci_distro.each { distro ->
                              [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
                              [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
                              [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
-                    def archive_number = bitbucket_metadata.getNumber().toString()
+                    archive_number = bitbucket_metadata.getNumber().toString()
                   }
 
                   stage 'set bitbucket status: in progress'
@@ -139,7 +139,7 @@ ci_distro.each { distro ->
                        parameters:
                           [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
                            [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: "inprogress"],
-                           [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: "\$archive_number"]]
+                           [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                   }
 
                  stage 'compiling sdformat + QA'
@@ -167,7 +167,7 @@ ci_distro.each { distro ->
                    parameters:
                       [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
                        [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
-                       [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: "\$archive_number"]]
+                       [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                 }
               """.stripIndent())
         }
