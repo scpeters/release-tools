@@ -113,7 +113,7 @@ ci_distro.each { distro ->
                  def archive_number = ""
 
                  stage 'checkout for the mercurial hash'
-                  node("docker") {
+                  node("master") {
                    checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO",
                              propagate: false, wait: true])
                     sh 'echo `hg id -i` > SCM_hash'
