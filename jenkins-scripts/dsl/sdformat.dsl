@@ -110,6 +110,7 @@ ci_distro.each { distro ->
           sandbox()
           script("""\
                  currentBuild.description =  "\$JOB_DESCRIPTION"
+                 archive_number = ""
 
                  stage 'checkout for the mercurial hash'
                   node("docker") {
@@ -121,61 +122,52 @@ ci_distro.each { distro ->
 
                  stage 'create bitbucket status file'
                   node {
-                    build job: '${create_status_name}',
-                    propagate: false, wait: true,
-                    parameters:
-                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
-                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
-                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
-                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
-                       [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
+                    def bitbucket_metadata = build job: '${create_status_name}',
+                          propagate: false, wait: true,
+                          parameters:
+                            [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
+                    def archive_number = bitbucket_metadata.getNumber().toString()
                   }
 
-                 parallel 'start the build': {
-                   stage 'set bitbucket status: in progress'
-                   node {
-                     step ([\$class: 'CopyArtifact',
-                            projectName: '${create_status_name}',
-                            fingerprintArtifacts: true,
-                            filter: '${build_status_file_name}']);
+                  stage 'set bitbucket status: in progress'
+                  node {
                      build job: '_bitbucket-set_status',
                        parameters:
-                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',    value: "\$RTOOLS_BRANCH"],
-                           [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS', value: "inprogress"]]
-                   }
-                 }, 'run compilation': {
-                  stage 'compiling sdformat + QA'
-                  node {
-                    build job: 'sdformat-ci-pr_any-trusty-amd64',
-                      propagate: true, wait: true,
-                      parameters:
-                       [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
-                        [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
-                        [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
-                        [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
-                        [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
-                        [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
+                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
+                           [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: "inprogress"],
+                           [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: "\$archive_number"]]
                   }
+
+                 stage 'compiling sdformat + QA'
+                 node {
+                  def compilation = build job: 'sdformat-ci-pr_any-trusty-amd64_no_status',
+                        propagate: true, wait: true,
+                        parameters:
+                         [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
+                          [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
+                          [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
+                          [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
+                          [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
+                          [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
                 }
 
-                echo currentBuild.getResult()
-
                 publish_result = 'failed'
-                if (currentBuild.getResult() == 'SUCCESS')
+                if (compilation.getResult() == 'SUCCESS')
                 {
                   publish_result = 'ok'
                 }
 
                 stage 'publish bitbucket status'
                 node {
-                 step ([\$class: 'CopyArtifact',
-                        projectName: '${create_status_name}',
-                        fingerprintArtifacts: true,
-                        filter: '${build_status_file_name}']);
                  build job: '_bitbucket-set_status',
                    parameters:
-                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH', value: "\$RTOOLS_BRANCH"],
-                       [\$class: 'StringParameterValue', name: 'STATUS',        value: publish_result ]]
+                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
+                       [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
+                       [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: "\$archive_number"]]
                 }
               """.stripIndent())
         }
