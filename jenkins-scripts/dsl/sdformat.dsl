@@ -15,8 +15,6 @@ def all_supported_distros   = Globals.get_all_supported_distros()
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 
-def build_status_file_name  = Globals.bitbucket_build_status_file_name
-
 // Need to be used in ci_pr
 String abi_job_name = ''
 
@@ -94,108 +92,10 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 2. Create the any job
-    sdf_repo           = "http://bitbucket.org/osrf/sdformat"
-    create_status_name = Globals.bitbucket_build_status_job_name
+    sdf_repo              = "http://bitbucket.org/osrf/sdformat"
+    ci_build_any_job_name = "sdformat-ci-pr_any-${distro}-${arch}"
 
-    def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
-    sdformat_ci_main.with
-    {
-      label "master || docker"
-
-      definition
-      {
-        cps
-        {
-          // run script in sandbox groovy
-          sandbox()
-          script("""\
-                 currentBuild.description =  "\$JOB_DESCRIPTION"
-                 def archive_number = ""
-
-                 stage 'checkout for the mercurial hash'
-                  node("master") {
-                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', revision: "\$SRC_BRANCH", source: "\$SRC_REPO",
-                             propagate: false, wait: true])
-                    sh 'echo `hg id -i` > SCM_hash'
-                    env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
-                  }
-
-                 stage 'create bitbucket status file'
-                  node {
-                    def bitbucket_metadata = build job: '${create_status_name}',
-                          propagate: false, wait: true,
-                          parameters:
-                            [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
-                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
-                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
-                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
-                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
-                    archive_number = bitbucket_metadata.getNumber().toString()
-                  }
-
-                  stage 'set bitbucket status: in progress'
-                  node {
-                     build job: '_bitbucket-set_status',
-                       parameters:
-                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
-                           [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: "inprogress"],
-                           [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
-                  }
-
-                 stage 'compiling sdformat + QA'
-                 node {
-                  def compilation = build job: 'sdformat-ci-pr_any-trusty-amd64_no_status',
-                        propagate: true, wait: true,
-                        parameters:
-                         [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
-                          [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
-                          [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
-                          [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
-                          [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
-                          [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
-                }
-
-                publish_result = 'failed'
-                if (compilation.getResult() == 'SUCCESS')
-                {
-                  publish_result = 'ok'
-                }
-
-                stage 'publish bitbucket status'
-                node {
-                 build job: '_bitbucket-set_status',
-                   parameters:
-                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
-                       [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
-                       [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
-                }
-              """.stripIndent())
-        }
-      }
-
-      parameters {
-        stringParam('RTOOLS_BRANCH','default','release-tools branch to send to jobs')
-        stringParam('SRC_REPO',sdf_repo,'URL pointing to repository')
-        stringParam('SRC_BRANCH','default','Branch of SRC_REPO to test')
-        stringParam('JOB_DESCRIPTION','','Description of the job in course. For information proposes.')
-        stringParam('DEST_BRANCH','default','Branch to merge in')
-      }
-
-      steps
-      {
-         systemGroovyCommand("""\
-
-              if (job_description == "")
-              {
-              }
-
-              build.setDescription(job_description)
-              """.stripIndent()
-         )
-      }
-    }
-
-    def sdformat_ci_any_job = job("sdformat-ci-pr_any-${distro}-${arch}")
+    def sdformat_ci_any_job = job(ci_build_any_job_name)
     OSRFLinuxCompilationAny.create(sdformat_ci_any_job, sdf_repo)
     sdformat_ci_any_job.with
     {
@@ -231,6 +131,12 @@ ci_distro.each { distro ->
          """.stripIndent())
        }
      }
+
+    // --------------------------------------------------------------
+    // 3. Create the main CI worf flow job
+    def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
+    OSRFCIWorflow.create(sdformat_ci_job, ci_build_any_job_name)
+
   } // end of arch
 } // end of distro
 
