@@ -7,8 +7,10 @@ def create_status_name = Globals.bitbucket_build_status_job_name
 
 class OSRFCIWorflow
 {
-  static void create(Job job, String build_any_job)
+  static void create(Job job)
   {
+    String build_any_job = "lala"
+
     job.with
     {
       label "master || docker"

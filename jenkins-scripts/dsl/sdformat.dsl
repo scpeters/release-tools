@@ -1,6 +1,5 @@
 import _configs_.*
 import javaposse.jobdsl.dsl.Job
-import javaposse.jobdsl.dsl.jobs.WorkflowJob
 
 def sdformat_supported_branches = [ 'sdformat2', 'sdformat3', 'sdformat4' ]
 def nightly_sdformat_branch = [ 'sdformat4' ]
@@ -140,7 +139,8 @@ ci_distro.each { distro ->
     // --------------------------------------------------------------
     // 3. Create the main CI worf flow job
     def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
-    OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
+    // OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
+    OSRFCIWorkflow.create(sdformat_ci_job)
 
   } // end of arch
 } // end of distro
