@@ -15,7 +15,6 @@
 #   - USE_OSRF_REPO     : deprecated! [default false] true|false if true, add the stable osrf repo to sources.list
 
 echo "DOCKER_POSTINSTALL_HOOK: ${DOCKER_POSTINSTALL_HOOK}"
-`expr length "${DOCKER_POSTINSTALL_HOOK}"`
 
 if [[ -z ${ARCH} ]]; then
   echo "Arch undefined, default to amd64"
