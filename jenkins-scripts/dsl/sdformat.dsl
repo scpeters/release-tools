@@ -1,5 +1,6 @@
 import _configs_.*
 import javaposse.jobdsl.dsl.Job
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
 
 def sdformat_supported_branches = [ 'sdformat2', 'sdformat3', 'sdformat4' ]
 def nightly_sdformat_branch = [ 'sdformat4' ]
