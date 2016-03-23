@@ -15,6 +15,11 @@ def all_supported_distros   = Globals.get_all_supported_distros()
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 
+// Ideally should be build using variables but can not be used in that way
+// in the static call. TODO: think how to fix this
+// String ci_build_any_job_name = "sdformat-ci-pr_any-${distro}-${arch}"
+String ci_build_any_job_name = "sdformat-ci-pr_any-trusty-amd64"
+
 // Need to be used in ci_pr
 String abi_job_name = ''
 
@@ -92,8 +97,7 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 2. Create the any job
-    String sdf_repo              = "http://bitbucket.org/osrf/sdformat"
-    String ci_build_any_job_name = "sdformat-ci-pr_any-${distro}-${arch}"
+    String sdf_repo = "http://bitbucket.org/osrf/sdformat"
 
     def sdformat_ci_any_job = job(ci_build_any_job_name)
     OSRFLinuxCompilationAny.create(sdformat_ci_any_job, sdf_repo)
@@ -134,7 +138,7 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 3. Create the main CI worf flow job
-    def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
+    def sdformat_ci_main = WorkflowJob("sdformat-ci-pr_any")
     OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
 
   } // end of arch
