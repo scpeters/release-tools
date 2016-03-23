@@ -1,12 +1,13 @@
 package _configs_
 
 import javaposse.jobdsl.dsl.Job
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
 
 def create_status_name = Globals.bitbucket_build_status_job_name
 
 class OSRFCIWorflow
 {
-  static void create(workflowJob job, String build_any_job)
+  static void create(WorkflowJob job, String build_any_job)
   {
     job.with
     {
