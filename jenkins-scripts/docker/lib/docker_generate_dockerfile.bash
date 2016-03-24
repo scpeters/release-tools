@@ -235,6 +235,9 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
    fi
 DELIM_DISPLAY
 
+echo "foo: ${DOCKER_POSTINSTALL_HOOK}"
+echo `expr length "${DOCKER_POSTINSTALL_HOOK}"`
+
 if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
 cat >> Dockerfile << DELIM_WORKAROUND_POST_HOOK
 RUN ${DOCKER_POSTINSTALL_HOOK}
