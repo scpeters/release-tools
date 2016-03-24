@@ -236,9 +236,6 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
 DELIM_DISPLAY
 fi
 
-echo "foo: ${DOCKER_POSTINSTALL_HOOK}"
-echo `expr length "${DOCKER_POSTINSTALL_HOOK}"`
-
 if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
 cat >> Dockerfile << DELIM_WORKAROUND_POST_HOOK
 RUN ${DOCKER_POSTINSTALL_HOOK}
@@ -255,7 +252,6 @@ ENV LANGUAGE en_GB
 # Docker has problems with Qt X11 MIT-SHM extension
 ENV QT_X11_NO_MITSHM 1
 DELIM_WORKAROUND_91
-fi
 
 cat >> Dockerfile << DELIM_DOCKER4
 COPY build.sh build.sh
