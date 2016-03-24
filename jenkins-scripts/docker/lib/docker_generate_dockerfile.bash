@@ -234,6 +234,7 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
        exit 1 \\
    fi
 DELIM_DISPLAY
+fi
 
 echo "foo: ${DOCKER_POSTINSTALL_HOOK}"
 echo `expr length "${DOCKER_POSTINSTALL_HOOK}"`
