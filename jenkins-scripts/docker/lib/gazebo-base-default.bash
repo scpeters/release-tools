@@ -21,7 +21,7 @@ if [[ ${GAZEBO_BASE_CMAKE_ARGS} != ${GAZEBO_BASE_CMAKE_ARGS/Coverage} ]]; then
   EXTRA_PACKAGES="${EXTRA_PACKAGES} lcov" 
 fi
 
-for i in [1..2]; do
+for i in 1 2; do
 cat >> build.sh << DELIM
 ###################################################
 # Make project-specific changes here
