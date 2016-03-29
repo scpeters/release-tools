@@ -21,15 +21,14 @@ if [[ ${GAZEBO_BASE_CMAKE_ARGS} != ${GAZEBO_BASE_CMAKE_ARGS/Coverage} ]]; then
   EXTRA_PACKAGES="${EXTRA_PACKAGES} lcov" 
 fi
 
-for i in 1 2; do
-cat >> build.sh << DELIM
+cat > build.sh << DELIM
 ###################################################
 # Make project-specific changes here
 #
 set -ex
 source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 
-init_stopwatch COMPILATION_${i}
+init_stopwatch COMPILATION_bootstrap
 # Normal cmake routine for Gazebo
 echo '# BEGIN SECTION: Gazebo configuration'
 rm -rf $WORKSPACE/install
@@ -44,9 +43,27 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: Gazebo compilation'
 make -j${MAKE_JOBS}
 echo '# END SECTION'
-init_stopwatch COMPILATION_${i}
+init_stopwatch COMPILATION_bootstrap
+
+init_stopwatch COMPILATION_pch
+# Normal cmake routine for Gazebo
+echo '# BEGIN SECTION: Gazebo configuration'
+rm -rf $WORKSPACE/build
+mkdir -p $WORKSPACE/build
+cd $WORKSPACE/build
+cmake ${GAZEBO_BASE_CMAKE_ARGS}      \\
+    -DCMAKE_INSTALL_PREFIX=/usr      \\
+    -DENABLE_SCREEN_TESTS:BOOL=False \\
+    -DUSE_PCH=ON
+  $WORKSPACE/gazebo
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: Gazebo compilation'
+make -j${MAKE_JOBS}
+echo '# END SECTION'
+init_stopwatch COMPILATION_pch
+
 DELIM
-done
 
 USE_OSRF_REPO=true
 SOFTWARE_DIR="gazebo"
