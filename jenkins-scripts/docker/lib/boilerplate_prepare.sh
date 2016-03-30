@@ -83,7 +83,18 @@ if $NEED_C11_COMPILER; then
   fi
 fi
 
-# Useful for running tests properly in ros based software
+if [ -z ${ENABLE_CCACHE} ]; then
+  ENABLE_CCACHE=true
+  DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ccache"
+  CCACHE_DIR="/srv/ccache"
+  # create the host cache dir to be shared across all docker images
+  if [[ ! -d ${CCACHE_DIR} ]]; then
+    mkdir -p ${CCACHE_DIR}
+    chmod o+w ${CCACHE_DIR}
+  fi
+fi
+
+# Useful for running tests properly integrated ros based software
 if ${ENABLE_ROS}; then
   export ROS_HOSTNAME=localhost
   export ROS_MASTER_URI=http://localhost:11311
