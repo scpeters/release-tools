@@ -54,7 +54,7 @@ cd $WORKSPACE/build
 cmake ${GAZEBO_BASE_CMAKE_ARGS}      \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
-    -DUSE_PCH=ON
+    -DUSE_PCH=ON \\
   $WORKSPACE/gazebo
 echo '# END SECTION'
 
