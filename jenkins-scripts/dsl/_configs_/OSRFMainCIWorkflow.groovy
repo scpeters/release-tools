@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.Job
 
 def create_status_name = Globals.bitbucket_build_status_job_name
 
-class OSRFCIWorkflow
+class OSRFMainCIWorkflow
 {
   static void create(Job job)
   {
