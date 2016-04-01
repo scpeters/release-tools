@@ -138,9 +138,12 @@ ci_distro.each { distro ->
 
     // --------------------------------------------------------------
     // 3. Create the main CI worf flow job
-    def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
-    // OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
-    OSRFCIWorkflow.create(sdformat_ci_job)
+    // GOOD VERSION:
+    // 0. def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
+    // 1. OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
+    // 2. OSRFCIWorkflow.create(sdformat_ci_job)
+    def sdformat_ci_main = job("sdformat-ci-pr_any")
+   
 
   } // end of arch
 } // end of distro
