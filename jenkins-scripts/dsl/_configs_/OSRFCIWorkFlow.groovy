@@ -75,7 +75,7 @@ class OSRFCIWorkFlow
                  stage 'compiling + QA'
                  node {
                   def compilation = build job: '${build_any_job_name}',
-                        propagate: true, wait: true,
+                        propagate: false, wait: true,
                         parameters:
                          [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
                           [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
@@ -100,6 +100,8 @@ class OSRFCIWorkFlow
                        [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
                        [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                 }
+                
+                currentBuild.result = compilation.getResult()
               """.stripIndent())
           } // end of cps
         } // end of definition
