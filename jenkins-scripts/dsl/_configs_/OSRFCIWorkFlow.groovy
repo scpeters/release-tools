@@ -61,8 +61,42 @@ class OSRFCIWorkFlow
                     archive_number = bitbucket_metadata.getNumber().toString()
                   }
 
-
+                  stage 'set bitbucket status: in progress'
+                  node {
+                     build job: '_bitbucket-set_status',
+                       parameters:
+                          [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
+                           [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: "inprogress"],
+                           [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                   }
+
+                 stage 'compiling + QA'
+                 node {
+                  def compilation = build job: ${build_any_job_name},
+                        propagate: true, wait: true,
+                        parameters:
+                         [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
+                          [\$class: 'BooleanParameterValue', name: 'NO_MAILS',        value: false],
+                          [\$class: 'StringParameterValue',  name: 'SRC_REPO',        value: "\$SRC_REPO"],
+                          [\$class: 'StringParameterValue',  name: 'SRC_BRANCH',      value: "\$SRC_BRANCH"],
+                          [\$class: 'StringParameterValue',  name: 'JOB_DESCRIPTION', value: "\$JOB_DESCRIPTION"],
+                          [\$class: 'StringParameterValue',  name: 'DEST_BRANCH',     value: "\$DEST_BRANCH"]]
+                }
+
+                publish_result = 'failed'
+                if (compilation.getResult() == 'SUCCESS')
+                {
+                  publish_result = 'ok'
+                }
+
+                stage 'publish bitbucket status'
+                node {
+                 build job: '_bitbucket-set_status',
+                   parameters:
+                      [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
+                       [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
+                       [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
+                }
               """.stripIndent())
           } // end of cps
         } // end of definition
