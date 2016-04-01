@@ -34,9 +34,21 @@ class OSRFFoo
           {
             // run script in sandbox groovy
             sandbox()
-            script("test")
-          }
-        }
-      }
-   }
+            script("""\
+                 currentBuild.description =  "\$JOB_DESCRIPTION"
+                 def archive_number = ""
+
+                 stage 'checkout for the mercurial hash'
+                  node("master") {
+                   checkout([\$class: 'MercurialSCM', credentialsId: '', installation: '(Default)', 
+                             revision: "\$SRC_BRANCH", source: "\$SRC_REPO",
+                             propagate: false, wait: true])
+                    sh 'echo `hg id -i` > SCM_hash'
+                    env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
+                  }
+              """.stripIndent())
+          } // end of cps
+        } // end of definition
+      } // end of job
+   } // end of create
 }
