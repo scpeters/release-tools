@@ -40,6 +40,7 @@ ${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
 set -x # back to debug
 echo '# END SECTION'
 
+# TODO: add a parse log to return unstable when failed
 if ! $BITBUCKET_API_RESULT; then
   echo 'BEGIN SECTION: build status FAILED'
   echo 'The call from the python client to bitbucket to set the build status failed'
