@@ -25,6 +25,7 @@ class OSRFFoo
           {
             // run script in sandbox groovy
             sandbox()
+            script("test")
           }
         }
       }
