@@ -39,6 +39,7 @@ class OSRFCIWorkFlow
             script("""\
                  currentBuild.description =  "\$JOB_DESCRIPTION"
                  def archive_number = ""
+                 def compilation_job = null
 
                  stage 'checkout for the mercurial hash'
                   node("master") {
@@ -74,7 +75,7 @@ class OSRFCIWorkFlow
 
                  stage 'compiling + QA'
                  node {
-                  def compilation = build job: '${build_any_job_name}',
+                    compilation_job = build job: '${build_any_job_name}',
                         propagate: false, wait: true,
                         parameters:
                          [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
@@ -86,7 +87,7 @@ class OSRFCIWorkFlow
                 }
 
                 publish_result = 'failed'
-                if (compilation.getResult() == 'SUCCESS')
+                if (compilation_job.getResult() == 'SUCCESS')
                 {
                   publish_result = 'ok'
                 }
@@ -101,7 +102,7 @@ class OSRFCIWorkFlow
                        [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                 }
                 
-                currentBuild.result = compilation.getResult()
+                currentBuild.result = compilation_job.getResult()
               """.stripIndent())
           } // end of cps
         } // end of definition
