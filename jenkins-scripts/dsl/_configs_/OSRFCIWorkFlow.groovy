@@ -95,10 +95,10 @@ class OSRFCIWorkFlow
                 stage 'publish bitbucket status'
                 node {
                  build job: '_bitbucket-set_status',
-                   propagate: true, wait: true,
+                   propagate: false, wait: true,
                    parameters:
                       [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
-                       [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
+                       [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: publish_result ],
                        [\$class: 'StringParameterValue', name: 'CREATE_CONFIG_BUILD_NUM', value: archive_number]]
                 }
                 
