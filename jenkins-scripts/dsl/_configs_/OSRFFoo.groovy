@@ -13,7 +13,7 @@ import javaposse.jobdsl.dsl.Job
 
 class OSRFFoo
 {
-   static void create(Job job)
+   static void create(Job job, String ci_build_any_job_name)
    {
      GenericMail.include_mail(job)
 
