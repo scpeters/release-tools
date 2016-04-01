@@ -11,7 +11,7 @@ import javaposse.jobdsl.dsl.Job
      - base mail for Failures and Unstables
 */
 
-class OSRFBase
+class OSRFFoo
 {
    static void create(Job job)
    {
