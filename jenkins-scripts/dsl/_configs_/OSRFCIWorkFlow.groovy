@@ -47,6 +47,7 @@ class OSRFCIWorkFlow
                              propagate: false, wait: true])
                     sh 'echo `hg id -i` > SCM_hash'
                     env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
+                 }
 
                  stage 'create bitbucket status file'
                   node {
