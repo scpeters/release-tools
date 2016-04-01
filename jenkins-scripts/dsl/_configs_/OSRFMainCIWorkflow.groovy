@@ -10,6 +10,8 @@ class OSRFMainCIWorkflow
   static void create(Job job)
   {
     String build_any_job = "lala"
+  }
+/*
 
     job.with
     {
@@ -96,4 +98,5 @@ class OSRFMainCIWorkflow
       }
     } // end of parameters
   } // end of create
+*/
 } // end of class
