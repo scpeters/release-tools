@@ -51,7 +51,7 @@ class OSRFCIWorkFlow
 
                  stage 'create bitbucket status file'
                   node {
-                    def bitbucket_metadata = build job: \'${create_status_name}\',
+                    def bitbucket_metadata = build job: '${create_status_name}',
                           propagate: false, wait: true,
                           parameters:
                             [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
@@ -74,7 +74,7 @@ class OSRFCIWorkFlow
 
                  stage 'compiling + QA'
                  node {
-                  def compilation = build job: ${build_any_job_name},
+                  def compilation = build job: '${build_any_job_name}',
                         propagate: true, wait: true,
                         parameters:
                          [[\$class: 'StringParameterValue',  name: 'RTOOLS_BRANCH',   value: "\$RTOOLS_BRANCH"],
