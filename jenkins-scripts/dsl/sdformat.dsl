@@ -143,7 +143,6 @@ ci_distro.each { distro ->
     // 1. OSRFCIWorkflow.create(sdformat_ci_job, ci_build_any_job_name)
     // def sdformat_ci_main = job("sdformat-ci-pr_any")
     def sdformat_ci_main = job("sdformat-ci-pr_any")
-    OSRFLinuxCompilation.create(sdformat_ci_main)
     OSRFCIWorkflow.create(sdformat_ci_main)
 
   } // end of arch
