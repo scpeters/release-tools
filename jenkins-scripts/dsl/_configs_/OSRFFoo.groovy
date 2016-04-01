@@ -2,13 +2,15 @@ package _configs_
 
 import javaposse.jobdsl.dsl.Job
 
+def create_status_name = Globals.bitbucket_build_status_job_name
+
 /*
-  -> GenericMail
+  -> 
 
   Implements:
-     - description
-     - RTOOLS parame + groovy to set jobDescription
-     - base mail for Failures and Unstables
+     - label
+     - parameters
+     - definition (workflow)
 */
 
 class OSRFFoo
