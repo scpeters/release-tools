@@ -20,15 +20,6 @@ class OSRFFoo
      {
        label "master || docker"
 
-       definition
-       {
-         cps
-         {
-           // run script in sandbox groovy
-           sandbox()
-        }
-      }
- 
       parameters {
         stringParam('RTOOLS_BRANCH','default','release-tools branch to send to jobs')
         stringParam('SRC_REPO','','URL pointing to repository')
