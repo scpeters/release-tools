@@ -18,6 +18,15 @@ class OSRFFoo
       job.with
       {
         label "master || docker"
+
+        definition
+        {
+          cps
+          {
+            // run script in sandbox groovy
+            sandbox()
+          }
+        }
       }
    }
 }
