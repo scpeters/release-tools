@@ -140,7 +140,7 @@ ci_distro.each { distro ->
     // 3. Create the main CI worf flow job
     // GOOD VERSION:
     def sdformat_ci_main = workflowJob("sdformat-ci-pr_any")
-    OSRFFoo.create(sdformat_ci_main, ci_build_any_job_name)
+    OSRFCIWorkFlow.create(sdformat_ci_main, ci_build_any_job_name)
 
   } // end of arch
 } // end of distro
