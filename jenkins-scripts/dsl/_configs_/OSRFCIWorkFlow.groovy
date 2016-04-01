@@ -65,6 +65,7 @@ class OSRFCIWorkFlow
                   stage 'set bitbucket status: in progress'
                   node {
                      build job: '_bitbucket-set_status',
+                       propagate: false, wait: true,
                        parameters:
                           [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
                            [\$class: 'StringParameterValue', name: 'BITBUCKET_STATUS',        value: "inprogress"],
@@ -93,6 +94,7 @@ class OSRFCIWorkFlow
                 stage 'publish bitbucket status'
                 node {
                  build job: '_bitbucket-set_status',
+                   propagate: true, wait: true,
                    parameters:
                       [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',           value: "\$RTOOLS_BRANCH"],
                        [\$class: 'StringParameterValue', name: 'STATUS',                  value: publish_result ],
