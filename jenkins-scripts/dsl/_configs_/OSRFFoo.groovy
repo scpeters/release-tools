@@ -45,6 +45,21 @@ class OSRFFoo
                              propagate: false, wait: true])
                     sh 'echo `hg id -i` > SCM_hash'
                     env.MERCURIAL_REVISION_SHORT = readFile('SCM_hash').trim()
+
+                 stage 'create bitbucket status file'
+                  node {
+                    def bitbucket_metadata = build job: 'lala',
+                          propagate: false, wait: true,
+                          parameters:
+                            [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_REPO',     value: "\$SRC_REPO"],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_HG_HASH',  value: env.MERCURIAL_REVISION_SHORT],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_JOB_NAME', value: env.JOB_NAME],
+                             [\$class: 'StringParameterValue', name: 'JENKINS_BUILD_URL',      value: env.BUILD_URL]]
+                    archive_number = bitbucket_metadata.getNumber().toString()
+                  }
+
+
                   }
               """.stripIndent())
           } // end of cps
