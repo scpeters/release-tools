@@ -2,6 +2,8 @@ package _configs_
 
 import javaposse.jobdsl.dsl.Job
 
+def create_status_name = Globals.bitbucket_build_status_job_name
+
 /*
   -> GenericMail
 
@@ -48,7 +50,7 @@ class OSRFFoo
 
                  stage 'create bitbucket status file'
                   node {
-                    def bitbucket_metadata = build job: 'lala',
+                    def bitbucket_metadata = build job: '${create_status_name}',
                           propagate: false, wait: true,
                           parameters:
                             [[\$class: 'StringParameterValue', name: 'RTOOLS_BRANCH',          value: "\$RTOOLS_BRANCH"],
