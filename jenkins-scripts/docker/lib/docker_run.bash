@@ -11,6 +11,7 @@ stop_stopwatch CREATE_TESTING_ENVIROMENT
 
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
+ccache -s
 echo '# END SECTION'
 
 if $USE_GPU_DOCKER; then
@@ -30,13 +31,7 @@ sudo docker run $EXTRA_PARAMS_STR  \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}:${WORKSPACE} \
             -t ${DOCKER_TAG} \
-            /bin/bash build.sh
-
-sudo docker run $EXTRA_PARAMS_STR  \
-            --cidfile=${CIDFILE} \
-            -v ${WORKSPACE}:${WORKSPACE} \
-            -t ${DOCKER_TAG} \
-            /bin/bash "ccache -s"
+            /bin/bash build.sh && ccache -s
 
 CID=$(cat ${CIDFILE})
 
