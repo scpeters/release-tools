@@ -89,8 +89,8 @@ if [ -z ${ENABLE_CCACHE} ]; then
   CCACHE_DIR="/srv/ccache"
   # create the host cache dir to be shared across all docker images
   if [[ ! -d ${CCACHE_DIR} ]]; then
-    mkdir -p ${CCACHE_DIR}
-    chmod o+w ${CCACHE_DIR}
+    sudo mkdir -p ${CCACHE_DIR}
+    sudo chmod o+w ${CCACHE_DIR}
   fi
 fi
 
