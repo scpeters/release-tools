@@ -11,7 +11,6 @@ stop_stopwatch CREATE_TESTING_ENVIROMENT
 
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
-ccache -s
 echo '# END SECTION'
 
 if $USE_GPU_DOCKER; then
