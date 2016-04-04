@@ -32,6 +32,12 @@ sudo docker run $EXTRA_PARAMS_STR  \
             -t ${DOCKER_TAG} \
             /bin/bash build.sh
 
+sudo docker run $EXTRA_PARAMS_STR  \
+            --cidfile=${CIDFILE} \
+            -v ${WORKSPACE}:${WORKSPACE} \
+            -t ${DOCKER_TAG} \
+            /bin/bash "ccache -s"
+
 CID=$(cat ${CIDFILE})
 
 sudo docker stop ${CID} || true
