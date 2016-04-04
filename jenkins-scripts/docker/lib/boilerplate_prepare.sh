@@ -85,7 +85,7 @@ fi
 
 if [ -z ${ENABLE_CCACHE} ]; then
   ENABLE_CCACHE=true
-  DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ccache"
+  BASE_DEPENDENCIES="${BASE_DEPENDENCIES} ccache"
   CCACHE_DIR="/srv/ccache"
   # create the host cache dir to be shared across all docker images
   if [[ ! -d ${CCACHE_DIR} ]]; then
