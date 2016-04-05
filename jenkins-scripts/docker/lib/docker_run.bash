@@ -30,7 +30,7 @@ sudo docker run $EXTRA_PARAMS_STR  \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}:${WORKSPACE} \
             -t ${DOCKER_TAG} \
-            '/bin/bash build.sh && ccache -s'
+            /bin/bash 'build.sh && ccache -s'
 
 CID=$(cat ${CIDFILE})
 
