@@ -9,11 +9,11 @@ sudo mkdir -p ${WORKSPACE}/build
 sudo docker build -t ${DOCKER_TAG} .
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
-echo '# BEGIN SECTION: see ccache statistics'
 cat >> build.sh << DELIM_CCACHE
+echo '# BEGIN SECTION: see ccache statistics'
 ccache -s
-DELIM_CCACHE
 echo '# END SECTION'
+DELIM_CCACHE
 
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
