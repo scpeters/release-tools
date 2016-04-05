@@ -9,6 +9,12 @@ sudo mkdir -p ${WORKSPACE}/build
 sudo docker build -t ${DOCKER_TAG} .
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
+echo '# BEGIN SECTION: see ccache statistics'
+cat >> build.sh << DELIM_CCACHE
+ccache -s
+DELIM_CCACHE
+echo '# END SECTION'
+
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
 echo '# END SECTION'
@@ -30,7 +36,7 @@ sudo docker run $EXTRA_PARAMS_STR  \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}:${WORKSPACE} \
             -t ${DOCKER_TAG} \
-            /bin/bash 'build.sh && ccache -s'
+            /bin/bash build.sh
 
 CID=$(cat ${CIDFILE})
 
