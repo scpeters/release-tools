@@ -43,7 +43,7 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: Gazebo compilation'
 make -j${MAKE_JOBS}
 echo '# END SECTION'
-init_stopwatch COMPILATION_bootstrap
+stop_stopwatch COMPILATION_bootstrap
 
 init_stopwatch COMPILATION_pch
 # Normal cmake routine for Gazebo
@@ -61,7 +61,7 @@ echo '# END SECTION'
 echo '# BEGIN SECTION: Gazebo compilation'
 make -j${MAKE_JOBS}
 echo '# END SECTION'
-init_stopwatch COMPILATION_pch
+stop_stopwatch COMPILATION_pch
 
 DELIM
 
