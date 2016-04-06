@@ -9,15 +9,6 @@ sudo mkdir -p ${WORKSPACE}/build
 sudo docker build -t ${DOCKER_TAG} .
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
-cat >> build.sh << DELIM_CCACHE_BUILD
-echo
-echo "not running?"
-echo
-echo '# BEGIN SECTION: see ccache statistics'
-ccache -s
-echo '# END SECTION'
-DELIM_CCACHE_BUILD
-
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
 echo '# END SECTION'
@@ -29,23 +20,18 @@ if $USE_GPU_DOCKER; then
                   -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
 fi
 
-if $ENABLE_CCACHE; then
-  sudo docker run -t ${DOCKER_TAG} \
-   	     /usr/bin/ccache -s
-fi
-
 sudo docker run $EXTRA_PARAMS_STR  \
             --cidfile=${CIDFILE} \
             -v ${WORKSPACE}:${WORKSPACE} \
             -t ${DOCKER_TAG} \
             /bin/bash build.sh
 
+CID=$(cat ${CIDFILE})
+
 if $ENABLE_CCACHE; then
-  sudo docker run -t ${DOCKER_TAG} \
-   	     /usr/bin/ccache -s
+  sudo docker run ${CID} /usr/bin/ccache -s
 fi
 
-CID=$(cat ${CIDFILE})
 
 sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true

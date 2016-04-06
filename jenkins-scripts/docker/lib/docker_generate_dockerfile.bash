@@ -258,6 +258,7 @@ cat >> Dockerfile << DELIM_CCACHE
 VOLUME ${CCACHE_DIR} ${CCACHE_DIR}
 ENV CCACHE_DIR ${CCACHE_DIR}
 ENV PATH /usr/lib/ccache:\$PATH
+RUN /usr/bin/ccache -s
 DELIM_CCACHE
 fi
 
