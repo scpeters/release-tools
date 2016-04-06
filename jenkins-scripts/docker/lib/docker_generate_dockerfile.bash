@@ -95,6 +95,15 @@ ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBFULLNAME "OSRF Jenkins"
 ENV DEBEMAIL "build@osrfoundation.org"
+
+# Workaround to issue:
+# https://bitbucket.org/osrf/handsim/issue/91
+RUN locale-gen en_GB.utf8
+ENV LC_ALL en_GB.utf8
+ENV LANG en_GB.utf8
+ENV LANGUAGE en_GB
+# Docker has problems with Qt X11 MIT-SHM extension
+ENV QT_X11_NO_MITSHM 1
 DELIM_DOCKER
 
 # The redirection fails too many times using us ftp
@@ -242,25 +251,11 @@ RUN ${DOCKER_POSTINSTALL_HOOK}
 DELIM_WORKAROUND_POST_HOOK
 fi
 
-cat >> Dockerfile << DELIM_WORKAROUND_91
-# Workaround to issue:
-# https://bitbucket.org/osrf/handsim/issue/91
-RUN locale-gen en_GB.utf8
-ENV LC_ALL en_GB.utf8
-ENV LANG en_GB.utf8
-ENV LANGUAGE en_GB
-# Docker has problems with Qt X11 MIT-SHM extension
-ENV QT_X11_NO_MITSHM 1
-DELIM_WORKAROUND_91
-
 if $ENABLE_CCACHE; then
-cat >> Dockerfile << DELIM_CCACHE
-ADD ${CCACHE_DIR} ${CCACHE_DIR}
-ENV CCACHE_DIR ${CCACHE_DIR}
-ENV PATH /usr/lib/ccache:\$PATH
-RUN ls -las ${CCACHE_DIR}
-RUN /usr/bin/ccache -s
-DELIM_CCACHE
+  # Add the statistics about ccache at the beggining of the build
+  sed -i '1iecho # BEGIN SECTION: starting ccache statistics' build.sh
+  sed -i '1iccache -s' build.sh
+  sed -i '1iecho # END SECTION' build.sh
 fi
 
 cat >> Dockerfile << DELIM_DOCKER4
@@ -271,4 +266,8 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: see Dockerfile'
 cat Dockerfile
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: see build.sh script'
+cat build.sh
 echo '# END SECTION'
