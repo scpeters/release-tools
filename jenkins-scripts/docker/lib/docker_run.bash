@@ -31,7 +31,7 @@ fi
 
 if $ENABLE_CCACHE; then
   sudo docker run -t ${DOCKER_TAG} \
-   	     ['ccache','-s']
+   	     /usr/bin/ccache -s
 fi
 
 sudo docker run $EXTRA_PARAMS_STR  \
@@ -42,7 +42,7 @@ sudo docker run $EXTRA_PARAMS_STR  \
 
 if $ENABLE_CCACHE; then
   sudo docker run -t ${DOCKER_TAG} \
-   	     ['ccache','-s']
+   	     /usr/bin/ccache -s
 fi
 
 CID=$(cat ${CIDFILE})
