@@ -19,7 +19,7 @@ fi
 if $ENABLE_CCACHE; then
   EXTRA_PARAMS_STR=" -v ${CCACHE_DIR}:${CCACHE_DIR}:rw \
                      -e CCACHE_DIR=${CCACHE_DIR}       \
-		     -e PATH /usr/lib/ccache:\$PATH"
+		     -e PATH=/usr/lib/ccache:\$PATH"
 fi
 
 sudo docker run $EXTRA_PARAMS_STR  \
