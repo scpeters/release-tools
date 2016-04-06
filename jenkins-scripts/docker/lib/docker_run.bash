@@ -10,6 +10,9 @@ sudo docker build -t ${DOCKER_TAG} .
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
 cat >> build.sh << DELIM_CCACHE_BUILD
+echo
+echo "not running?"
+echo
 echo '# BEGIN SECTION: see ccache statistics'
 ccache -s
 echo '# END SECTION'
