@@ -55,7 +55,7 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Mimic old layout of exported test results
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
-       udo mv ${d} ${WORKSPACE}/build/
+       sudo mv ${d} ${WORKSPACE}/build/
     done
     
     sudo chown jenkins -R ${WORKSPACE}/build/
