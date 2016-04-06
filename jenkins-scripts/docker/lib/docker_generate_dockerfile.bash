@@ -248,7 +248,7 @@ fi
 if $ENABLE_CCACHE; then
 cat >> Dockerfile << DELIM_CCACHE
 ENV PATH /usr/lib/ccache:\$PATH
-RUN ccache -s
+RUN CCACHE_DIR=${CCACHE_DIR} ccache -s
 DELIM_CCACHE
 fi
 
