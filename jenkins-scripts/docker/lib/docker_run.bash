@@ -9,11 +9,11 @@ sudo mkdir -p ${WORKSPACE}/build
 sudo docker build -t ${DOCKER_TAG} .
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
-cat >> build.sh << DELIM_CCACHE
+cat >> build.sh << DELIM_CCACHE_BUILD
 echo '# BEGIN SECTION: see ccache statistics'
 ccache -s
 echo '# END SECTION'
-DELIM_CCACHE
+DELIM_CCACHE_BUILD
 
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
@@ -55,7 +55,7 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Mimic old layout of exported test results
     mkdir ${WORKSPACE}/build
     for d in $(find ${WORKSPACE} -name '*_results' -type d); do
-       sudo mv ${d} ${WORKSPACE}/build/
+       udo mv ${d} ${WORKSPACE}/build/
     done
     
     sudo chown jenkins -R ${WORKSPACE}/build/
