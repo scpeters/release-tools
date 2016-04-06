@@ -11,6 +11,8 @@ cat > build.sh << DELIM
 set -ex
 source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 
+ccache -s
+
 echo '# BEGIN SECTION: configure'
 # Step 2: configure and build
 cd $WORKSPACE
@@ -46,6 +48,8 @@ init_stopwatch CPPCHECK
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 stop_stopwatch CPPCHECK
 echo '# END SECTION'
+
+ccache -s
 
 echo "at the end"
 DELIM
