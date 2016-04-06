@@ -30,9 +30,8 @@ if $USE_GPU_DOCKER; then
 fi
 
 if $ENABLE_CCACHE; then
-  EXTRA_PARAMS_STR="-e CCACHE_DIR=${CCACHE_DIR} \
-                    -v ${CCACHE_DIR}:${CCACHE_DIR} \
-                    ${EXTRA_PARAMS_STR}"
+  sudo docker run -t ${DOCKER_TAG} \
+   	     /bin/bash ccache -s
 fi
 
 sudo docker run $EXTRA_PARAMS_STR  \
@@ -40,6 +39,11 @@ sudo docker run $EXTRA_PARAMS_STR  \
             -v ${WORKSPACE}:${WORKSPACE} \
             -t ${DOCKER_TAG} \
             /bin/bash build.sh
+
+if $ENABLE_CCACHE; then
+  sudo docker run -t ${DOCKER_TAG} \
+   	     /bin/bash ccache -s
+fi
 
 CID=$(cat ${CIDFILE})
 
