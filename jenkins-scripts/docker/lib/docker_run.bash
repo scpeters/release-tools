@@ -29,9 +29,9 @@ sudo docker run $EXTRA_PARAMS_STR  \
 CID=$(cat ${CIDFILE})
 
 if $ENABLE_CCACHE; then
+  sudo docker start ${CID}
   sudo docker exec ${CID} /usr/bin/ccache -s
 fi
-
 
 sudo docker stop ${CID} || true
 sudo docker rm ${CID} || true
