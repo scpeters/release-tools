@@ -460,6 +460,10 @@ def go(argv):
                 # just to test CI infrastructure
                 if (not args.package[:-1] == 'sdformat'):
                     continue
+                # (2016-04-18) No i386 image in xenial at
+                # https://hub.docker.com/r/mcandre/docker-ubuntu/tags/
+                if (d == 'xenial')
+                    continue
 
             # no wily for i386 in docker
             if (d == 'wily' and a == 'i386'):
