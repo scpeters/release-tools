@@ -27,6 +27,13 @@ cat > build.sh << DELIM
 #
 set -ex
 
+# Install PPA
+echo '# BEGIN SECTION: install urdfdom 0.4 from PPA'
+apt-get install -y software-properties-common
+apt-add-repository ppa:j-rivero/urdfdom0.4-xenial
+apt-get install -y urdfdom libsdformat4-dev
+echo '# END SECTION"
+
 # Step 2: configure and build
 # Check for DART
 if $DART_COMPILE_FROM_SOURCE; then
