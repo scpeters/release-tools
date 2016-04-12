@@ -174,8 +174,7 @@ fi
 GAZEBO_BASE_DEPENDENCIES="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
                           ${sdformat_pkg}"
 
-GAZEBO_EXTRA_DEPENDENCIES="robot-player-dev \\
-                           libavformat-dev  \\
+GAZEBO_EXTRA_DEPENDENCIES="libavformat-dev  \\
                            libavcodec-dev   \\
                            libgraphviz-dev  \\
                            libswscale-dev   \\
