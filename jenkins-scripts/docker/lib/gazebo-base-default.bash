@@ -32,7 +32,7 @@ echo '# BEGIN SECTION: install urdfdom 0.4 from PPA'
 apt-get install -y software-properties-common
 apt-add-repository -y ppa:j-rivero/urdfdom0.4-xenial
 apt-get install -y liburdfdom-dev libsdformat4-dev
-echo '# END SECTION"
+echo '# END SECTION'
 
 # Step 2: configure and build
 # Check for DART
