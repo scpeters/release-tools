@@ -252,10 +252,18 @@ DELIM_WORKAROUND_POST_HOOK
 fi
 
 if $ENABLE_CCACHE; then
+cat >> Dockerfile << DELIM_CCACHE
+ENV PATH /usr/lib/ccache:\$PATH
+ENV CCACHE_DIR ${CCACHE_DIR}"
+DELIM_CCACHE
+
   # Add the statistics about ccache at the beggining of the build
-  sed -i '1iecho # BEGIN SECTION: starting ccache statistics' build.sh
-  sed -i '1iccache -s' build.sh
-  sed -i '1iecho # END SECTION' build.sh
+  # first 3 lines: bash, set and space
+  sed -i '6iecho $PATH' build.sh
+  sed -i '4iecho # BEGIN SECTION: starting ccache statistics' build.sh
+  sed -i '7iccache -s' build.sh
+  sed -i '8iecho # END SECTION' build.sh
+  sed -i '9echo ""' build.sh
 fi
 
 cat >> Dockerfile << DELIM_DOCKER4

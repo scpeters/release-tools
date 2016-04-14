@@ -5,13 +5,10 @@ fi
 
 cat > build.sh << DELIM
 #!/bin/bash
-###################################################
-# Make project-specific changes here
-#
 set -ex
-source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
+apt-get install -y dpkg-dev
 
-ccache -s
+source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 
 echo '# BEGIN SECTION: configure'
 # Step 2: configure and build
