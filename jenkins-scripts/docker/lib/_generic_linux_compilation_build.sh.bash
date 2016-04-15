@@ -43,6 +43,4 @@ init_stopwatch CPPCHECK
 sh tools/code_check.sh -xmldir $WORKSPACE/build/cppcheck_results || true
 stop_stopwatch CPPCHECK
 echo '# END SECTION'
-
-echo "at the end"
 DELIM
