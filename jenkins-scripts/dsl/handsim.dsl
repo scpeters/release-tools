@@ -62,7 +62,7 @@ handsim_packages.each { pkg ->
             """.stripIndent())
     }
 
-    publishers 
+    publishers
     {
       downstreamParameterized {
         trigger("${pkg_name}-install-pkg-${ci_distro}-amd64") {
@@ -111,7 +111,7 @@ handsim_packages.each { pkg ->
                   """.stripIndent())
           }
       }
-   
+
       // --------------------------------------------------------------
       // 2. Create the ANY job
       def handsim_ci_any_job = job("${pkg_name}-ci-pr_any-${distro}-${arch}")
@@ -124,7 +124,7 @@ handsim_packages.each { pkg ->
             label "gpu-reliable-${distro}"
           }
 
-          steps 
+          steps
           {
             shell("""\
                   export DISTRO=${distro}
@@ -138,7 +138,27 @@ handsim_packages.each { pkg ->
   }
 }
 
-// LINUX (only handsim) 
+
+// LINUX (only luke-hand)
+def luke_pkg_job = job("haptix-luke-proprietary-debbuilder")
+OSRFLinuxBuildPkg.create(luke_pkg_job)
+luke_pkg_job.with
+{
+  steps {
+    shell("""\
+          #!/bin/bash -xe
+
+          /bin/bash -x ./scripts/jenkins-scripts/docker/multidistribution-no-ros-debbuild.bash
+          """.stripIndent())
+  }
+
+   // remove the publishers section: we don't want to publish packages now
+   configure { project ->
+      project.remove(project / publishers) // remove the existing 'scm' element
+   }
+}
+
+// LINUX (only handsim)
 supported_distros.each { distro ->
   supported_arches.each { arch ->
     // --------------------------------------------------------------
@@ -168,7 +188,7 @@ supported_distros.each { distro ->
     }
 
     // --------------------------------------------------------------
-    // 2. multiany test  
+    // 2. multiany test
     def handsim_multiany_job = job("handsim-ci-ign_any+haptix_any-${distro}-${arch}")
     OSRFLinuxCompilation.create(handsim_multiany_job)
 
@@ -185,12 +205,12 @@ supported_distros.each { distro ->
       steps
       {
          systemGroovyCommand("""\
-            job_description = 
-                   'handsim: ' + 
+            job_description =
+                   'handsim: ' +
                      build.buildVariableResolver.resolve('HANDSIM_BRANCH') + '</b>' +
-                   'haptix-comm: ' + 
+                   'haptix-comm: ' +
                      build.buildVariableResolver.resolve('HAPTIX_BRANCH') + '<br />' +
-                   'ign-transport: ' + 
+                   'ign-transport: ' +
                      build.buildVariableResolver.resolve('IGN_BRANCH') + '<br /><br />' +
                    'RTOOLS_BRANCH: ' + build.buildVariableResolver.resolve('RTOOLS_BRANCH')
             build.setDescription(job_description)
@@ -284,13 +304,13 @@ class OSRFWinHaptixSDK
 
     job.with
     {
-      steps 
+      steps
       {
         batchFile("""\
             call "./scripts/jenkins-scripts/haptix_comm-sdk-debbuilder-${arch}.bat"
-            """.stripIndent())      
+            """.stripIndent())
       }
-   
+
       publishers
       {
         archiveArtifacts('pkgs/*.zip')
@@ -358,12 +378,12 @@ haptix_any_sdk_builder.with
     stringParam('HAPTIX_COMM_BRANCH', 'default', 'ignition transport branch to use')
   }
 
-  steps 
+  steps
   {
       systemGroovyCommand("""\
           build.setDescription(
            '<b>ign_transport:</b> ' +
-              build.buildVariableResolver.resolve('IGN_TRANSPORT_BRANCH') +'<br/>' + 
+              build.buildVariableResolver.resolve('IGN_TRANSPORT_BRANCH') +'<br/>' +
            '<b>haptix-comm:</b> ' +
               build.buildVariableResolver.resolve('HAPTIX_COMM_BRANCH') + '<br /><br />' +
            'RTOOLS_BRANCH: ' + build.buildVariableResolver.resolve('RTOOLS_BRANCH'));
