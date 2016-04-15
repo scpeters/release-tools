@@ -6,8 +6,6 @@ fi
 cat > build.sh << DELIM
 #!/bin/bash
 set -ex
-apt-get install -y dpkg-dev
-
 source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 
 echo '# BEGIN SECTION: configure'
