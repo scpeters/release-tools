@@ -30,7 +30,7 @@ sudo docker run $EXTRA_PARAMS_STR  \
 CID=$(cat ${CIDFILE})
 
 if $ENABLE_CCACHE; then
-  sudo docker start ${CID}
+  sudo docker start -a ${CID}
 #  sudo docker exec ${CID} /usr/bin/ccache -s
 fi
 
