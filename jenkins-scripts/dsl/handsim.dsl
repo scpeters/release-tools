@@ -141,7 +141,7 @@ handsim_packages.each { pkg ->
 
 // LINUX (only luke-hand)
 def luke_pkg_job = job("haptix-luke-proprietary-debbuilder")
-OSRFLinuxBuildPkg.create(luke_pkg_job)
+OSRFLinuxBuildPkgPrivate.create(luke_pkg_job, 'ssh://hg@bitbucket.org/osrf/haptix-luke-proprietary')
 luke_pkg_job.with
 {
   steps {

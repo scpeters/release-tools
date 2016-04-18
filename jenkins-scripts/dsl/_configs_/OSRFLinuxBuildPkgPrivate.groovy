@@ -7,33 +7,33 @@ import javaposse.jobdsl.dsl.Job
 
   Implements:
     - parameters:
-        - SOURCE_TARBALL_URI
         - RELEASE_REPO_BRANCH
-        - UPLOAD_TO_REPO
     - publish artifacts
     - launch repository_ng
 */
-class OSRFLinuxBuildPkg
+class OSRFLinuxBuildPkgPrivate
 
-{  
-  static void create(Job job)
+{
+  static void create(Job job, String repo)
   {
     OSRFLinuxBuildBasePkg.create(job)
 
     job.with
     {
       parameters {
-        stringParam("SOURCE_TARBALL_URI", null, "URL to the tarball containing the package sources")
-        stringParam("RELEASE_REPO_BRANCH", null, "Branch from the -release repo to be used")
-        stringParam("UPLOAD_TO_REPO", null, "OSRF repo name to upload the package to")
+        stringParam("RELEASE_REPO_BRANCH", null,
+                    "Branch from the -release repo to be used")
+        stringParam('SRC_TAG_TO_BUILD', 'default',
+                    'Branch from the repo software to built package from')
+        stringParam("UPLOAD_TO_REPO", 'private', "You should not need to modify this value.")
       }
 
       steps {
         systemGroovyCommand("""\
           build.setDescription(
-          '<b>' + build.buildVariableResolver.resolve('VERSION') + '-' + 
+          '<b>' + build.buildVariableResolver.resolve('VERSION') + '-' +
           build.buildVariableResolver.resolve('RELEASE_VERSION') + '</b>' +
-          '(' + build.buildVariableResolver.resolve('DISTRO') + '/' + 
+          '(' + build.buildVariableResolver.resolve('DISTRO') + '/' +
                 build.buildVariableResolver.resolve('ARCH') + ')' +
           '<br />' +
           'branch: ' + build.buildVariableResolver.resolve('RELEASE_REPO_BRANCH') + ' | ' +
@@ -44,17 +44,12 @@ class OSRFLinuxBuildPkg
         )
       }
 
-      publishers {
-        archiveArtifacts('pkgs/*')
-
-        downstreamParameterized {
-	  trigger('repository_uploader_ng') {
-	    condition('SUCCESS')
-	    parameters {
-	      currentBuild()
-	      predefinedProp("PROJECT_NAME_TO_COPY_ARTIFACTS", "\${JOB_NAME}")
-	    }
-	  }
+      scm
+      {
+        hg(repo) {
+          branch('${SRC_TAG_TO_BUILD}')
+          // script expect the path at WORKSPACE/build/$PACKAGE
+          subdirectory('build/${PACKAGE}')
         }
       }
     } // end of job
