@@ -6,6 +6,12 @@ if [ "${UPLOAD_TO_REPO}" = "nightly" ]; then
    NIGHTLY_MODE=true
 fi
 
+# it will assume sources in WORKSPACE/build/$PACKAGE
+PRIVATE_MODE=false
+if [ "${UPLOAD_TO_REPO}" = "private" ]; then
+  PRIVATE_MODE=true
+fi
+
 # Do not use the subprocess_reaper in debbuild. Seems not as needed as in
 # testing jobs and seems to be slow at the end of jenkins jobs
 export ENABLE_REAPER=false
@@ -30,7 +36,13 @@ echo '# BEGIN SECTION: import the debian metadata'
 REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 # Step 1: Get the source (nightly builds or tarball)
-if ${NIGHTLY_MODE}; then
+if ${PRIVATE_MODE}; then
+  if [[ -d ${WORKSPACE}/build/${PACKAGE} ]]; then
+    echo "PRIVATE_MODE is enable. Sources are expected at: "
+    echo "${WORKSPACE}/build/${PACKAGE}" and can not find them"
+    exit 1
+  fi
+elif ${NIGHTLY_MODE}; then
   hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r default
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME
   cd \$REAL_PACKAGE_NAME
