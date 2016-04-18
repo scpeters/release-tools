@@ -39,7 +39,7 @@ REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 if ${PRIVATE_MODE}; then
   if [[ -d ${WORKSPACE}/${PACKAGE} ]]; then
     echo "PRIVATE_MODE is enable. Sources are expected at: "
-    echo "${WORKSPACE}/${PACKAGE}" and can not find them"
+    echo "${WORKSPACE}/${PACKAGE} and can not find them."
     exit 1
   fi
   mv ${WORKSPACE}/${PACKAGE} ${WORKSPACE}/build/${PACKAGE_SRC_BUILD_DIR}
