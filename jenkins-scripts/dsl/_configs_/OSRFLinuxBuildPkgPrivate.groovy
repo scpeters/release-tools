@@ -50,6 +50,7 @@ class OSRFLinuxBuildPkgPrivate
           branch('${SRC_TAG_TO_BUILD}')
           // script expect the path at WORKSPACE/build/$PACKAGE
           subdirectory('build/${PACKAGE}')
+          credentials(Globals.get_bitbucket_bot_username())
         }
       }
     } // end of job
