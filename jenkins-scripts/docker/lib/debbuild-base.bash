@@ -37,11 +37,12 @@ REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 # Step 1: Get the source (nightly builds or tarball)
 if ${PRIVATE_MODE}; then
-  if [[ -d ${WORKSPACE}/build/${PACKAGE} ]]; then
+  if [[ -d ${WORKSPACE}/${PACKAGE} ]]; then
     echo "PRIVATE_MODE is enable. Sources are expected at: "
-    echo "${WORKSPACE}/build/${PACKAGE}" and can not find them"
+    echo "${WORKSPACE}/${PACKAGE}" and can not find them"
     exit 1
   fi
+  mv ${WORKSPACE}/${PACKAGE} ${WORKSPACE}/build/${PACKAGE_SRC_BUILD_DIR}
 elif ${NIGHTLY_MODE}; then
   hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r default
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME

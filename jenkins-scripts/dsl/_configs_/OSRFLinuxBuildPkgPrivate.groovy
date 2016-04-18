@@ -48,8 +48,7 @@ class OSRFLinuxBuildPkgPrivate
       {
         hg(repo) {
           branch('${SRC_TAG_TO_BUILD}')
-          // script expect the path at WORKSPACE/build/$PACKAGE
-          subdirectory('build/${PACKAGE}')
+          subdirectory('${PACKAGE}')
           credentials(Globals.get_bitbucket_bot_credentials())
         }
       }
