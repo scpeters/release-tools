@@ -66,8 +66,8 @@ class Globals
     return get_ci_gpu() + [ 'intel' ]
    }
 
-   static String get_bitbucket_bot_username()
+   static String get_bitbucket_bot_credentials()
    {
-      return 'osrf_jenkins'
+      return '65cd22d1-f3d5-4ff4-b18f-1d88efa13a02'
    }
 }
