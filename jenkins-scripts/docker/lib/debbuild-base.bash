@@ -37,7 +37,7 @@ REAL_PACKAGE_NAME=$(echo $PACKAGE | sed 's:[0-9]*$::g')
 
 # Step 1: Get the source (nightly builds or tarball)
 if ${PRIVATE_MODE}; then
-  if [[ -d ${WORKSPACE}/${PACKAGE} ]]; then
+  if [[ ! -d ${WORKSPACE}/${PACKAGE} ]]; then
     echo "PRIVATE_MODE is enable. Sources are expected at: "
     echo "${WORKSPACE}/${PACKAGE} and can not find them."
     exit 1
