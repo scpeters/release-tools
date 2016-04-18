@@ -109,24 +109,30 @@ esac
 
 cd /tmp/$PACKAGE-release/${DISTRO}
 
-# [nightly] Adjust version in nightly mode
+# Adjust version in nightly and private modes
 if $NIGHTLY_MODE; then
   TIMESTAMP=\$(date '+%Y%m%d')
-  NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+hg\${TIMESTAMP}r\${REV}-${RELEASE_VERSION}~${DISTRO}
+  NIGHTLY_VERSION=${UPSTREAM_VERSION}+hg\${TIMESTAMP}r\${REV}
+  NIGHTLY_VERSION_FULL_SUFFIX=\${NIGHTLY_VERSION}-${RELEASE_VERSION}~${DISTRO}
   debchange --package ${PACKAGE} \\
-              --newversion \${NIGHTLY_VERSION_SUFFIX} \\
+              --newversion \${NIGHTLY_VERSION_FULL_SUFFIX} \\
               --distribution ${DISTRO} \\
               --force-distribution \\
-              --changelog=debian/changelog -- "Nightly release: \${NIGHTLY_VERSION_SUFFIX}"
+              --changelog=debian/changelog -- "Nightly release: \${NIGHTLY_VERSION_FULL_SUFFIX}"
+  ORIG_PKG_VERSION=\${NIGHTLY_VERSION}	      
+fi
+
+if ${PRIVATE_MODE}; then
+  ORIG_PKG_VERSION=${VERSION}-${RELEASE_VERSION}~${DISTRO}
 fi
 
 # Get into the unpacked source directory, without explicit knowledge of that
 # directory's name
 cd \`find $WORKSPACE/build -mindepth 1 -type d |head -n 1\`
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
-if $NIGHTLY_MODE; then
+if $NIGHTLY_MODE || $PRIVATE_MODE; then
   rm -fr .hg*
-  echo | dh_make -y -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}+hg\${TIMESTAMP}r\${REV} > /dev/null
+  echo | dh_make -y -s --createorig -p ${PACKAGE_ALIAS}_\${ORIG_PKG_VERSION} > /dev/null
 fi
 
 # Adding extra directories to code. debian has no problem but some extra directories
