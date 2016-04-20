@@ -60,15 +60,18 @@ cmake ${GAZEBO_BASE_CMAKE_ARGS}      \\
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: Gazebo compilation'
+init_stopwatch COMPILATION
 make -j${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: Gazebo installation'
 make install
 . /usr/share/gazebo/setup.sh
+stop_stopwatch COMPILATION
 echo '# END SECTION'
 
 # Need to clean up from previous built
+init_stopwatch TEST
 rm -fr $WORKSPACE/cppcheck_results
 rm -fr $WORKSPACE/test_results
 
@@ -91,8 +94,10 @@ else
   make test ARGS="-VV -R EXAMPLE_*" || true
   echo '# END SECTION'
 fi
+stop_stopwatch TEST
 
 # Only run cppcheck on trusty
+init_stopwatch CPPCHECK
 if [ "$DISTRO" = "trusty" ] || [ "$DISTRO" = "wily" ]; then
   echo '# BEGIN SECTION: running cppcheck'
   # Step 3: code check
@@ -103,6 +108,7 @@ else
   mkdir -p $WORKSPACE/build/cppcheck_results/
   echo "<results></results>" >> $WORKSPACE/build/cppcheck_results/empty.xml 
 fi
+stop_stopwatch CPPCHECK
 echo '# END SECTION'
 DELIM
 
