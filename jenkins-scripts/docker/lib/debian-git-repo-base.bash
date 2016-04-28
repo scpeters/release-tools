@@ -12,6 +12,7 @@ export ENABLE_REAPER=false
 # Workaround to make this work on ARM since git over qemu
 # is broken
 echo '# BEGIN SECTION: clone the git repo'
+sudo chown -R jenkins $WORKSPACE/repo
 rm -fr $WORKSPACE/repo
 git clone $GIT_REPOSITORY $WORKSPACE/repo
 cd $WORKSPACE/repo
