@@ -20,7 +20,7 @@ echo '# BEGIN SECTION: clone the git repo'
 rm -fr $WORKSPACE/repo
 git clone $GIT_REPOSITORY $WORKSPACE/repo
 cd $WORKSPACE/repo
-git checkout ${BRANCH}
+git checkout -b ${BRANCH}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
