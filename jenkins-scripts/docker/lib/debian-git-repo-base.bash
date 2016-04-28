@@ -9,19 +9,21 @@ export ENABLE_REAPER=false
 # Use defaul branch if not sending BRANCH parameter
 [[ -z ${BRANCH} ]] && export BRANCH=master
 
-cat > build.sh << DELIM
-###################################################
-# Make project-specific changes here
-#
-#!/usr/bin/env bash
-set -ex
-
+# Workaround to make this work on ARM since git over qemu
+# is broken
 echo '# BEGIN SECTION: clone the git repo'
 rm -fr $WORKSPACE/repo
 git clone $GIT_REPOSITORY $WORKSPACE/repo
 cd $WORKSPACE/repo
 git checkout -b ${BRANCH}
 echo '# END SECTION'
+
+cat > build.sh << DELIM
+###################################################
+# Make project-specific changes here
+#
+#!/usr/bin/env bash
+set -ex
 
 echo '# BEGIN SECTION: install build dependencies'
 mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
