@@ -31,7 +31,7 @@ case ${LINUX_DISTRO} in
     
   'debian')
     # Currently not needed
-    # SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
+    SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
 
     # debian does not ship locales by default
     export DEPENDENCY_PKGS="locales ${DEPENDENCY_PKGS}"
