@@ -18,6 +18,7 @@ git clone $GIT_REPOSITORY $WORKSPACE/repo
 cd $WORKSPACE/repo
 git checkout -b ${BRANCH}
 echo '# END SECTION'
+cd $WORKSPACE
 
 cat > build.sh << DELIM
 ###################################################
