@@ -6,15 +6,6 @@ export ENABLE_REAPER=false
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
-# If no value for MULTIARCH_SUPPORT was submitted and
-# distro is precise, disable the multiarch, this is generally
-# since the use of GNUINSTALLDIRs
-if [[ -z ${MULTIARCH_SUPPORT} ]]; then
-  if [[ $DISTRO == 'precise' ]]; then
-    MULTIARCH_SUPPORT=false
-  fi
-fi
-
 # Use defaul branch if not sending BRANCH parameter
 [[ -z ${BRANCH} ]] && export BRANCH=master
 
@@ -88,7 +79,7 @@ test \$FOUND_PKG -eq 1 || exit 1
 echo '# END SECTION'
 DELIM
 
-OSRF_REPOS_TO_USE="stable"
+OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE:-stable}
 DEPENDENCY_PKGS="devscripts \
 		 ubuntu-dev-tools \
 		 debhelper \
