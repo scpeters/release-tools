@@ -85,6 +85,9 @@ ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBFULLNAME "OSRF Jenkins"
 ENV DEBEMAIL "build@osrfoundation.org"
+
+RUN echo "deb-src ${SOURCE_LIST_URL} ${DISTRO} main" \\
+                                               >> /etc/apt/sources.list
 DELIM_DOCKER
 
 # The redirection fails too many times using us ftp
@@ -95,7 +98,7 @@ DELIM_DEBIAN_APT
 fi
 
 if [[ ${LINUX_DISTRO} == 'ubuntu' ]]; then
-  if [[ ${ARCH} != 'armhf' ]]; then
+  if [[ ${ARCH} != 'armhf' && $ARCH != 'arm64']]; then
 cat >> Dockerfile << DELIM_DOCKER_ARCH
   # Note that main,restricted and universe are not here, only multiverse
   # main, restricted and unvierse are already setup in the original image
