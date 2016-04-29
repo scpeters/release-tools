@@ -38,6 +38,7 @@ BASE_DEPENDENCIES="build-essential \\
                    python          \\
                    bc              \\
                    netcat-openbsd  \\
+                   ninja-build     \\
                    net-tools"
 
 BREW_BASE_DEPENDCIES="mercurial git cmake"

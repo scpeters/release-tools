@@ -16,7 +16,8 @@ echo '# BEGIN SECTION: configure'
 cd $WORKSPACE
 cd $WORKSPACE/build
 cmake $WORKSPACE/${SOFTWARE_DIR} \
-    -DCMAKE_INSTALL_PREFIX=/usr
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -GNinja
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: compiling'
