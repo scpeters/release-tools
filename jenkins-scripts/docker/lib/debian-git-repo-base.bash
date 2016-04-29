@@ -43,6 +43,14 @@ sed -i -e "s:\$VERSION:\$OSRF_VERSION:g" debian/changelog
 changelog_distro=\$(dpkg-parsechangelog | grep Distribution | awk '{print \$2}')
 sed -i -e "1 s:\$changelog_distro:$DISTRO:" debian/changelog
 
+if [ $ARCH = 'armhf' ] || [ $ARCH = 'arm64' ]; then
+cat > /usr/bin/doxygen << DOXY
+#!/bin/bash
+true
+DOXY
+chmod +x /usr/bin/doxygen
+fi
+
 # When backported from Vivid (or above) to Trusty/Utopic some packages are not
 # avilable or names are different
 if [ $DISTRO = 'trusty' ]; then
