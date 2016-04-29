@@ -19,8 +19,8 @@ hg clone https://bitbucket.org/ignitionrobotics/ign-transport
 cd ign-transport
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-make -j${MAKE_JOBS}
-make install
+ninja -j${MAKE_JOBS}
+ninja install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: building haptix-comm: ${IGN_BRANCH}'
@@ -29,8 +29,8 @@ hg clone https://bitbucket.org/osrf/haptix-comm
 cd haptix-comm
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-make -j${MAKE_JOBS}
-make install
+ninja -j${MAKE_JOBS}
+ninja install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: building handsim: ${HANDSIM_BRANCH}'
@@ -41,16 +41,16 @@ cmake $WORKSPACE/handsim \
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: compiling'
-make -j${MAKE_JOBS}
+ninja -j${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: installing'
-make install
+ninja install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running tests'
 mkdir -p \$HOME
-make test ARGS="-VV" || true
+ninja test ARGS="-VV" || true
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: cppcheck'

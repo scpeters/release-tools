@@ -56,8 +56,8 @@ cd $WORKSPACE/build
 cmake ${ABI_JOB_CMAKE_PARAMS} \\
   -DCMAKE_INSTALL_PREFIX=/usr/local/origin_branch \\
   /tmp/${ABI_JOB_SOFTWARE_NAME}
-make -j${MAKE_JOBS}
-make install
+ninja -j${MAKE_JOBS}
+ninja install
 ORIGIN_DIR=\$(find /usr/local/origin_branch/include -name ${ABI_JOB_SOFTWARE_NAME}-* -type d | sed -e 's:.*/::')
 echo '# END SECTION'
 
@@ -72,8 +72,8 @@ cd $WORKSPACE/build
 cmake ${ABI_JOB_CMAKE_PARAMS} \\
   -DCMAKE_INSTALL_PREFIX=/usr/local/target_branch \\
   /tmp/${ABI_JOB_SOFTWARE_NAME}
-make -j${MAKE_JOBS}
-make install
+ninja -j${MAKE_JOBS}
+ninja install
 TARGET_DIR=\$(find /usr/local/target_branch/include -name ${ABI_JOB_SOFTWARE_NAME}-* -type d | sed -e 's:.*/::')
 echo '# END SECTION'
 

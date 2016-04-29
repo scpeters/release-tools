@@ -44,7 +44,7 @@ git clone https://github.com/ros-simulation/gazebo_ros_demos
 cd gazebo_ros_demos/
 export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:$PWD
 cd $WORKSPACE/ws
-catkin_make -j${MAKE_JOBS}
+catkin_make_isolated --use-ninja -j${MAKE_JOBS}
 SHELL=/bin/sh . $WORKSPACE/ws/devel/setup.sh
 
 # Precise coreutils does not support preserve-status

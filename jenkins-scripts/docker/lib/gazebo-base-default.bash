@@ -42,9 +42,9 @@ if $DART_COMPILE_FROM_SOURCE; then
   cd $WORKSPACE/dart/build
   cmake .. \
       -DCMAKE_INSTALL_PREFIX=/usr
-  #make -j${MAKE_JOBS}
-  make -j1
-  make install
+  #ninja -j${MAKE_JOBS}
+  ninja -j1
+  ninja install
   echo '# END SECTION'
 fi
 
@@ -60,11 +60,11 @@ cmake ${GAZEBO_BASE_CMAKE_ARGS}      \\
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: Gazebo compilation'
-make -j${MAKE_JOBS}
+ninja -j${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: Gazebo installation'
-make install
+ninja install
 . /usr/share/gazebo/setup.sh
 echo '# END SECTION'
 
@@ -79,16 +79,16 @@ if [ `expr length "${GAZEBO_BASE_TESTS_HOOK} "` -gt 1 ]; then
 else
   # Run default
   echo '# BEGIN SECTION: UNIT testing'
-  make test ARGS="-VV -R UNIT_*" || true
+  ninja test ARGS="-VV -R UNIT_*" || true
   echo '# END SECTION'
   echo '# BEGIN SECTION: INTEGRATION testing'
-  make test ARGS="-VV -R INTEGRATION_*" || true
+  ninja test ARGS="-VV -R INTEGRATION_*" || true
   echo '# END SECTION'
   echo '# BEGIN SECTION: REGRESSION testing'
-  make test ARGS="-VV -R REGRESSION_*" || true
+  ninja test ARGS="-VV -R REGRESSION_*" || true
   echo '# END SECTION'
   echo '# BEGIN SECTION: EXAMPLE testing'
-  make test ARGS="-VV -R EXAMPLE_*" || true
+  ninja test ARGS="-VV -R EXAMPLE_*" || true
   echo '# END SECTION'
 fi
 

@@ -43,7 +43,7 @@ mkdir ${WORKSPACE}/ros
 cd ${WORKSPACE}/ros
 wget 'https://wiki.debian.org/DebianScience/Robotics/ROS?action=AttachFile&do=get&target=jade-debian-desktop-full-missing-packages.rosinstall' -O indigo-desktop-full-wet.rosinstall
 wstool init -j${MAKE_JOBS} src indigo-desktop-full-wet.rosinstall
-catkin_make_isolated --install
+catkin_make_isolated --use-ninja --install
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: run a test'

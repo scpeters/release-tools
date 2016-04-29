@@ -26,14 +26,14 @@ ninja -j${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: installing'
-make install
+ninja install
 stop_stopwatch COMPILATION
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running tests'
 init_stopwatch TEST
 mkdir -p \$HOME
-make test ARGS="-VV" || true
+ninja test ARGS="-VV" || true
 stop_stopwatch TEST
 echo '# END SECTION'
 
