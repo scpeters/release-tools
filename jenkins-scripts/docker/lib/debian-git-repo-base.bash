@@ -49,6 +49,7 @@ cat > /usr/bin/doxygen << DOXY
 true
 DOXY
 chmod +x /usr/bin/doxygen
+rm debian/*.docs
 fi
 
 # When backported from Vivid (or above) to Trusty/Utopic some packages are not
