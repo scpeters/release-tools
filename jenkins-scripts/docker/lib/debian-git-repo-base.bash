@@ -62,6 +62,9 @@ if [ $DISTRO = 'trusty' ] || [ $DISTRO = 'utopic' ]; then
   sed -i -e 's:libsdformat-dev:libsdformat2-dev:g' debian/control 
 fi
 
+# Fix non existing option on debian rules (happen on ign-math)
+sed -i -e 's:--no-parallel::g' debian/rules
+
 # Do not perform symbol checking
 rm -fr debian/*.symbols
 echo '# END SECTION'
