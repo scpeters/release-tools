@@ -44,11 +44,9 @@ changelog_distro=\$(dpkg-parsechangelog | grep Distribution | awk '{print \$2}')
 sed -i -e "1 s:\$changelog_distro:$DISTRO:" debian/changelog
 
 if [ $ARCH = 'armhf' ] || [ $ARCH = 'arm64' ]; then
-cat > /usr/bin/doxygen << DOXY
-#!/bin/bash
-true
-DOXY
-chmod +x /usr/bin/doxygen
+sed -i -e 's:.*dh_auto_build.*doc.*:[[:tab:]]true:g' debian/rules
+mkdir -p debian/doxygen/html
+touch debian/doxygen/html fake
 rm debian/*.docs
 fi
 
