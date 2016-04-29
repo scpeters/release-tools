@@ -22,7 +22,7 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: compiling'
 init_stopwatch COMPILATION
-make -j${MAKE_JOBS}
+ninja -j${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: installing'
