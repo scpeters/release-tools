@@ -43,12 +43,10 @@ sed -i -e "s:\$VERSION:\$OSRF_VERSION:g" debian/changelog
 changelog_distro=\$(dpkg-parsechangelog | grep Distribution | awk '{print \$2}')
 sed -i -e "1 s:\$changelog_distro:$DISTRO:" debian/changelog
 
-#if [ $ARCH = 'armhf' ] || [ $ARCH = 'arm64' ]; then
-#sed -i -e 's:.*dh_auto_build.*doc.*:[[:tab:]]true:g' debian/rules
-#mkdir -p debian/doxygen/html
-#touch debian/doxygen/html fake
-#rm debian/*.docs
-#fi
+if [ $ARCH = 'armhf' ] || [ $ARCH = 'arm64' ]; then
+sed -i -e $'s/.*dh_auto_build.*doc.*/\ttrue/g' debian/rules
+rm debian/*.docs
+fi
 
 # When backported from Vivid (or above) to Trusty/Utopic some packages are not
 # avilable or names are different
