@@ -11,12 +11,12 @@ npm_ignition_projects.each { ign_sw ->
     supported_arches.each { arch ->
       // --------------------------------------------------------------
       // 1. Create the default ci jobs
-      def ignition_ci_job_name = "ignition_${ign_sw}-ci-${distro}-${arch}"
-      def ignition_ci_job = job(ignition_ci_job_name)
+      def ignition_ci_job = job("ignition_${ign_sw}-ci-${distro}-${arch}")
+      def checkout_dir="ign-${ign_sw}"
+
       OSRFLinuxNpm.create(ignition_ci_job)
       ignition_ci_job.with
       {
-          def checkout_dir="ign-${ign_sw}"
           scm {
             hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
               branch('default')
