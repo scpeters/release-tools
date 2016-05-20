@@ -24,7 +24,7 @@ set -ex
 source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 
 echo '# BEGIN SECTION: installing npm from repositories'
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get install -y nodejs
 echo '# END SECTION'
 
