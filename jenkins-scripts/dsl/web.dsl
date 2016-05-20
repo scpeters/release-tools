@@ -16,10 +16,11 @@ npm_ignition_projects.each { ign_sw ->
       OSRFLinuxNpm.create(ignition_ci_job)
       ignition_ci_job.with
       {
+          def checkout_dir="ign-${ign_sw}"
           scm {
             hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
               branch('default')
-              subdirectory("ign-${ign_sw}")
+              subdirectory(checkout_dir)
             }
           }
 
@@ -33,7 +34,7 @@ npm_ignition_projects.each { ign_sw ->
 
                   export DISTRO=${distro}
                   export ARCH=${arch}
-
+                  export SOFTWARE_DIR=${checkout_dir}
                   /bin/bash -xe ./scripts/jenkins-scripts/docker/generic-npm-install.bash
                   """.stripIndent())
           }
@@ -50,7 +51,7 @@ npm_ignition_projects.each { ign_sw ->
          shell("""\
               export DISTRO=${distro}
               export ARCH=${arch}
-
+              export SOFTWARE_DIR=${checkout_dir}
               /bin/bash -xe ./scripts/jenkins-scripts/docker/generic-npm-install.bash
               """.stripIndent())
         }
