@@ -6,7 +6,7 @@ from pprint import pprint
 
 from pybitbucket.auth import BasicAuthenticator
 from pybitbucket.bitbucket import Client
-from pybitbucket.build import BuildStatus, BuildStatusStates
+from pybitbucket.build import BuildStatus, BuildStatusStates, StatusData
 
 from osrfbitbucket.client import OSRFBitbucketClient
 
@@ -22,6 +22,7 @@ def main(argv):
                               --pass <bitbucket_pass>
                               --load_from_file <path>
                               --status [ok|failed|progress]
+                              --desc <build_description>
             """
       sys.exit(1)
 
@@ -42,7 +43,9 @@ def main(argv):
         
     client = OSRFBitbucketClient(user, password)
     client.send_build_status(client.build_data_from_file(config_file), 
-                             client.get_build_status_from_str(status))
+                             StatusData(
+                                client.get_build_status_from_str(status),
+                                jenkins_build_description))
 
 if __name__ == "__main__":
    main(sys.argv[1:])
