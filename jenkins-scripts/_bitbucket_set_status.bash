@@ -95,11 +95,11 @@ ${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
 DELIM
 # real run of the script
 ${WORKSPACE}/scripts/jenkins-scripts/python-bitbucket/set_status_from_file.py \
-    --user osrf_jenkins  \
-    --pass ${BITBUCKET_USER_PASS} \
-    --desc ${BITBUCKET_BUILD_DESC} \
-    --status ${BITBUCKET_STATUS} \
-    --load_from_file ${BITBUCKET_BUILD_STATUS_FILE} >>& ${BITBUCKET_LOG_FILE} || BITBUCKET_API_RESULT=false
+    --user "osrf_jenkins"  \
+    --pass "${BITBUCKET_USER_PASS}" \
+    --desc "${BITBUCKET_BUILD_DESC}" \
+    --status "${BITBUCKET_STATUS}" \
+    --load_from_file "${BITBUCKET_BUILD_STATUS_FILE}" >>& ${BITBUCKET_LOG_FILE} || BITBUCKET_API_RESULT=false
 set -x # back to debug
 echo '# END SECTION'
 
