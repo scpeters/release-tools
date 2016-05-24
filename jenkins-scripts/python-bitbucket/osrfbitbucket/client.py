@@ -39,7 +39,7 @@ class BuildData:
 class StatusData:
     def __init__(self,
                  status,
-                 build_descrition = None):
+                 build_description = None):
         self.status            = status
         self.build_description = build_description
 
