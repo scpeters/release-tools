@@ -6,9 +6,9 @@ from pprint import pprint
 
 from pybitbucket.auth import BasicAuthenticator
 from pybitbucket.bitbucket import Client
-from pybitbucket.build import BuildStatus, BuildStatusStates, StatusData
+from pybitbucket.build import BuildStatus, BuildStatusStates
 
-from osrfbitbucket.client import OSRFBitbucketClient
+from osrfbitbucket.client import OSRFBitbucketClient, StatusData
 
 def main(argv):
     try:
