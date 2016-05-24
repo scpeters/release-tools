@@ -37,9 +37,7 @@ class BuildData:
         self.jenkins_data = build_jenkins_data
 
 class StatusData:
-    def __init__(self,
-                 status,
-                 build_description = None):
+    def __init__(self, status, build_description = ""):
         self.status            = status
         self.build_description = build_description
 
@@ -95,7 +93,7 @@ class OSRFBitbucketClient:
             key             = key,
             name            = build_data.jenkins_data.build_name,
             url             = build_data.jenkins_data.build_url,
-            description     = build_data.jenkins_data.build_description,
+            description     = status_data.build_description,
             state           = status_data.status,
             client          = self.client)
 
