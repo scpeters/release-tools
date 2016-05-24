@@ -41,7 +41,7 @@ def main(argv):
             password = arg
         elif opt == '--desc':
             jenkins_build_description = arg
-         elif opt == '--status':
+        elif opt == '--status':
             status = arg
        
     client = OSRFBitbucketClient(user, password)
