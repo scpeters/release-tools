@@ -40,6 +40,8 @@ def main(argv):
             password = arg
         elif opt == '--status':
             status = arg
+        elif opt == '--desc':
+            jenkins_build_description = arg
         
     client = OSRFBitbucketClient(user, password)
     client.send_build_status(client.build_data_from_file(config_file), 
