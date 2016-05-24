@@ -12,17 +12,18 @@ from osrfbitbucket.client import OSRFBitbucketClient, StatusData
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"l:u:p:f:s", ["user=",
-                                                      "pass=",
-                                                      "load_from_file=",
-                                                      "status="])
+        opts, args = getopt.getopt(argv,"l:u:p:f:d:s", ["user=",
+                                                        "pass=",
+                                                        "load_from_file=",
+                                                        "desc=",
+                                                        "status="])
     except getopt.GetoptError:
       print """
             osrf_pr_from_file --user <bitbucket_user>
                               --pass <bitbucket_pass>
                               --load_from_file <path>
-                              --status [ok|failed|progress]
                               --desc <build_description>
+                              --status [ok|failed|progress]
             """
       sys.exit(1)
 
@@ -38,11 +39,11 @@ def main(argv):
             user = arg
         elif opt == '--pass':
             password = arg
-        elif opt == '--status':
-            status = arg
         elif opt == '--desc':
             jenkins_build_description = arg
-        
+         elif opt == '--status':
+            status = arg
+       
     client = OSRFBitbucketClient(user, password)
     client.send_build_status(client.build_data_from_file(config_file), 
                              StatusData(
