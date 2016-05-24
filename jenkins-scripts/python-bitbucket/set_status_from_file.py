@@ -35,13 +35,13 @@ def main(argv):
     for opt, arg in opts:
         if opt in ('-l', '--load_from_file'):
             config_file = arg
-        if opt == '--user':
+        elif opt in ('-u', '--user'):
             user = arg
-        elif opt == '--pass':
+        elif opt in ('-p', '--pass'):
             password = arg
-        elif opt == '--desc':
+        elif opt in ('-d', '--desc'):
             jenkins_build_description = arg
-        elif opt == '--status':
+        elif opt in ('-s', '--status':
             status = arg
        
     client = OSRFBitbucketClient(user, password)
