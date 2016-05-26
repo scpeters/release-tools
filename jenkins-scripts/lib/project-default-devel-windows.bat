@@ -1,10 +1,11 @@
 :: Windows standard file to build Visual Studio projects
 ::
 :: Parameters:
-::   - VCS_DIRECTORY : WORKSPACE/VCS_DIRECTORY should contain the sources
-::   - BUILD_TYPE    : (default Release) [ Release | Debug ] Build type to use
-::   - DEPEN_PKGS    : (optional) list of dependencies (separted by spaces)
-::   - KEEP_WORKSPACE: (optional) true | false. Clean workspace at the end
+::   - VCS_DIRECTORY  : WORKSPACE/VCS_DIRECTORY should contain the sources
+::   - BUILD_TYPE     : (default Release) [ Release | Debug ] Build type to use
+::   - DEPEN_PKGS     : (optional) list of dependencies (separated by spaces)
+::   - DEPEN_SRCS     : (optional) bitbucket owner/repo list (separated by spaces)
+::   - KEEP_WORKSPACE : (optional) true | false. Clean workspace at the end
 ::
 :: Actions
 ::   - Configure the compiler
@@ -51,8 +52,22 @@ for %%p in (%DEPEN_PKGS%) do (
   call %win_lib% :download_7za
   call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/%%p %%p || goto :error
   call %win_lib% :unzip_7za %%p %%p > install.log || goto:error
+  echo # END SECTION
 )
-echo # END SECTION
+
+for %%p in (%DEPEN_SRCS%) do (
+  echo # BEGIN SECTION: downlading and compile dependency %%p
+  set SRC_DIR=%WORKSPACE%\workspace\%pp
+  if EXIST %SRC_DIR% ( rmdir /s /q %SRC_DIR% )
+  hg clone https://bitbucket.org/%pp %SRC_DIR%
+  cd %SRC_DIR%
+  mkdir build
+  cd build
+  call "..\configure.bat" Release %BITNESS% || goto %win_lib% :error
+  copy %WORKSPACE%\workspace\jom.exe .
+  jom
+  nmake install
+)
 
 echo # BEGIN SECTION: move %VCS_DIRECTORY% source to workspace
 xcopy %WORKSPACE%\%VCS_DIRECTORY% %VCS_DIRECTORY% /s /e /i > xcopy.log || goto :error
@@ -81,7 +96,6 @@ nmake install || goto %win_lib% :error
 echo # END SECTION
 
 echo # BEGIN SECTION: running tests
-cd %WORKSPACE%\workspace\haptix-comm\build
 REM nmake test is not working test/ directory exists and nmake is not
 REM able to handle it.
 ctest -C "%BUILD_TYPE%" --force-new-ctest-process -VV  || echo "tests failed"
