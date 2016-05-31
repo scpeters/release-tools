@@ -188,6 +188,7 @@ RUN apt-get update && \
 
 # This is killing the cache so we get the most recent packages if there
 # was any update
+ENV DOCKER_FIX '                                        '
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
 RUN apt-get update && \
     apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
