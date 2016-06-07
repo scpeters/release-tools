@@ -51,6 +51,19 @@ echo # END SECTION
   echo # END SECTION
 )
 
+echo # BEGIN SECTION: compile and install ign-transport
+set IGN_TRANSPORT_DIR=%WORKSPACE%\workspace\ign-TRANSPORT
+if EXIST %IGN_TRANSPORT_DIR% ( rmdir /s /q %IGN_TRANSPORT_DIR% )
+hg clone https://bitbucket.org/ignitionrobotics/ign-TRANSPORT %IGN_TRANSPORT_DIR%
+cd %IGN_TRANSPORT_DIR%
+mkdir build
+cd build
+call "..\configure.bat" Release %BITNESS% || goto %win_lib% :error
+copy %WORKSPACE%\workspace\jom.exe .
+jom
+nmake install
+echo # END SECTION
+
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\workspace\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
