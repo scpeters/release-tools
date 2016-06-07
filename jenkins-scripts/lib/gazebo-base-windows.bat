@@ -28,6 +28,8 @@ call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/protobuf-2.6.0
 call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/tbb43_20141023oss_win.zip tbb43_20141023oss_win.zip
 call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/zziplib-0.13.62-vc12-x64-release-debug.zip zziplib-0.13.62-vc12-x64-release-debug.zip
 call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/zlib-1.2.8-vc12-x64-release-debug.zip zlib-1.2.8-vc12-x64-release-debug.zip
+call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/zeromq-3.2.4-amd64.zip zeromq-3.2.4-amd64.zip
+call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/cppzmq-noarch.zip cppzmq-noarch.zip
 call %win_lib% :wget http://download.qt-project.org/official_releases/jom/jom.zip jom.zip
 
 call %win_lib% :download_7za
@@ -42,7 +44,10 @@ call %win_lib% :unzip_7za protobuf-2.6.0-win%BITNESS%-vc12.zip
 call %win_lib% :unzip_7za tbb43_20141023oss_win.zip
 call %win_lib% :unzip_7za zlib-1.2.8-vc12-x64-release-debug.zip
 call %win_lib% :unzip_7za zziplib-0.13.62-vc12-x64-release-debug.zip
+call %win_lib% :unzip_7za zeromq-3.2.4-amd64.zip
+call %win_lib% :unzip_7za cppzmq-noarch.zip
 call %win_lib% :unzip_7za jom.zip
+
 echo # END SECTION
 ) ELSE (
   echo # BEGIN SECTION: reusing workspace 
