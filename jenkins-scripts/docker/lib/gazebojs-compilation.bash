@@ -41,7 +41,7 @@ DELIM
 SOFTWARE_DIR="gazebojs"
 OSRF_REPOS_TO_USE="stable"
 
-DEPENDENCY_PKGS="${BASE_DEPENDENCIES} gazebo7 libgazebo7-dev libjansson-dev mercurial nodejs nodejs-legacy npm"
+DEPENDENCY_PKGS="${BASE_DEPENDENCIES} wget gazebo7 libgazebo7-dev libjansson-dev mercurial nodejs nodejs-legacy npm"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
