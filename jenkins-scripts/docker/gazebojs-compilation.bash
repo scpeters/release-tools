@@ -14,4 +14,4 @@ if [[ -z ${DISTRO} ]]; then
   exit 1
 fi
 
-. ${SCRIPT_DIR}/lib/gazebojs-compilation.bashº
+. ${SCRIPT_DIR}/lib/gazebojs-compilation.bash
