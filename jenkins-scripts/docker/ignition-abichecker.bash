@@ -23,10 +23,10 @@ fi
 case ${ABI_JOB_SOFTWARE_NAME} in
   "ign-transport")
     ABI_JOB_PKG_DEPENDENCIES_VAR_NAME="IGN_TRANSPORT_DEPENDENCIES"
-    break;;
+  ;;
   "ign-common")
     ABI_JOB_PKG_DEPENDENCIES_VAR_NAME="IGN_COMMON_DEPENDENCIES"
-    break;;
+  ;;
 esac
 
 export ABI_JOB_REPOS="stable"
