@@ -14,9 +14,15 @@ if [[ -z ${DISTRO} ]]; then
   exit 1
 fi
 
+if [[ ${DISTRO} == 'wily' ]]; then
+    ruby_pkgs="ruby2.2 ruby2.2-dev"
+else
+    ruby_pkgs="ruby ruby-dev"
+fi
+
 export BUILDING_SOFTWARE_DIRECTORY="ign-msgs"
-export BUILDING_DEPENDENCIES="libprotobuf-dev libprotoc-dev protobuf-compiler ruby-dev ruby libignition-math2-dev"
-export DOCKER_POSTINSTALL_HOOK="gem install protobuf"
+export BUILDING_DEPENDENCIES="libprotobuf-dev libprotoc-dev protobuf-compiler ${ruby_pkgs} libignition-math2-dev"
+export DOCKER_POSTINSTALL_HOOK="gem install activesupport protobuf"
 export BUILDING_JOB_REPOSITORIES="stable"
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash
