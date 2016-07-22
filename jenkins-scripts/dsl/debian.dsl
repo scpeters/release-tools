@@ -62,7 +62,8 @@ packages.each { repo_name, pkgs ->
       scm {
 	git("${git_repo}") {
 	  branch('master')
-	  subdirectory("${pkg}")
+          // fixed repo name is used for backwards compatibility
+	  relativeTargetDir("repo")
 	}
       }
 
@@ -104,6 +105,10 @@ packages.each { repo_name, pkgs ->
 
       publishers
       {
+        publishers {
+          archiveArtifacts('pkgs/*')
+        }
+
          // Added the lintian parser
          configure { project ->
            project / publishers << 'hudson.plugins.logparser.LogParserPublisher' {
