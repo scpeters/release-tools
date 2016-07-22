@@ -4,5 +4,5 @@
 # build.sh (not run at the moment) with the compilation code (vars expanded)
 
 cat > build.sh <<- EOF
-$(envsubst ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash)
+$(envsubst < ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash)
 EOF
