@@ -15,10 +15,9 @@ if [[ -d ${REPO_PATH} ]]; then
   export CLONE_NEEDED=false
 fi
 
-# Use defaul branch if not sending BRANCH parameter
+# Respect BRANCH parameter if set. Disable checkout if not BRANCh is set
 if [[ -z ${BRANCH} ]]; then
-  export BRANCH=master
-  export CLONE_NEEDED=true
+  export CLONE_NEEDED=false
 fi
 
 cat > build.sh << DELIM
