@@ -62,8 +62,12 @@ packages.each { repo_name, pkgs ->
       scm {
 	git("${git_repo}") {
 	  branch('master')
-          // fixed repo name is used for backwards compatibility
-	  relativeTargetDir("repo")
+          extensions { 
+            cloneOption {
+              // fixed repo name is used for backwards compatibility
+              reference("repo")
+            }
+          }
 	}
       }
 
