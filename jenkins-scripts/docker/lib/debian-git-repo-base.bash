@@ -32,13 +32,12 @@ if ${CLONE_NEEDED}; then
 echo '# BEGIN SECTION: clone the git repo'
 rm -fr ${REPO_PATH}
 git clone $GIT_REPOSITORY ${REPO_PATH}
-cd ${REPO_PATH}
-git checkout ${BRANCH}
 echo '# END SECTION'
 fi
 
 cd ${REPO_PATH}
-git status
+# git plugin leaves a detached state in HEAD not ready for gbp
+# be sure of checking the branch
 git checkout ${BRANCH}
 
 echo '# BEGIN SECTION: install build dependencies'
