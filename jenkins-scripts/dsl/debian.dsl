@@ -65,6 +65,7 @@ packages.each { repo_name, pkgs ->
             url("${git_repo}")
           }
           extensions {
+            cleanBeforeCheckout() 
             relativeTargetDirectory('repo')
           }
         }
