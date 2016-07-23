@@ -59,14 +59,15 @@ packages.each { repo_name, pkgs ->
   OSRFLinuxBase.create(ci_job)
   ci_job.with
   {
-      scm {
-	git("${git_repo}") {
-	  branch('master')
+     scm {
+        git {
+          remote {
+            url("${git_repo}")
+          }
           extensions {
-            // fixed repo name is used for backwards compatibility
             relativeTargetDirectory('repo')
           }
-	}
+        }
       }
 
       triggers {
@@ -99,7 +100,6 @@ packages.each { repo_name, pkgs ->
 
               export LINUX_DISTRO=debian
               export DISTRO=sid
-              export GIT_REPOSITORY="${git_repo}"
 
               /bin/bash -xe ./scripts/jenkins-scripts/docker/debian-git-debbuild.bash
               """.stripIndent())
