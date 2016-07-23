@@ -70,6 +70,7 @@ rm -fr debian/*.symbols
 echo '# END SECTION'
 
 echo "# BEGIN SECTION: create source package \${OSRF_VERSION}"
+rm ../*.orig.*
 gbp buildpackage -j${MAKE_JOBS} --git-ignore-new -S -uc -us
 
 cp ../*.dsc $WORKSPACE/pkgs
