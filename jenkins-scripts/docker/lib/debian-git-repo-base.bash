@@ -79,7 +79,9 @@ cp ../*.debian.* $WORKSPACE/pkgs
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: create deb packages'
-gbp buildpackage -j${MAKE_JOBS} --git-ignore-new -uc -us
+# The git plugin leaves a repository copy with a detached HEAD
+# state. gbp does not like it thus the need of using --git-ignore-branch
+gbp buildpackage -j${MAKE_JOBS} --git-ignore-new --git-ignore-branch -uc -us
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: export pkgs'
