@@ -8,7 +8,7 @@ export ENABLE_REAPER=false
 
 # The git plugin leaves a repository copy with a detached HEAD
 # state. gbp does not like it thus the need of using --git-ignore-branch
-export GBP="gbp buildpackage -j${MAKE_JOBS} --git-ignore-new --git-ignore-branch -uc -us"
+export GBP_COMMAND="gbp buildpackage -j${MAKE_JOBS} --git-ignore-new --git-ignore-branch -uc -us"
 export REPO_PATH="$WORKSPACE/repo"
 
 # Historically the job run git clone. New version leave it for jenkins
