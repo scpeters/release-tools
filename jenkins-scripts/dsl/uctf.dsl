@@ -118,4 +118,40 @@ supported_distros.each { distro ->
        }
     }
   }
+
+  // --------------------------------------------------------------
+  // 3. Debian repo import upstream code
+  def upstream_import = job("uctf-upstream_tarball")
+  OSRFLinuxBase.create(upstream_import)
+
+  upstream_import.with
+  {
+    scm {
+      git {
+        remote {
+          github('osrf/uctf', 'https')
+          credentials('923bb60c-535f-4fb9-8768-44d4d0cd11dd')
+        }
+
+        extensions {
+          cleanBeforeCheckout()
+          relativeTargetDirectory('repo')
+          submoduleOptions {
+              recursive(true)
+            }
+        }
+      }
+    }
+
+    steps {
+          shell("""#!/bin/bash -xe
+
+                today=\$(date +'%Y%M%d')
+                rm -fr \${WORKSPACE}/repo/.git
+                rm -fr \${WORKSPACE}/repo/Firmware/.git
+
+                tar cvzf \${WORKSPACE}/uctf-0.0.0~\$today~\$GIT_COMMIT.tar.bz2 \${WORKSPACE}/repo
+                """.stripIndent())
+       }
+  }
 }
