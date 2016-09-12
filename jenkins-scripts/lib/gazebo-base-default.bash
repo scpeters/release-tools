@@ -226,7 +226,7 @@ if ${COVERAGE_ENABLED} ; then
   # java is needed to run bullshtml
   apt-get install -y default-jre
   cd $WORKSPACE
-  wget http://bullshtml.googlecode.com/files/bullshtml_1.0.5.tar.gz -O bullshtml.tar.gz
+  wget https://github.com/j-rivero/bullshtml/archive/1.1.tar.gz -O bullshtml.tar.gz
   tar -xzf bullshtml.tar.gz
   cd bullshtml
   sh bullshtml .
