@@ -228,8 +228,8 @@ if ${COVERAGE_ENABLED} ; then
   cd $WORKSPACE
   wget https://github.com/j-rivero/bullshtml/archive/1.1.tar.gz -O bullshtml.tar.gz
   tar -xzf bullshtml.tar.gz
-  cd bullshtml
-  sh bullshtml .
+  cd bullshtml-*
+  sh ../target/bullshtml.sh .
   # Hack to remove long paths from report
   find . -name '*.html' -exec sed -i -e 's:${WORKSPACE}::g' {} \;
 fi
