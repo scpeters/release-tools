@@ -92,7 +92,7 @@ export DISPLAY=$(ps ax \
 )
 echo '# END SECTION'
 
-PKG_LIBRARY_PATH=$(find /tmp/mac/ -type d -name '[0-9]*.[0-9]*')
+PKG_LIBRARY_PATH=$(find /usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/ -type d -name '[0-9]*.[0-9]*')
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${PKG_LIBRARY_PATH}
 
 echo "# BEGIN SECTION: configure ${PROJECT}"
