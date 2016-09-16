@@ -93,10 +93,12 @@ export DISPLAY=$(ps ax \
 )
 echo '# END SECTION'
 
+PKG_LIBRARY_PATH=$(find /tmp/mac/ -type d -name '[0-9]*.[0-9]*')
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${PKG_LIBRARY_PATH}
+
 echo "# BEGIN SECTION: configure ${PROJECT}"
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_INSTALL_PREFIX=/usr/local/Cellar/${PROJECT}/HEAD \
-      -DPKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/usr/local/opt/curl/lib/pkgconfig \
      ${WORKSPACE}/${PROJECT_PATH}
 echo '# END SECTION'
 
