@@ -104,7 +104,8 @@ echo # END SECTION
 
 echo # BEGIN SECTION: compiling gazebo
 copy %WORKSPACE%\workspace\jom.exe .
-jom -j%MAKE_JOBS% VERBOSE=1 || goto :error
+jom -j%MAKE_JOBS% VERBOSE=1 || dumpbin /EXPORTS gazebo/util/gazebo_util.dll
+goto :error
 echo # END SECTION
 
 if NOT DEFINED KEEP_WORKSPACE (
