@@ -83,8 +83,10 @@ cd $WORKSPACE
 rm -fr $WORKSPACE/abi-compliance-checker
 git clone git://github.com/lvc/abi-compliance-checker.git
 cd abi-compliance-checker
+if [[ $(date +%Y%m%d) -le 20170101 ]]; then
 # use stable tag, since master branch was recently broken
 git checkout 1.99.23
+fi
 perl Makefile.pl -install --prefix=/usr
 
 mkdir -p $WORKSPACE/abi_checker
