@@ -83,6 +83,8 @@ cd $WORKSPACE
 rm -fr $WORKSPACE/abi-compliance-checker
 git clone git://github.com/lvc/abi-compliance-checker.git
 cd abi-compliance-checker
+# use stable tag, since master branch was recently broken
+git checkout 1.99.23
 perl Makefile.pl -install --prefix=/usr
 
 mkdir -p $WORKSPACE/abi_checker
