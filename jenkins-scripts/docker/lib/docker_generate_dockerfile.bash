@@ -87,13 +87,6 @@ cat > Dockerfile << DELIM_DOCKER
 FROM ${FROM_VALUE}
 MAINTAINER Jose Luis Rivero <jrivero@osrfoundation.org>
 
-# If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
-# By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
-RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
-RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
-  && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
-  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
-  || echo "No squid-deb-proxy detected on docker host"
 # setup environment
 ENV LANG C
 ENV LC_ALL C
@@ -176,7 +169,6 @@ DELIM_DOCKER_DART_PKGS
 fi
 
 # Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
-# string in the moth year str
 if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
 cat >> Dockerfile << DELIM_DOCKER_INVALIDATE
 RUN echo 'BEGIN SECTION: invalidate full docker cache'
@@ -200,7 +192,6 @@ cat >> Dockerfile << DELIM_DOCKER3
 # The expection of updates is low and anyway it is cathed by the next
 # update command below
 RUN echo "${MONTH_YEAR_STR}"
-ENV DEBIAN_FRONTEND noninteractive
 # The rm command will minimize the layer size
 RUN apt-get update && \
     apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} && \
