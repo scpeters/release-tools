@@ -1,13 +1,16 @@
-# 
+#
 # Script to generate the dockerfile needed for running the build.sh script
 #
 # Inputs used:
-#   - DISTRO            : base distribution (ex: vivid)
-#   - ARCH              : [default amd64] base arquitecture (ex: amd64)
-#   - OSRF_REPOS_TO_USE : [default empty] space separated list of osrf repos to add to sourcess.list
-#   - USE_ROS_REPO      : [default false] true|false if add the packages.ros.org to the sources.list
-#   - DEPENDENCY_PKGS   : (optional) packages to be installed in the image
-#   - SOFTWARE_DIR      : (optional) directory to copy inside the image
+# - DISTRO            : base distribution (ex: vivid)
+# - LINUX_DISTRO      : [default ubuntu] base linux distribution (ex: debian)
+# - ARCH              : [default amd64] base arquitecture (ex: amd64)
+# - OSRF_REPOS_TO_USE : [default empty] space separated list of osrf repos to add to sourcess.list
+# - USE_ROS_REPO      : [default false] true|false if add the packages.ros.org to the sources.list
+# - DEPENDENCY_PKGS   : (optional) packages to be installed in the image
+# - SOFTWARE_DIR      : (optional) directory to copy inside the image
+# - DOCKER_POSTINSTALL_HOOK : (optional) bash code to run after installing  DEPENDENCY_PKGS.
+#                       It can be used for gem ruby installations or pip python
 
 #   - USE_OSRF_REPO     : deprecated! [default false] true|false if true, add the stable osrf repo to sources.list
 
@@ -16,23 +19,49 @@ if [[ -z ${ARCH} ]]; then
   export ARCH="amd64"
 fi
 
+if [[ -z ${LINUX_DISTRO} ]]; then
+  echo "Linux distro undefined, default to ubuntu"
+  export LINUX_DISTRO="ubuntu"
+fi
+
+case ${LINUX_DISTRO} in
+  'ubuntu')
+    SOURCE_LIST_URL="http://archive.ubuntu.com/ubuntu"
+    ;;
+    
+  'debian')
+    # Currently not needed
+    # SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
+
+    # debian does not ship locales by default
+    export DEPENDENCY_PKGS="locales ${DEPENDENCY_PKGS}"
+
+    if [[ -n ${OSRF_REPOS_TO_USE} ]]; then
+      echo "WARN!! OSRF has no debian repositories yet!"
+      OSRF_REPOS_TO_USE=""
+    fi
+    ;;
+
+  *)
+    echo "Unknow linux distribution: ${LINUX_DISTRO}"
+    exit 1
+esac
+
 # Select the docker container depenending on the ARCH
 case ${ARCH} in
-  'amd64') 
-     FROM_VALUE=ubuntu:${DISTRO}
+  'amd64')
+     FROM_VALUE=${LINUX_DISTRO}:${DISTRO}
      ;;
   'i386')
-     # There are no i386 official images. Only 14.04 (trusty) is available
-     # https://registry.hub.docker.com/u/32bit/ubuntu/tags/manage/
-     if [[ $DISTRO != 'trusty' ]]; then
-       FROM_VALUE=32bit/ubuntu:14.04
+     if [[ ${LINUX_DISTRO} == 'debian' ]]; then
+       echo "There is no debian/jessie i386 docker image available"
+       exit 1
+     else
+       FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
      fi
-
-     # Other images are not official.
-     FROM_VALUE=mcandre/docker-ubuntu-32bit:${DISTRO}
      ;;
- 'armhf')
-     FROM_VALUE=osrf/ubuntu_armhf:${DISTRO}
+   'armhf' | 'arm64' )
+       FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
      ;;
   *)
      echo "Arch unknown"
@@ -48,9 +77,6 @@ if [[ -z ${OSRF_REPOS_TO_USE} ]]; then
   if ${USE_OSRF_REPO}; then
      OSRF_REPOS_TO_USE="stable"
   fi
-fi
-if ${NEED_PRERELEASE}; then
-  OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE} prerelease"
 fi
 
 echo '# BEGIN SECTION: create the Dockerfile'
@@ -69,28 +95,41 @@ RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
   && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
   || echo "No squid-deb-proxy detected on docker host"
 # setup environment
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
+ENV LANG C
+ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
+ENV DEBFULLNAME "OSRF Jenkins"
+ENV DEBEMAIL "build@osrfoundation.org"
 DELIM_DOCKER
 
-if [[ ${ARCH} != 'armhf' ]]; then
+# The redirection fails too many times using us ftp
+if [[ ${LINUX_DISTRO} == 'debian' ]]; then
+cat >> Dockerfile << DELIM_DEBIAN_APT
+  RUN sed -i -e 's:httpredir:ftp.us:g' /etc/apt/sources.list
+  RUN echo "deb-src http://ftp.us.debian.org/debian ${DISTRO} main" \\
+                                                         >> /etc/apt/sources.list
+DELIM_DEBIAN_APT
+fi
+
+if [[ ${LINUX_DISTRO} == 'ubuntu' ]]; then
+  if [[ ${ARCH} != 'armhf' && ${ARCH} != 'arm64' ]]; then
 cat >> Dockerfile << DELIM_DOCKER_ARCH
-# Note that main,restricted and universe are not here, only multiverse
-# main, restricted and unvierse are already setup in the original image
-RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} multiverse" \\
-                                                       >> /etc/apt/sources.list && \\
-    echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-updates multiverse" \\
-                                                       >> /etc/apt/sources.list && \\
-    echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO}-security main restricted universe multiverse" && \\
-                                                       >> /etc/apt/sources.list
+  # Note that main,restricted and universe are not here, only multiverse
+  # main, restricted and unvierse are already setup in the original image
+  RUN echo "deb ${SOURCE_LIST_URL} ${DISTRO} multiverse" \\
+                                                         >> /etc/apt/sources.list && \\
+      echo "deb ${SOURCE_LIST_URL} ${DISTRO}-updates main restricted universe multiverse" \\
+                                                         >> /etc/apt/sources.list && \\
+      echo "deb ${SOURCE_LIST_URL} ${DISTRO}-security main restricted universe multiverse" && \\
+                                                         >> /etc/apt/sources.list
 DELIM_DOCKER_ARCH
+  fi
 fi
 
 # i386 image only have main by default
 if [[ ${ARCH} == 'i386' ]]; then
 cat >> Dockerfile << DELIM_DOCKER_I386_APT
-RUN echo "deb http://archive.ubuntu.com/ubuntu ${DISTRO} restricted universe" \\
+RUN echo "deb ${SOURCE_LIST_URL} ${DISTRO} restricted universe" \\
                                                        >> /etc/apt/sources.list
 DELIM_DOCKER_I386_APT
 fi
@@ -110,7 +149,7 @@ fi
 
 for repo in ${OSRF_REPOS_TO_USE}; do
 cat >> Dockerfile << DELIM_OSRF_REPO
-RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${repo} ${DISTRO} main" > \\
+RUN echo "deb http://packages.osrfoundation.org/gazebo/${LINUX_DISTRO}-${repo} ${DISTRO} main" >\\
                                                 /etc/apt/sources.list.d/osrf.${repo}.list
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
 DELIM_OSRF_REPO
@@ -118,8 +157,9 @@ done
 
 if ${USE_ROS_REPO}; then
 cat >> Dockerfile << DELIM_ROS_REPO
+# Note that ROS uses ubuntu hardcoded in the paths of repositories
 RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
-                                                /etc/apt/sources.list.d/ros.list && \\
+                                                /etc/apt/sources.list.d/ros.list
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 DELIM_ROS_REPO
 fi
@@ -156,7 +196,7 @@ fi
 
 cat >> Dockerfile << DELIM_DOCKER3
 # Invalidate cache monthly
-# This is the firt big installation of packages on top of the raw image. 
+# This is the firt big installation of packages on top of the raw image.
 # The expection of updates is low and anyway it is cathed by the next
 # update command below
 RUN echo "${MONTH_YEAR_STR}"
@@ -174,6 +214,16 @@ RUN apt-get update && \
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3
+
+cat >> Dockerfile << DELIM_DOCKER_SQUID
+# If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
+# By default, squid-deb-proxy 403s unknown sources, so apt shouldn't proxy ppa.launchpad.net
+RUN route -n | awk '/^0.0.0.0/ {print \$2}' > /tmp/host_ip.txt
+RUN echo "HEAD /" | nc \$(cat /tmp/host_ip.txt) 8000 | grep squid-deb-proxy \
+  && (echo "Acquire::http::Proxy \"http://\$(cat /tmp/host_ip.txt):8000\";" > /etc/apt/apt.conf.d/30proxy) \
+  && (echo "Acquire::http::Proxy::ppa.launchpad.net DIRECT;" >> /etc/apt/apt.conf.d/30proxy) \
+  || echo "No squid-deb-proxy detected on docker host"
+DELIM_DOCKER_SQUID
 
 if [[ -n ${SOFTWARE_DIR} ]]; then
 cat >> Dockerfile << DELIM_DOCKER4
@@ -194,10 +244,18 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
        exit 1 \\
    fi
 DELIM_DISPLAY
+fi
+
+if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
+cat >> Dockerfile << DELIM_WORKAROUND_POST_HOOK
+RUN ${DOCKER_POSTINSTALL_HOOK}
+DELIM_WORKAROUND_POST_HOOK
+fi
 
 cat >> Dockerfile << DELIM_WORKAROUND_91
 # Workaround to issue:
 # https://bitbucket.org/osrf/handsim/issue/91
+RUN echo "en_GB.utf8 UTF-8" >> /etc/locale.gen
 RUN locale-gen en_GB.utf8
 ENV LC_ALL en_GB.utf8
 ENV LANG en_GB.utf8
@@ -205,7 +263,33 @@ ENV LANGUAGE en_GB
 # Docker has problems with Qt X11 MIT-SHM extension
 ENV QT_X11_NO_MITSHM 1
 DELIM_WORKAROUND_91
+
+if $ENABLE_CCACHE; then
+cat >> Dockerfile << DELIM_CCACHE
+ENV PATH /usr/lib/ccache:\$PATH
+ENV CCACHE_DIR ${CCACHE_DIR}
+ENV CCACHE_MAXSIZE ${CCACHE_MAXSIZE}
+DELIM_CCACHE
+
+# Add the statistics about ccache at the beggining of the build
+# first 3 lines: bash, set and space
+sed -i '4iecho "# BEGIN SECTION: starting ccache statistics"' build.sh
+sed -i "5iccache -M ${CCACHE_MAXSIZE}" build.sh
+sed -i '6iccache -s' build.sh
+sed -i '7iecho # "END SECTION"' build.sh
+sed -i '8iecho ""' build.sh
+
+# Add the statistics about ccache at the end
+cat >> build.sh << BUILDSH_CCACHE
+echo '# BEGIN SECTION: starting ccache statistics'
+ccache -s
+echo '# END SECTION'
+BUILDSH_CCACHE
 fi
+
+echo '# BEGIN SECTION: see build.sh script'
+cat build.sh
+echo '# END SECTION'
 
 cat >> Dockerfile << DELIM_DOCKER4
 COPY build.sh build.sh

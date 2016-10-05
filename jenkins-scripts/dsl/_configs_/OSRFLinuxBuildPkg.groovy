@@ -3,11 +3,11 @@ package _configs_
 import javaposse.jobdsl.dsl.Job
 
 /*
-  -> OSRFLinuxBase
+  -> OSRFLinuxBuildPkgBase
   -> GenericRemoteToken
 
   Implements:
-    - priorioty 300
+    - priority 100
     - keep only 10 last artifacts
     - parameters:
         - PACKAGE
@@ -19,25 +19,21 @@ import javaposse.jobdsl.dsl.Job
         - RELEASE_REPO_BRANCH
         - PACKAGE_ALIAS 
         - UPLOAD_TO_REPO
-    - publish artifacts
     - launch repository_ng
 */
-class OSRFLinuxBuildPkg extends OSRFLinuxBase
-
+class OSRFLinuxBuildPkg
 {  
   static void create(Job job)
   {
-    OSRFLinuxBase.create(job)
+    OSRFLinuxBuildPkgBase.create(job)
     GenericRemoteToken.create(job)
 
     job.with
     {
-      priority 300
-
-      logRotator {
-        artifactNumToKeep(10)
+      properties {
+        priority 100
       }
-
+    
       parameters {
         stringParam("PACKAGE",null,"Package name to be built")
         stringParam("VERSION",null,"Packages version to be built")
@@ -48,6 +44,7 @@ class OSRFLinuxBuildPkg extends OSRFLinuxBase
         stringParam("RELEASE_REPO_BRANCH", null, "Branch from the -release repo to be used")
         stringParam("PACKAGE_ALIAS", null, "If not empty, package name to be used instead of PACKAGE")
         stringParam("UPLOAD_TO_REPO", null, "OSRF repo name to upload the package to")
+        stringParam("OSRF_REPOS_TO_USE", null, "OSRF repos name to use when building the package")
       }
 
       steps {
@@ -67,8 +64,6 @@ class OSRFLinuxBuildPkg extends OSRFLinuxBase
       }
 
       publishers {
-        archiveArtifacts('pkgs/*')
-
         downstreamParameterized {
 	  trigger('repository_uploader_ng') {
 	    condition('SUCCESS')

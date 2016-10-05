@@ -15,14 +15,14 @@ cat >> /var/cache/debconf/config.dat << DELIM
 Name: robocup3ds-nao-meshes/accepted-robocup3ds-nao-meshes
 Template: robocup3ds-nao-meshes/accepted-robocup3ds-nao-meshes
 Value: true
-Owners: gazebo6-robocup3ds, libgazebo6-robocup3ds
+Owners: gazebo7-robocup3ds, libgazebo7-robocup3ds
 Flags: seen
 DELIM
 """
 
 INSTALL_JOB_POSTINSTALL_HOOK="""
 echo '# BEGIN SECTION: run the one-liner installation'
-curl -ssL https://bitbucket.org/osrf/release-tools/raw/default/one-line-installations/robocup3ds.sh | sh
+curl -ssL http://get.robocup3ds.gazebosim.org | sh
 echo '# END SECTION'
 
 

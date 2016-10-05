@@ -3,9 +3,27 @@ import javaposse.jobdsl.dsl.Job
 
 Globals.default_emails = "jrivero@osrfoundation.org"
 
-packages = [ 'gazebo', 'sdformat', 'urdfdom', 'urdfdom-headers', 'console-bridge', 'libccd', 'simbody', 'robot-player', 'ignition-math2', 'ignition-transport', 'fcl' ]
+packages = [:]
+packages['debian-science'] = ['console-bridge',
+                              'gazebo',
+                              'fcl',
+                              'ignition-math2',
+                              'ignition-msgs',
+                              'ignition-transport',
+                              'kido',
+                              'libccd',
+                              'robot-player',
+                              'sdformat',
+                              'simbody',
+                              'urdfdom',
+                              'urdfdom-headers' ]
 
-packages.each { pkg ->
+packages['collab-maint']   = ['peak-linux-driver',
+                              'peak-pcan-basic']
+
+packages.each { repo_name, pkgs ->
+ pkgs.each { pkg ->
+
   // --------------------------------------------------------------
   // 1. Create the job that tries to install packages
   def install_job = job("${pkg}-install-pkg-debian_sid-amd64")
@@ -15,6 +33,12 @@ packages.each { pkg ->
      triggers {
        cron('@weekly')
      }
+
+    // No accepted in Sid yet
+    if ((pkg == 'kido') || (pkg == 'ignition-msgs'))
+    {
+      disabled()
+    }
 
      steps {
       shell("""\
@@ -32,34 +56,37 @@ packages.each { pkg ->
 
   // --------------------------------------------------------------
   // 2. Create the job that tries to build the package and run lintian
+
+  if (repo_name == 'debian-science') {
+    git_repo = "git://anonscm.debian.org/${repo_name}/packages/${pkg}.git"
+  } else {
+    git_repo = "git://anonscm.debian.org/${repo_name}/${pkg}.git"
+  }
+
   def ci_job = job("${pkg}-pkg_builder-master-debian_sid-amd64")
-  OSRFLinuxBase.create(ci_job)
+  OSRFLinuxBuildPkgBase.create(ci_job)
   ci_job.with
   {
-      def git_repo = "git://anonscm.debian.org/debian-science/packages/${pkg}.git"
+     scm {
+        git {
+          remote {
+            url("${git_repo}")
+          }
+          extensions {
+            cleanBeforeCheckout()
+            relativeTargetDirectory('repo')
+          }
 
-      scm {
-	git("${git_repo}") {
-	  branch('master')
-	  subdirectory("${pkg}")
-	}
+          branch('refs/heads/master')
+        }
       }
 
       triggers {
         scm('@daily')
       }
 
-      priority 300
-
-      logRotator {
-        artifactNumToKeep(10)
-      }
-
-      concurrentBuild(true)
-
-      throttleConcurrentBuilds {
-	maxPerNode(1)
-	maxTotal(5)
+      properties {
+        priority 350
       }
 
       parameters {
@@ -73,7 +100,6 @@ packages.each { pkg ->
 
               export LINUX_DISTRO=debian
               export DISTRO=sid
-              export GIT_REPOSITORY="${git_repo}"
 
               /bin/bash -xe ./scripts/jenkins-scripts/docker/debian-git-debbuild.bash
               """.stripIndent())
@@ -81,6 +107,20 @@ packages.each { pkg ->
 
       publishers
       {
+        postBuildScripts {
+          steps {
+            shell("""\
+              #!/bin/bash -xe
+
+              [[ -d \${WORKSPACE}/repo ]] && sudo chown -R jenkins \${WORKSPACE}/repo
+              """.stripIndent())
+          }
+
+          onlyIfBuildSucceeds(false)
+          onlyIfBuildFails(false)
+        }
+
+
          // Added the lintian parser
          configure { project ->
            project / publishers << 'hudson.plugins.logparser.LogParserPublisher' {
@@ -89,6 +129,7 @@ packages.each { pkg ->
               parsingRulesPath('/var/lib/jenkins/logparser_lintian')
            }
          }
-       }
+      }
+    }
   }
 }

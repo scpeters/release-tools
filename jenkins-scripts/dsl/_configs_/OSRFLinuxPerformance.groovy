@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.Job
   -> OSRFLinuxBase
 
   Implements:
-    - pritority 100
+    - priority 400
     - logrotator
     - performance plugin
 */
@@ -19,7 +19,9 @@ class OSRFLinuxPerformance
 
     job.with
     {
-      priority 100
+      properties {
+        priority 400
+      }
 
       logRotator {
         artifactNumToKeep(10)

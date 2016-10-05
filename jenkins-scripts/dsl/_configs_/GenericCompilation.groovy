@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Job
 
 /*
   Implements:
-    - priorioty 100
+    - priority 300
     - keep only 15 builds
     - mail with test results
 */
@@ -13,8 +13,7 @@ class GenericCompilation
 
    static String get_compilation_mail_content()
    {
-      return '''\
-     $DEFAULT_CONTENT
+      return GenericMail.get_default_content() + '''\
 
      ${BUILD_LOG_REGEX, regex="^.*: (fatal ){0,1}error.*$",  linesBefore="5", linesAfter="5", maxMatches=0, showTruncatedLines=false}
 
@@ -27,7 +26,7 @@ class GenericCompilation
      '''.stripIndent()
    }
 
-   static void create(Job job)
+   static void create(Job job, boolean enable_testing = true)
    {
 
      GenericMail.update_field(job, 'defaultContent',
@@ -35,23 +34,25 @@ class GenericCompilation
 
      job.with
      {
-        priority 100
+        properties {
+          priority 300
+        }
 
         logRotator {
           numToKeep(15)
         }
 
-        publishers
+        if (enable_testing)
         {
-           // junit plugin is not implemented. Use configure for it
-           configure { project ->
-              project / publishers << 'hudson.tasks.junit.JUnitResultArchiver' {
-                   testResults('build/test_results/*.xml')
-                   keepLongStdio false
-                   testDataPublishers()
+          publishers
+          {
+            archiveJunit('build/test_results/*.xml') {
+              testDataPublishers {
+                publishFlakyTestsReport()
               }
-          }
-        } // end of publishers
+            }
+          } // end of publishers
+        } // end of enable_testing
       } // end of job
    } // end of create
 } // end of class

@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Job
 
 /*
   Implements:
-    - priorioty 100
+    - priority 400
     - keep only 15 builds
 */
 class OSRFLinuxInstall extends OSRFLinuxBase
@@ -15,7 +15,9 @@ class OSRFLinuxInstall extends OSRFLinuxBase
 
     job.with
     {
-      priority 100
+      properties {
+        priority 400
+      }
 
       logRotator {
         numToKeep(15)

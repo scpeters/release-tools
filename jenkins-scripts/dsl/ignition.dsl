@@ -2,8 +2,8 @@ import _configs_.*
 import javaposse.jobdsl.dsl.Job
 
 // IGNITION PACKAGES
-def ignition_software         = [ 'transport', 'math' ]
-def ignition_transport_series = '0'
+def ignition_software         = [ 'transport', 'math', 'msgs', 'common' ]
+def ignition_transport_series = '' // empty for a unversioned -dev package
 def ignition_math_series      = '2'
 
 // Main platform using for quick CI
@@ -16,30 +16,35 @@ def supported_arches        = Globals.get_supported_arches()
 
 def all_supported_distros = ci_distro + other_supported_distros
 
-// Need to be used in ci_pr
-String abi_job_name = ''
+// Map needed to be used in ci_pr
+abi_job_names = [:]
 
 Globals.extra_emails = "caguero@osrfoundation.org"
+
+String ci_distro_str = ci_distro[0]
+
+// Map of lists to use in CIWorkflow
+ci_pr_any_list = [:]
+ignition_software.each { ign_sw ->
+  def list_empty = []
+  ci_pr_any_list[ign_sw] = list_empty
+}
 
 // ABI Checker job
 // Need to be the before ci-pr_any so the abi job name is defined
 ignition_software.each { ign_sw ->
   abi_distro.each { distro ->
     supported_arches.each { arch ->
-      abi_job_name = "ignition_${ign_sw}-abichecker-any_to_any-${distro}-${arch}"
-      def abi_job = job(abi_job_name)
+      abi_job_names[ign_sw] = "ignition_${ign_sw}-abichecker-any_to_any-${distro}-${arch}"
+      def abi_job = job(abi_job_names[ign_sw])
+      checkout_subdir = "ign-${ign_sw}"
+
       OSRFLinuxABI.create(abi_job)
+      OSRFBitbucketHg.create(abi_job,
+                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "default", checkout_subdir)
       abi_job.with
       {
-        checkout_subdir = "ign-${ign_sw}"
-
-        scm {
-          hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
-            branch('default')
-            subdirectory(checkout_subdir)
-          }
-        }
-
         steps {
           shell("""\
                 #!/bin/bash -xe
@@ -60,41 +65,14 @@ ignition_software.each { ign_sw ->
   ci_distro.each { distro ->
     supported_arches.each { arch ->
       // --------------------------------------------------------------
-      // 1. Create the default ci jobs
-      def ignition_ci_job = job("ignition_${ign_sw}-ci-default-${distro}-${arch}")
-      OSRFLinuxCompilation.create(ignition_ci_job)
-      ignition_ci_job.with
-      {
-          scm {
-            hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
-              branch('default')
-              subdirectory("ign-${ign_sw}")
-            }
-          }
-
-          triggers {
-            scm('*/5 * * * *')
-          }
-
-          steps {
-            shell("""\
-                  #!/bin/bash -xe
-
-                  export DISTRO=${distro}
-                  export ARCH=${arch}
-
-                  /bin/bash -xe ./scripts/jenkins-scripts/docker/ign_${ign_sw}-compilation.bash
-                  """.stripIndent())
-          }
-      }
-      // --------------------------------------------------------------
-      // 2. Create the any job
-      def ignition_ci_any_job = job("ignition_${ign_sw}-ci-pr_any-${distro}-${arch}")
+      // 1. Create the any job
+      def ignition_ci_job_name = "ignition_${ign_sw}-ci-pr_any-${distro}-${arch}"
+      def ignition_ci_any_job = job(ignition_ci_job_name)
       OSRFLinuxCompilationAny.create(ignition_ci_any_job,
                                     "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
       ignition_ci_any_job.with
       {
-        steps 
+        steps
         {
            conditionalSteps
            {
@@ -106,7 +84,7 @@ ignition_software.each { ign_sw ->
 
                steps {
                  downstreamParameterized {
-                   trigger("${abi_job_name}") {
+                   trigger(abi_job_names[ign_sw]) {
                      parameters {
                        predefinedProp("ORIGIN_BRANCH", '$DEST_BRANCH')
                        predefinedProp("TARGET_BRANCH", '$SRC_BRANCH')
@@ -118,13 +96,17 @@ ignition_software.each { ign_sw ->
            }
 
            shell("""\
+                #!/bin/bash -xe
                 export DISTRO=${distro}
                 export ARCH=${arch}
 
                 /bin/bash -xe ./scripts/jenkins-scripts/docker/ign_${ign_sw}-compilation.bash
                 """.stripIndent())
-        }
-      }
+        } // end of steps
+      } // end of ci_any_job
+
+      // add ci-pr_any to the list for CIWorkflow
+      ci_pr_any_list[ign_sw] << ignition_ci_job_name
     }
   }
 }
@@ -141,11 +123,15 @@ ignition_software.each { ign_sw ->
          triggers {
            cron('@daily')
          }
- 
+
          def dev_package = "libignition-${ign_sw}${ignition_transport_series}-dev"
 
          if ("${ign_sw}" == "math")
           dev_package = "libignition-${ign_sw}${ignition_math_series}-dev"
+
+         // common and msgs don't have packages yet
+         if (("${ign_sw}" == "common") || ("${ign_sw}" == "msgs"))
+          disabled()
 
          steps {
           shell("""\
@@ -171,15 +157,12 @@ ignition_software.each { ign_sw ->
       // ci_default job for the rest of arches / scm@daily
       def ignition_ci_job = job("ignition_${ign_sw}-ci-default-${distro}-${arch}")
       OSRFLinuxCompilation.create(ignition_ci_job)
+      OSRFBitbucketHg.create(ignition_ci_job,
+                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "default", "ign-${ign_sw}")
+
       ignition_ci_job.with
       {
-          scm {
-            hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
-              branch('default')
-              subdirectory("ign-${ign_sw}")
-            }
-          }
-
           triggers {
             scm('@daily')
           }
@@ -221,7 +204,8 @@ ignition_software.each { ign_sw ->
 
 // 1. any job
 ignition_software.each { ign_sw ->
-  def ignition_brew_ci_any_job = job("ignition_${ign_sw}-ci-pr_any-homebrew-amd64")
+  String ignition_brew_ci_any_job_name = "ignition_${ign_sw}-ci-pr_any-homebrew-amd64"
+  def ignition_brew_ci_any_job = job(ignition_brew_ci_any_job_name)
   OSRFBrewCompilationAny.create(ignition_brew_ci_any_job,
                                 "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
   ignition_brew_ci_any_job.with
@@ -234,23 +218,18 @@ ignition_software.each { ign_sw ->
               """.stripIndent())
       }
   }
-}
 
-// 2. default
-ignition_software.each { ign_sw ->
+  // add ci-pr_any to the list for CIWorkflow
+  ci_pr_any_list[ign_sw] << ignition_brew_ci_any_job_name
+
+  // 2. default
   def ignition_brew_ci_job = job("ignition_${ign_sw}-ci-default-homebrew-amd64")
   OSRFBrewCompilation.create(ignition_brew_ci_job)
-
+  OSRFBitbucketHg.create(ignition_brew_ci_job,
+                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "default", "ign-${ign_sw}")
   ignition_brew_ci_job.with
   {
-      scm {
-        hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
-          branch('default')
-          // in brew use ign-math to match OSRFBrewCompilationAny mechanism
-          subdirectory("ign-${ign_sw}")
-        }
-      }
-
       triggers {
         scm('@daily')
       }
@@ -270,7 +249,8 @@ ignition_software.each { ign_sw ->
 
 // 1. any
 ignition_software.each { ign_sw ->
-  def ignition_win_ci_any_job = job("ignition_${ign_sw}-ci-pr_any-windows7-amd64")
+  String ignition_win_ci_any_job_name = "ignition_${ign_sw}-ci-pr_any-windows7-amd64"
+  def ignition_win_ci_any_job = job(ignition_win_ci_any_job_name)
   OSRFWinCompilationAny.create(ignition_win_ci_any_job,
                                 "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
   ignition_win_ci_any_job.with
@@ -281,23 +261,19 @@ ignition_software.each { ign_sw ->
               """.stripIndent())
       }
   }
-}
 
-// 2. default
-ignition_software.each { ign_sw ->
+  // add ci-pr_any to the list for CIWorkflow
+  ci_pr_any_list[ign_sw] << ignition_win_ci_any_job_name
+
+  // 2. default
   def ignition_win_ci_job = job("ignition_${ign_sw}-ci-default-windows7-amd64")
   OSRFWinCompilation.create(ignition_win_ci_job)
-
+  OSRFBitbucketHg.create(ignition_win_ci_job,
+                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "default", "ign-${ign_sw}")
+ 
   ignition_win_ci_job.with
   {
-      scm {
-        hg("http://bitbucket.org/ignitionrobotics/ign-${ign_sw}") {
-          branch('default')
-          // in win use ign-math to match OSRFWinCompilationAny mechanism
-          subdirectory("ign-${ign_sw}")
-        }
-      }
-
       triggers {
         scm('@daily')
       }
@@ -308,4 +284,10 @@ ignition_software.each { ign_sw ->
               """.stripIndent())
       }
   }
+}
+
+// Main CI workflow
+ignition_software.each { ign_sw ->
+  def ign_ci_main = workflowJob("ignition_${ign_sw}-ci-pr_any")
+  OSRFCIWorkFlowMultiAny.create(ign_ci_main, ci_pr_any_list[ign_sw])
 }
