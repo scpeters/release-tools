@@ -103,8 +103,9 @@ call "..\configure.bat" Release %BITNESS% || goto %win_lib% :error
 echo # END SECTION
 
 echo # BEGIN SECTION: compiling gazebo
-copy %WORKSPACE%\workspace\jom.exe .
-jom -j%MAKE_JOBS% || goto :error
+nmake gzserver || goto :error
+nmake gzclient || goto :error
+nmake || goto :error
 echo # END SECTION
 
 if NOT DEFINED KEEP_WORKSPACE (
