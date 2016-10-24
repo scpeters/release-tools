@@ -35,9 +35,9 @@ fi
 echo '# END SECTION'
 """
 # Need bc to proper testing and parsing the time
-export DEPENDENCY_PKGS DEPENDENCY_PKGS="wget bc \
-                                   	ros-indigo-ihmc-ros-java-adapter \
-				        ros-indigo-image-transport-plugins \
-                                        val-sensor-interfaces"
+export DEPENDENCY_PKGS="wget bc \
+			ros-indigo-ihmc-ros-java-adapter \
+			ros-indigo-image-transport-plugins \
+			val-sensor-interfaces"
 
 . ${SCRIPT_DIR}/lib/generic-install-base.bash
