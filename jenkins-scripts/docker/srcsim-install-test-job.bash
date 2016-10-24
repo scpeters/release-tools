@@ -47,6 +47,6 @@ fi
 echo '# END SECTION'
 """
 # Need bc to proper testing and parsing the time
-export DEPENDENCY_PKGS DEPENDENCY_PKGS="wget bc python3-software-properties git"
+export DEPENDENCY_PKGS DEPENDENCY_PKGS="wget bc software-properties-common  git"
 
 . ${SCRIPT_DIR}/lib/generic-install-base.bash
