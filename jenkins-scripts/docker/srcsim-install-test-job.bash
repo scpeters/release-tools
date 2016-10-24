@@ -28,7 +28,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd641
 . /opt/nasa/indigo/setup.bash
 
 cd /tmp
-git clone https://github.com/ihmcrobotics/ihmc-open-robotics-software1
+git clone https://github.com/ihmcrobotics/ihmc-open-robotics-software
 git checkout develop
 ./gradlew :Valkyrie:deployLocal1
 cd /opt/ros/indigo/share/ihmc_ros_java_adapter
