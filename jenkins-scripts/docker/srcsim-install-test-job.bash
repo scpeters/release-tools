@@ -12,7 +12,9 @@ echo \"deb http://52.53.157.231/src ${DISTRO} main\" >\\
                                            /etc/apt/sources.list.d/src.list
 apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
 wget -qO - http://52.53.157.231/src/src.key | sudo apt-key add -
+apt-add-repository -y ppa:openjdk-r/ppa
 sudo apt-get update
+apt-get install -y openjdk-8-jdk
 """
 
 INSTALL_JOB_POSTINSTALL_HOOK="""
@@ -45,6 +47,6 @@ fi
 echo '# END SECTION'
 """
 # Need bc to proper testing and parsing the time
-export DEPENDENCY_PKGS DEPENDENCY_PKGS="wget bc openjdk-8-jdk git"
+export DEPENDENCY_PKGS DEPENDENCY_PKGS="wget bc python3-software-properties git"
 
 . ${SCRIPT_DIR}/lib/generic-install-base.bash
