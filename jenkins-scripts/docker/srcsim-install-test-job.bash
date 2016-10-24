@@ -15,17 +15,7 @@ wget -qO - http://52.53.157.231/src/src.key | sudo apt-key add -
 apt-add-repository -y ppa:openjdk-r/ppa
 sudo apt-get update
 apt-get install -y openjdk-8-jdk
-"""
-
-INSTALL_JOB_POSTINSTALL_HOOK="""
-echo '# BEGIN SECTION: testing by running qual1 launch file'
-mkdir -p ~/.gazebo/models
-wget -O /tmp/control.tar.gz http://models.gazebosim.org/control_console/model.tar.gz && tar xvf /tmp/control.tar.gz -C ~/.gazebo/models
-
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-. /opt/ros/indigo/setup.bash
-. /opt/nasa/indigo/setup.bash
 
 cd /tmp
 git clone https://github.com/ihmcrobotics/ihmc-open-robotics-software
@@ -35,6 +25,15 @@ git checkout develop
 cd /opt/ros/indigo/share/ihmc_ros_java_adapter
 ./gradlew --stop
 ./gradlew -x runJavaDelegate -PuseLocal=true
+"""
+
+INSTALL_JOB_POSTINSTALL_HOOK="""
+echo '# BEGIN SECTION: testing by running qual1 launch file'
+mkdir -p ~/.gazebo/models
+wget -O /tmp/control.tar.gz http://models.gazebosim.org/control_console/model.tar.gz && tar xvf /tmp/control.tar.gz -C ~/.gazebo/models
+
+. /opt/ros/indigo/setup.bash
+. /opt/nasa/indigo/setup.bash
 
 TEST_START=\`date +%s\`
 timeout --preserve-status 400 roslaunch srcsim qual1.launch extra_gazebo_args:=\"-r\" init:=\"true\" || true
