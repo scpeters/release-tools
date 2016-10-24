@@ -22,7 +22,7 @@ echo '# BEGIN SECTION: testing by running qual1 launch file'
 mkdir -p ~/.gazebo/models
 wget -O /tmp/control.tar.gz http://models.gazebosim.org/control_console/model.tar.gz && tar xvf /tmp/control.tar.gz -C ~/.gazebo/models
 
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd641
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 . /opt/ros/indigo/setup.bash
 . /opt/nasa/indigo/setup.bash
@@ -31,7 +31,7 @@ cd /tmp
 git clone https://github.com/ihmcrobotics/ihmc-open-robotics-software
 cd ihmc-open-robotics-software
 git checkout develop
-./gradlew :Valkyrie:deployLocal1
+./gradlew :Valkyrie:deployLocal
 cd /opt/ros/indigo/share/ihmc_ros_java_adapter
 ./gradlew --stop
 ./gradlew -x runJavaDelegate -PuseLocal=true
