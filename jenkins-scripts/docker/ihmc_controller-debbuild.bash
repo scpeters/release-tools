@@ -5,6 +5,8 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 export ENABLE_ROS=false
+export DOCKER_JOB_NAME="ihmc_controller_job"
+. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
 cat > build.sh << DELIM
 ###################################################
