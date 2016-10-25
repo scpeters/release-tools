@@ -216,13 +216,6 @@ ihmc_build_pkg.with
     }
   }
 
-  concurrentBuild(true)
-
-  throttleConcurrentBuilds {
-    maxPerNode(1)
-    maxTotal(5)
-  }
-
   steps {
     shell("""\
           #!/bin/bash -xe
@@ -271,3 +264,57 @@ ihmc_build_pkg.with
   }
 }
 
+// --------------------------------------------------------------
+// ihmc-valyrie-ros package builder
+def ihmc_gradle = job("ihmc_controller-builder")
+OSRFLinuxBase.create(ihmc_gradle)
+
+ihmc_gradle.with
+{
+  scm {
+    git {
+      remote {
+        github('ihmcrobotics/ihmc-open-robotics-software', 'https')
+        branch('develop')
+      }
+
+      extensions {
+        cleanBeforeCheckout()
+        relativeTargetDirectory('repo')
+      }
+    }
+  }
+
+  steps {
+    shell("""\
+          #!/bin/bash -xe
+
+          export ARCH=amd64
+          export DISTRO=trusty
+
+          /bin/bash -xe ./scripts/jenkins-scripts/docker/ihmc_controller-debbuild.bash
+          """.stripIndent())
+  }
+
+  publishers
+  {
+    publishers {
+      archiveArtifacts('pkgs/*')
+    }
+  }
+
+  postBuildScripts {
+    steps {
+      shell("""\
+        #!/bin/bash -xe
+
+        [[ -d \${WORKSPACE}/repo ]] && sudo chown -R jenkins \${WORKSPACE}/repo
+        [[ -d \${WORKSPACE}/pkgs ]] && sudo chown -R jenkins \${WORKSPACE}/pkgs
+
+        """.stripIndent())
+    }
+
+    onlyIfBuildSucceeds(false)
+    onlyIfBuildFails(false)
+  }
+}
