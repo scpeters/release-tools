@@ -301,20 +301,20 @@ ihmc_gradle.with
     publishers {
       archiveArtifacts('pkgs/*')
     }
-  }
 
-  postBuildScripts {
-    steps {
-      shell("""\
-        #!/bin/bash -xe
+    postBuildScripts {
+      steps {
+        shell("""\
+          #!/bin/bash -xe
 
-        [[ -d \${WORKSPACE}/repo ]] && sudo chown -R jenkins \${WORKSPACE}/repo
-        [[ -d \${WORKSPACE}/pkgs ]] && sudo chown -R jenkins \${WORKSPACE}/pkgs
+          [[ -d \${WORKSPACE}/repo ]] && sudo chown -R jenkins \${WORKSPACE}/repo
+          [[ -d \${WORKSPACE}/pkgs ]] && sudo chown -R jenkins \${WORKSPACE}/pkgs
 
-        """.stripIndent())
+          """.stripIndent())
+      }
+
+      onlyIfBuildSucceeds(false)
+      onlyIfBuildFails(false)
     }
-
-    onlyIfBuildSucceeds(false)
-    onlyIfBuildFails(false)
   }
 }
