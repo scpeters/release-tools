@@ -21,6 +21,7 @@ echo 'BEGIN SECTION: install PPA for Java 8'
 apt-add-repository -y ppa:webupd8team/java
 apt-get update
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+apt-get install -y oracle-java8-installer
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 echo 'END SECTION'
 
