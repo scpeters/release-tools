@@ -22,7 +22,7 @@ apt-add-repository -y ppa:webupd8team/java
 apt-get update
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
 apt-get install -y oracle-java8-installer
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle/
 echo 'END SECTION'
 
 echo 'BEGIN SECTION: run gradle'
@@ -32,8 +32,9 @@ git checkout develop
 ./gradlew :Valkyrie:deployLocal
 echo 'END SECTION'
 
-tar cvfz ${WORKSPACE}/pkgs/valkyrie_controller.tar.gz valkyrie
-
+TIMESTAMP=\$(date '+%Y%m%d')
+HASH=\%(git rev-parse --short HEAD)
+tar cvfz ${WORKSPACE}/pkgs/valkyrie_controller-${TIMESTAMP}-${HASH}.tar.gz valkyrie
 echo 'END SECTION'
 DELIM
 
