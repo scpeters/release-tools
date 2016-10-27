@@ -34,6 +34,8 @@ echo 'END SECTION'
 
 TIMESTAMP=\$(date '+%Y%m%d')
 HASH=\$(git rev-parse --short HEAD)
+cd \$HOME
+find / -name valkyrie -type d
 tar cvfz ${WORKSPACE}/pkgs/valkyrie_controller-\${TIMESTAMP}-\${HASH}.tar.gz valkyrie
 echo 'END SECTION'
 DELIM
