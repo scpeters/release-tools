@@ -33,7 +33,7 @@ git checkout develop
 echo 'END SECTION'
 
 TIMESTAMP=\$(date '+%Y%m%d')
-HASH=\%(git rev-parse --short HEAD)
+HASH=\$(git rev-parse --short HEAD)
 tar cvfz ${WORKSPACE}/pkgs/valkyrie_controller-${TIMESTAMP}-${HASH}.tar.gz valkyrie
 echo 'END SECTION'
 DELIM
