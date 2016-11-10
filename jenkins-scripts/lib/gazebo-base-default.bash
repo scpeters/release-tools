@@ -91,20 +91,6 @@ apt-get update
 apt-get install -y --force-yes  ${BASE_DEPENDENCIES} ${GAZEBO_BASE_DEPENDENCIES} ${GAZEBO_EXTRA_DEPENDENCIES} ${EXTRA_PACKAGES}
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: install graphic card support'
-# Optional stuff. Check for graphic card support
-if ${GRAPHIC_CARD_FOUND}; then
-    apt-get install -y ${GRAPHIC_CARD_PKG}
-    # Check to be sure version of kernel graphic card support is the same.
-    # It will kill DRI otherwise
-    CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\ " | awk '{ print \$3 }' | sed 's:-.*::')
-    if [ "\${CHROOT_GRAPHIC_CARD_PKG_VERSION}" != "${GRAPHIC_CARD_PKG_VERSION}" ]; then
-       echo "Package ${GRAPHIC_CARD_PKG} has different version in chroot and host system. Maybe you need to update your host" 
-       exit 1
-    fi
-fi
-
-
 if ${COVERAGE_ENABLED} ; then
   # Clean previous content
   rm -fr $WORKSPACE/coverage
