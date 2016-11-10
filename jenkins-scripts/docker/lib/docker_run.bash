@@ -31,7 +31,7 @@ if $ENABLE_CCACHE; then
 fi
 
 # DOCKER_FIX is for workaround https://github.com/docker/docker/issues/14203
-sudo docker run $EXTRA_PARAMS_STR  \
+sudo nvidia-docker run $EXTRA_PARAMS_STR  \
             -e DOCKER_FIX=''  \
             -e WORKSPACE=${WORKSPACE} \
             --cidfile=${CIDFILE} \

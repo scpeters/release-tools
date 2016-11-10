@@ -30,12 +30,8 @@ export_display_variable
 
 # Check for Nvidia stuff
 if [ -n "$(lspci -v | grep nvidia | head -n 2 | grep "Kernel driver in use: nvidia")" ]; then
-    export GRAPHIC_CARD_PKG=$(dpkg -l | egrep "^ii[[:space:]]* nvidia-[0-9]{3} " | awk '{ print $2 }' | tail -1)
-    if [ -z "${GRAPHIC_CARD_PKG}" ]; then
-      echo "Nvidia support found but not the module in use"
-      exit 1
-    fi
     # Check for host installed version
+    echo "Using nvidia-docker"
     export GRAPHIC_CARD_NAME="Nvidia"
     export GRAPHIC_CARD_FOUND=true
 fi
