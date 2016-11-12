@@ -47,7 +47,7 @@ fi
 # Check for intel
 if [ -n "$(lspci -v | grep "Kernel driver in use: i[0-9][0-9][0-9]")" ]; then
     export GRAPHIC_CARD_PKG="xserver-xorg-video-intel"
-    export GRAPHIC_CARD_NAME="Intel"
+    export RAPHIC_CARD_NAME="Intel"
     export GRAPHIC_CARD_FOUND=true
     # Need to run properly DRI on intel
     export EXTRA_PACKAGES="${EXTRA_PACKAGES} libgl1-mesa-dri"
@@ -76,7 +76,11 @@ if $GPU_SUPPORT_NEEDED; then
     fi
 fi
 
-# Get version of package 
-export GRAPHIC_CARD_PKG_VERSION=$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\ " | awk '{ print $3 }' | sed 's:-.*::')
-echo "${GRAPHIC_CARD_NAME} found using package ${GRAPHIC_CARD_PKG} (${GRAPHIC_CARD_PKG_VERSION})"
 
+# Get version of package if needed
+if [[ $GRAPHIC_CARD_NAME != "Nvidia" ]];then
+  export GRAPHIC_CARD_PKG_VERSION=$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\ " | awk '{ print $3 }' | sed 's:-.*::')
+  echo "${GRAPHIC_CARD_NAME} found using package ${GRAPHIC_CARD_PKG} (${GRAPHIC_CARD_PKG_VERSION})"
+else
+  echo "${GRAPHIC_CARD_NAME} found using docker-nvidia wrapper"
+fi
