@@ -20,9 +20,9 @@ cat build.sh
 echo '# END SECTION'
 
 if $USE_GPU_DOCKER; then
-  EXTRA_PARAMS_STR="--privileged     \
-                    --env=DISPLAY    \
-                    -v /sys:/sys:ro  \
+  EXTRA_PARAMS_STR="--privileged        \
+                    -e DISPLAY=$DISPLAY \
+                    -v /sys:/sys:ro     \
                     -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
 
   if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]]; then

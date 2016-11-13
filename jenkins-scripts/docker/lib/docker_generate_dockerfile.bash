@@ -267,7 +267,7 @@ sed -i '8iecho ""' build.sh
 cat >> build.sh << BUILDSH_CCACHE
 echo '# BEGIN SECTION: starting ccache statistics'
 ccache -s
-echo \$DISPLAY
+echo "Display: \$DISPLAY"
 echo '# END SECTION'
 BUILDSH_CCACHE
 fi
