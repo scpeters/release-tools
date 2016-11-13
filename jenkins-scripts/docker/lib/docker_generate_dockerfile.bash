@@ -28,7 +28,7 @@ case ${LINUX_DISTRO} in
   'ubuntu')
     SOURCE_LIST_URL="http://archive.ubuntu.com/ubuntu"
     ;;
-    
+
   'debian')
     # Currently not needed
     # SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
@@ -226,6 +226,13 @@ if $USE_GPU_DOCKER; then
 cat >> Dockerfile << DELIM_DISPLAY
 ENV DISPLAY ${DISPLAY}
 DELIM_DISPLAY
+if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]];then
+cat >> Dockerfile << DELIM_NVIDIA_GPU
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+ENV PATH /usr/local/nvidia/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}
+DELIM_NVIDIA_GPU
+fi
 fi
 
 if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
