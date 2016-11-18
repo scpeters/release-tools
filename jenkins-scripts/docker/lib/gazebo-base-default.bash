@@ -104,8 +104,6 @@ cmake ${GAZEBO_BASE_CMAKE_ARGS} \\
   $WORKSPACE/gazebo
 echo '# END SECTION'
 
-exit
-
 echo '# BEGIN SECTION: Gazebo compilation'
 init_stopwatch COMPILATION
 make -j${MAKE_JOBS}
