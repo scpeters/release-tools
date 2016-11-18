@@ -97,10 +97,7 @@ echo '# BEGIN SECTION: Gazebo configuration'
 rm -rf $WORKSPACE/install
 mkdir -p $WORKSPACE/install $WORKSPACE/build
 cd $WORKSPACE/build
-echo "Display: \$DISPLAY"
-xwininfo -root
-glxinfo
-cmake --debug-output ${GAZEBO_BASE_CMAKE_ARGS} \\
+cmake ${GAZEBO_BASE_CMAKE_ARGS} \\
     -DCMAKE_INSTALL_PREFIX=/usr      \\
     -DENABLE_SCREEN_TESTS:BOOL=False \\
     -DENABLE_TESTS_COMPILATION:BOOL=True \\
