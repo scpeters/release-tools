@@ -566,7 +566,7 @@ bundle_brew_job.with
           #!/bin/bash -xe
        
           export BREW_BUILD_BUNDLE=true
-          /bin/bash -xe ./scripts/jenkins-scripts/gazebo-one_liner-homebrew.bash
+          /bin/bash -xe ./scripts/jenkins-scripts/gazebo-default-devel-homebrew-amd64.bash
           """.stripIndent())
   }
 }
