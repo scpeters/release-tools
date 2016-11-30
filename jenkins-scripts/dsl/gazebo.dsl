@@ -551,6 +551,28 @@ all_branches.each { branch ->
   Globals.extra_emails = ""
 }
 
+
+// Brew bundle job
+def bundle_brew_job = job("gazebo-bundle-builder-homebrew-amd64")
+OSRFOsXBase.create(bundle_brew_job)
+bundle_brew_job.with
+{
+  triggers {
+    cron('@daily')
+  }
+
+  steps {
+    shell("""\
+          #!/bin/bash -xe
+       
+          export BREW_BUILD_BUNDLE=true
+          /bin/bash -xe ./scripts/jenkins-scripts/gazebo-one_liner-homebrew.bash
+          """.stripIndent())
+  }
+}
+
+
+
 // --------------------------------------------------------------
 // WINDOWS: CI job
 

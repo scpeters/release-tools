@@ -7,6 +7,16 @@ if [[ -z "${SCRIPT_DIR}" ]]; then
   SCRIPT_DIR="${SCRIPT_DIR%/lib/*}"
 fi
 
+# Tests options
+[[ -z ${BREW_ENABLE_TESTS} ]] && BREW_ENABLE_TESTS=true
+
+# Build bundle options
+[[ -z ${BREW_BUILD_BUNDLE} ]] && BREW_BUILD_BUNDLE=false
+
+if $BREW_BUILD_BUNDLE; then
+  BREW_ENABLE_TESTS=false
+fi
+
 export HOMEBREW_MAKE_JOBS=${MAKE_JOBS}
 
 # Get project name as first argument to this script
@@ -101,6 +111,7 @@ echo '# END SECTION'
 echo "# BEGIN SECTION: configure ${PROJECT}"
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_INSTALL_PREFIX=/usr/local/Cellar/${PROJECT}/HEAD \
+      -DENABLE_TESTS_COMPILATION=${BREW_ENABLE_TESTS} \
      ${WORKSPACE}/${PROJECT_PATH}
 echo '# END SECTION'
 
@@ -113,39 +124,47 @@ echo "#BEGIN SECTION: brew doctor analysis"
 brew doctor
 echo '# END SECTION'
 
-echo "# BEGIN SECTION: run tests"
-# Need to clean up models before run tests (issue 27)
-rm -fr \$HOME/.gazebo/models test_results*
-
-# Run `make test`
-# If it has any failures, then rerun the failed tests one time
-# and merge the junit results
-if ! make test ARGS="-VV" && [[ "${RERUN_FAILED_TESTS}" -gt 0 ]]; then
-  mv test_results test_results0
-  mkdir test_results
-  # we can't just run ctest --rerun-failed
-  # because that might not run the check_test_ran for failed tests
-  echo Failed tests:
-  ctest -N --rerun-failed
-  FAILED_TESTS=$(ctest -N --rerun-failed \
-    | grep 'Test  *#[0-9][0-9]*:' \
-    | sed -e 's@^ *Test  *#[0-9]*: *@@' \
-  )
-  for i in ${FAILED_TESTS}; do
-    make test ARGS="-VV -R ${i}\$$" || true
-  done
-  mkdir test_results_tmp
-  for i in $(ls test_results); do
-    echo looking for flaky tests in test_results0/$i and test_results/$i
-    python ${WORKSPACE}/scripts/jenkins-scripts/tools/flaky_junit_merge.py \
-      test_results0/$i test_results/$i \
-      > test_results_tmp/$i
-    mv test_results_tmp/$i test_results0
-  done
-  mv test_results test_results1
-  mv test_results0 test_results
+if $BREW_BUILD_BUNDLE; then
+  echo "# BEGIN SECTION: build bundle"
+  make package
+  echo '# END SECTION'
 fi
-echo '# END SECTION'
+
+if $BREW_ENABLE_TESTS; then
+  echo "# BEGIN SECTION: run tests"
+  # Need to clean up models before run tests (issue 27)
+  rm -fr \$HOME/.gazebo/models test_results*
+
+  # Run `make test`
+  # If it has any failures, then rerun the failed tests one time
+  # and merge the junit results
+  if ! make test ARGS="-VV" && [[ "${RERUN_FAILED_TESTS}" -gt 0 ]]; then
+    mv test_results test_results0
+    mkdir test_results
+    # we can't just run ctest --rerun-failed
+    # because that might not run the check_test_ran for failed tests
+    echo Failed tests:
+    ctest -N --rerun-failed
+    FAILED_TESTS=$(ctest -N --rerun-failed \
+      | grep 'Test  *#[0-9][0-9]*:' \
+      | sed -e 's@^ *Test  *#[0-9]*: *@@' \
+    )
+    for i in ${FAILED_TESTS}; do
+      make test ARGS="-VV -R ${i}\$$" || true
+    done
+    mkdir test_results_tmp
+    for i in $(ls test_results); do
+      echo looking for flaky tests in test_results0/$i and test_results/$i
+      python ${WORKSPACE}/scripts/jenkins-scripts/tools/flaky_junit_merge.py \
+        test_results0/$i test_results/$i \
+        > test_results_tmp/$i
+      mv test_results_tmp/$i test_results0
+    done
+    mv test_results test_results1
+    mv test_results0 test_results
+  fi
+  echo '# END SECTION'
+fi
 
 echo "# BEGIN SECTION: re-add group write permissions"
 sudo chmod -R ug+rwx ${HOMEBREW_CELLAR}
