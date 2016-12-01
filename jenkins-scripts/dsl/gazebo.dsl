@@ -555,7 +555,7 @@ all_branches.each { branch ->
 // Brew bundle job
 def bundle_brew_job = job("gazebo-bundle-builder-homebrew-amd64")
 OSRFOsXBase.create(bundle_brew_job)
-OSRFBitbucketHg.create(bundle_brew_job, "https://bitbucket.org/osrf/gazebo", 'default')
+OSRFBitbucketHg.create(bundle_brew_job, "https://bitbucket.org/osrf/gazebo", 'bundle')
 
 bundle_brew_job.with
 {
