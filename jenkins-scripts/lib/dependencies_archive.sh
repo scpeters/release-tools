@@ -78,9 +78,10 @@ if [[ ${SDFORMAT_MAJOR_VERSION} -ge 3 ]]; then
                                 libignition-math2-dev"
 fi
 
-# GAZEBO related dependencies
+# GAZEBO related dependencies. Default value points to the development version
+# of gazebo, it is being used by compile from source tutorial
 if [[ -z ${GAZEBO_MAJOR_VERSION} ]]; then
-    GAZEBO_MAJOR_VERSION=7
+    GAZEBO_MAJOR_VERSION=8
 fi
 
 # Need to explicit define to use old sdformat package
@@ -125,8 +126,22 @@ if [[ ${GAZEBO_MAJOR_VERSION} -le 7 ]]; then
   gazebo_qt_dependencies="libqt4-dev \\
                           libqtwebkit-dev"
 else
-  gazebo_qt_dependencies="libqt4-dev \\
-                          qtbase5-dev"
+  if [[ ${DISTRO} == 'trusty' ]]; then
+    gazebo_qt_dependencies="libqt4-dev \\
+                            libqwt-dev \\
+                            qtbase5-dev"
+  else
+    # After gazebo8 is released, these two lines should be all that remain
+    gazebo_qt_dependencies="qtbase5-dev \\
+                            libqwt-qt5-dev"
+    # Install qt4 as well for gazebo8 until its release
+    # 20170125 release date of gazebo8
+    if [[ $(date +%Y%m%d) -le 20170125 ]]; then
+      gazebo_qt_dependencies="${gazebo_qt_dependencies} \\
+                              libqt4-dev \\
+                              libqwt-dev"
+    fi
+  fi
 fi
 
 GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="libfreeimage-dev     \\
@@ -160,15 +175,15 @@ if [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
                                          libignition-math2-dev"
 fi
 
-if [[ ${GAZEBO_MAJOR_VERSION} -ge 7 ]]; then
+if [[ ${GAZEBO_MAJOR_VERSION} -eq 7 ]]; then
     GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
                               libignition-transport-dev"
 fi
 
 if [[ ${GAZEBO_MAJOR_VERSION} -ge 8 ]]; then
     GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
-                                         libignition-msgs-dev \\
-                                         libqwt-dev"
+                                         libignition-transport2-dev \\
+                                         libignition-msgs-dev"
 fi
 
 # libtinyxml2-dev is not on precise

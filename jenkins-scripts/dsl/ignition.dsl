@@ -41,7 +41,7 @@ ignition_software.each { ign_sw ->
 
       OSRFLinuxABI.create(abi_job)
       OSRFBitbucketHg.create(abi_job,
-                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
                             "default", checkout_subdir)
       abi_job.with
       {
@@ -69,7 +69,7 @@ ignition_software.each { ign_sw ->
       def ignition_ci_job_name = "ignition_${ign_sw}-ci-pr_any-${distro}-${arch}"
       def ignition_ci_any_job = job(ignition_ci_job_name)
       OSRFLinuxCompilationAny.create(ignition_ci_any_job,
-                                    "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
+                                    "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
       ignition_ci_any_job.with
       {
         steps
@@ -158,7 +158,7 @@ ignition_software.each { ign_sw ->
       def ignition_ci_job = job("ignition_${ign_sw}-ci-default-${distro}-${arch}")
       OSRFLinuxCompilation.create(ignition_ci_job)
       OSRFBitbucketHg.create(ignition_ci_job,
-                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
                             "default", "ign-${ign_sw}")
 
       ignition_ci_job.with
@@ -207,14 +207,20 @@ ignition_software.each { ign_sw ->
   String ignition_brew_ci_any_job_name = "ignition_${ign_sw}-ci-pr_any-homebrew-amd64"
   def ignition_brew_ci_any_job = job(ignition_brew_ci_any_job_name)
   OSRFBrewCompilationAny.create(ignition_brew_ci_any_job,
-                                "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
+                                "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
   ignition_brew_ci_any_job.with
   {
       steps {
         shell("""\
               #!/bin/bash -xe
 
-              /bin/bash -xe ./scripts/jenkins-scripts/ign_${ign_sw}-default-devel-homebrew-amd64.bash
+              export HOMEBREW_SCRIPT="./scripts/jenkins-scripts/ign_${ign_sw}-default-devel-homebrew-amd64.bash"
+              if [ -s "\$HOMEBREW_SCRIPT" ]
+              then
+                /bin/bash -xe "\$HOMEBREW_SCRIPT"
+              else
+                /bin/bash -xe "./scripts/jenkins-scripts/lib/project-default-devel-homebrew-amd64.bash" "ignition-${ign_sw}"
+              fi
               """.stripIndent())
       }
   }
@@ -226,7 +232,7 @@ ignition_software.each { ign_sw ->
   def ignition_brew_ci_job = job("ignition_${ign_sw}-ci-default-homebrew-amd64")
   OSRFBrewCompilation.create(ignition_brew_ci_job)
   OSRFBitbucketHg.create(ignition_brew_ci_job,
-                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
                             "default", "ign-${ign_sw}")
   ignition_brew_ci_job.with
   {
@@ -238,7 +244,13 @@ ignition_software.each { ign_sw ->
         shell("""\
               #!/bin/bash -xe
 
-              /bin/bash -xe ./scripts/jenkins-scripts/ign_${ign_sw}-default-devel-homebrew-amd64.bash
+              export HOMEBREW_SCRIPT="./scripts/jenkins-scripts/ign_${ign_sw}-default-devel-homebrew-amd64.bash"
+              if [ -s "\$HOMEBREW_SCRIPT" ]
+              then
+                /bin/bash -xe "\$HOMEBREW_SCRIPT"
+              else
+                /bin/bash -xe "./scripts/jenkins-scripts/lib/project-default-devel-homebrew-amd64.bash" "ignition-${ign_sw}"
+              fi
               """.stripIndent())
       }
   }
@@ -252,7 +264,7 @@ ignition_software.each { ign_sw ->
   String ignition_win_ci_any_job_name = "ignition_${ign_sw}-ci-pr_any-windows7-amd64"
   def ignition_win_ci_any_job = job(ignition_win_ci_any_job_name)
   OSRFWinCompilationAny.create(ignition_win_ci_any_job,
-                                "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
+                                "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}")
   ignition_win_ci_any_job.with
   {
       steps {
@@ -269,7 +281,7 @@ ignition_software.each { ign_sw ->
   def ignition_win_ci_job = job("ignition_${ign_sw}-ci-default-windows7-amd64")
   OSRFWinCompilation.create(ignition_win_ci_job)
   OSRFBitbucketHg.create(ignition_win_ci_job,
-                            "http://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
+                            "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/", 
                             "default", "ign-${ign_sw}")
  
   ignition_win_ci_job.with
