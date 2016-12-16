@@ -128,10 +128,6 @@ echo '# END SECTION'
 
 if $BREW_BUILD_BUNDLE; then
   echo "# BEGIN SECTION: build bundle"
-  # Fail to detect the ogre components. Do not why.
-  make install || true
-  mkdir -p gzserver.app/Contents/Components/
-  cp -a $(brew --prefix ogre)/lib/* Contents/Components/
   make install
   echo '# END SECTION'
 fi
