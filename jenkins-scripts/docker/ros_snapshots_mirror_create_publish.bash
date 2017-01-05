@@ -7,7 +7,7 @@ SCRIPT_DIR="${SCRIPT_DIR%/*}"
 export USE_APTLY_MANAGEMENT=true
 
 # TRI ROS Mirror common library
-. ${SCRIPT_DIR}/lib/_tri_ros_mirror_lib.bash
+. ${SCRIPT_DIR}/lib/_ros_snapshots_mirror_lib.bash
 
 if [[ -z ${SNAPSHOT_NAME} ]]; then
   echo "SNAPSHOT_NAME variable is empty"

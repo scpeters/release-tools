@@ -4,11 +4,11 @@ import javaposse.jobdsl.dsl.Job
 def supported_distros = [ 'trusty']
 def supported_arches  = [ 'amd64' ]
 
-def snapshot_job = job("tri_ros_mirror-create_snapshot")
+def snapshot_job = job("ros_snapshots_mirror-create_snapshot")
 OSRFLinuxBase.create(snapshot_job)
 snapshot_job.with
 {
-  label "tri_ros_mirror.trusty"
+  label "ros_snapshots_mirror.trusty"
 
   wrappers {
     preBuildCleanup {
@@ -28,7 +28,7 @@ snapshot_job.with
     shell("""\
       #!/bin/bash -xe
 
-      /bin/bash -xe ./scripts/jenkins-scripts/docker/tri_ros_mirror_create_snapshot.bash
+      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_create_snapshot.bash
       """.stripIndent())
   }
 
@@ -38,14 +38,14 @@ snapshot_job.with
   }
 }
 
-def snapshot_publish_job = job("tri_ros_mirror-publish_snapshot")
+def snapshot_publish_job = job("ros_snapshots_mirror-publish_snapshot")
 OSRFLinuxBase.create(snapshot_publish_job)
 snapshot_publish_job.with
 {
   steps
   {
 
-    label "tri_ros_mirror.trusty"
+    label "ros_snapshots_mirror.trusty"
 
     parameters
     {
@@ -55,7 +55,7 @@ snapshot_publish_job.with
     shell("""\
       #!/bin/bash -xe
 
-      /bin/bash -xe ./scripts/jenkins-scripts/docker/tri_ros_mirror_publish_snapshot.bash
+      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_publish_snapshot.bash
       """.stripIndent())
   }
 
@@ -67,7 +67,7 @@ snapshot_publish_job.with
 
 supported_distros.each { distro ->
   supported_arches.each { arch ->
-    def install_job = job("tri_ros_mirror-install-${distro}-${arch}")
+    def install_job = job("ros_snapshots_mirror-install-${distro}-${arch}")
     OSRFLinuxBase.create(install_job)
     install_job.with
     {
@@ -78,7 +78,7 @@ supported_distros.each { distro ->
 
 	      export DISTRO=${distro}
               export ARCH=${arch}
-	      /bin/bash -xe ./scripts/jenkins-scripts/docker/tri_ros_mirror_desktop_full_install.bash
+	      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_desktop_full_install.bash
 	      """.stripIndent())
       }
     }

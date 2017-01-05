@@ -5,7 +5,7 @@
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 # TRI ROS Mirror common library
-. ${SCRIPT_DIR}/lib/_tri_ros_mirror_lib.bash
+. ${SCRIPT_DIR}/lib/_ros_snapshots_mirror_lib.bash
 
 # Isolated repo
 export INSTALL_JOB_PKG="ros-indigo-desktop-full"
@@ -18,7 +18,7 @@ INSTALL_JOB_PREINSTALL_HOOK="""
 export URL='http://54.183.148.69'
 wget \${URL}/repo.key -O - | apt-key add -
 echo \"deb \${URL}/ ${DISTRO} main\" >\\
-                        /etc/apt/sources.list.d/tri_ros_mirror.list
+                        /etc/apt/sources.list.d/ros_snapshots_mirror.list
 sudo apt-get update
 """
 
