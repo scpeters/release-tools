@@ -433,6 +433,8 @@ IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          libavdevice-dev       \\
                          uuid-dev"
 
+IGN_CORE_DEPENDENCIES="libgflags-dev"
+
 #
 # HAPTIX
 #
