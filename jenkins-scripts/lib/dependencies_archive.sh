@@ -170,7 +170,7 @@ GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="libfreeimage-dev     \\
                           libsimbody-dev                   \\
                           ${dart_pkg}"
                    
-if [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]]; then
+if [[ ${GAZEBO_MAJOR_VERSION} -ge 6 ]] && [[ ${GAZEBO_MAJOR_VERSION} -lt 8 ]]; then
     GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
                                          libignition-math2-dev"
 fi
