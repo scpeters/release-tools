@@ -49,7 +49,7 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\workspace\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-math %IGN_MATH_DIR% -b ign-math2
+hg clone https://bitbucket.org/ignitionrobotics/ign-math %IGN_MATH_DIR% -b ign-math3
 cd %IGN_MATH_DIR%
 mkdir build
 cd build
