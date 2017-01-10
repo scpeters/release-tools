@@ -68,7 +68,7 @@ if EXIST %IGN_MATH_WS_DIR% (
   echo # BEGIN SECTION: ign-math already found
   echo # END SECTION
 ) ELSE (
-  echo # BEGIN SECTION: compile and install ign-math
+  echo # BEGIN SECTION: compile and install ign-transport
   set VCS_DIRECTORY=ign-math
   set KEEP_WORKSPACE=TRUE
   set ENABLE_TESTS=FALSE
