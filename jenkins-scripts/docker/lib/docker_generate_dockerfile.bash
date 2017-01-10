@@ -9,6 +9,8 @@
 # - USE_ROS_REPO      : [default false] true|false if add the packages.ros.org to the sources.list
 # - DEPENDENCY_PKGS   : (optional) packages to be installed in the image
 # - SOFTWARE_DIR      : (optional) directory to copy inside the image
+# - DOCKER_PREINSTALL_HOOK  : (optional) bash code to run before installing  DEPENDENCY_PKGS.
+#                       It can be used to install extra repositories from outside OSRF
 # - DOCKER_POSTINSTALL_HOOK : (optional) bash code to run after installing  DEPENDENCY_PKGS.
 #                       It can be used for gem ruby installations or pip python
 
@@ -174,6 +176,12 @@ RUN apt-add-repository -y ppa:libccd-debs
 RUN apt-add-repository -y ppa:fcl-debs
 RUN apt-add-repository -y ppa:dartsim
 DELIM_DOCKER_DART_PKGS
+fi
+
+if [ `expr length "${DOCKER_PREINSTALL_HOOK}"` -gt 1 ]; then
+cat >> Dockerfile << DELIM_WORKAROUND_PRE_HOOK
+RUN ${DOCKER_PREINSTALL_HOOK}
+DELIM_WORKAROUND_PRE_HOOK
 fi
 
 # Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
