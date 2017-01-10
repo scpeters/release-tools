@@ -43,6 +43,6 @@ wget -qO - http://srcsim.gazebosim.org/src/src.key | sudo apt-key add - && \\
 apt-get update
 """
 
-export BUILDING_JOB_REPOSITORIES="stable"
+export BUILDING_JOB_REPOSITORIES="stable srcsim"
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash
