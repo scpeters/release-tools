@@ -41,7 +41,6 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
-:: ign-msgs depends on ign-math2
 hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math2 %IGN_MATH_DIR%
 set VCS_DIRECTORY=ign-math
 set KEEP_WORKSPACE=TRUE
@@ -52,7 +51,7 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-msgs
 set IGN_MSGS_DIR=%WORKSPACE%\ign-msgs
 if EXIST %IGN_MSGS_DIR% ( rmdir /s /q %IGN_MSGS_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-msgs %IGN_MSGS_DIR%
+hg clone https://bitbucket.org/ignitionrobotics/ign-msgs -b ignition-msgs_0.6.1 %IGN_MSGS_DIR%
 set VCS_DIRECTORY=ign-msgs
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
