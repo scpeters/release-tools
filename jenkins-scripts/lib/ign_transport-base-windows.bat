@@ -51,7 +51,7 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-msgs
 set IGN_MSGS_DIR=%WORKSPACE%\ign-msgs
 if EXIST %IGN_MSGS_DIR% ( rmdir /s /q %IGN_MSGS_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-msgs -b ignition-msgs_0.6.1 %IGN_MSGS_DIR%
+hg clone https://bitbucket.org/ignitionrobotics/ign-msgs -b traversaro/copy-find-ignmath2-logic-from-sdformat-1483487773828 %IGN_MSGS_DIR%
 set VCS_DIRECTORY=ign-msgs
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
