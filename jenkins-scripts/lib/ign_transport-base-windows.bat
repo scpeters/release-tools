@@ -41,9 +41,8 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-math %IGN_MATH_DIR%
 :: ign-msgs depends on ign-math2
-hg up ign-math2
+hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math2 %IGN_MATH_DIR%
 set VCS_DIRECTORY=ign-math
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
