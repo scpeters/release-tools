@@ -11,6 +11,7 @@ ${BREW_BINARY} up
 BREW_LIST=$(${BREW_BINARY} list)
 if [[ -n "${BREW_LIST}" ]]; then
   ${BREW_BINARY} remove --force --ignore-dependencies ${BREW_LIST}
+  ${BREW_BINARY} install git
 fi
 rm -rf /usr/local/lib/python2.7/site-packages
 # redirect error to /dev/null to avoid temporal problems detected by
