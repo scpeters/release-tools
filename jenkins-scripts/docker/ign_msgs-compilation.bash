@@ -16,9 +16,7 @@ fi
 
 export BUILDING_SOFTWARE_DIRECTORY="ign-msgs"
 export BUILDING_DEPENDENCIES="libprotobuf-dev libprotoc-dev protobuf-compiler ruby ruby-dev libignition-math2-dev"
-export DOCKER_POSTINSTALL_HOOK="rvm install 2.2"
-export DOCKER_POSTINSTALL_HOOK="rvm use 2.2"
-export DOCKER_POSTINSTALL_HOOK="gem install protobuf"
+export DOCKER_POSTINSTALL_HOOK="rvm install 2.2; rvm use 2.2; gem install protobuf"
 export BUILDING_JOB_REPOSITORIES="stable"
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash
