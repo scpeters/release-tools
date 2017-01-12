@@ -11,6 +11,9 @@ APLTY_MIRROR_NAME="ros_stable"
 APLTY_PUBLISH_REPO_PREFIX="ros-stable-trusty-pkgs"
 USE_APTLY_MANAGEMENT=${USE_APTLY_MANAGEMENT:-false}
 
+ROS_REPO_URL="http://packages.ros.org/ros/ubuntu/"
+SNAP_REPO_URL="http://54.183.148.69"
+
 if $USE_APTLY_MANAGEMENT; then
   # Be sure that we have ROS keys
   GPG_CMD="sudo gpg --no-default-keyring --keyring trustedkeys.gpg --keyserver keys.gnupg.net" 

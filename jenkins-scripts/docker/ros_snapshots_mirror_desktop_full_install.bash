@@ -15,9 +15,8 @@ export USE_ROS_REPO=false
 INSTALL_JOB_PREINSTALL_HOOK="""
 # import the TRI ROS mirror
 
-export URL='http://54.183.148.69'
-wget \${URL}/repo.key -O - | apt-key add -
-echo \"deb \${URL}/ ${DISTRO} main\" >\\
+wget ${SNAP_REPO_URL}/repo.key -O - | apt-key add -
+echo \"deb ${SNAP_REPO_URL}/ ${DISTRO} main\" >\\
                         /etc/apt/sources.list.d/ros_snapshots_mirror.list
 sudo apt-get update
 """

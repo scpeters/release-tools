@@ -38,31 +38,6 @@ snapshot_job.with
   }
 }
 
-def checker_job = job("ros_snapshots_mirror-check_for_new_snapshot")
-OSRFLinuxBase.create(checker_job)
-checker_job.with
-{
-  label "ros_snapshots_mirror.trusty"
-
-  steps
-  {
-    shell("""\
-      #!/bin/bash -xe
-
-      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_create_snapshot.bash
-      """.stripIndent())
-  }
-
-  publishers
-  {
-    consoleParsing {
-        globalRules('/var/lib/jenkins/logparser_warn_on_mark_unstable')
-        unstableOnWarning()
-    }
-  }
-}
-
-
 def snapshot_publish_job = job("ros_snapshots_mirror-publish_snapshot")
 OSRFLinuxBase.create(snapshot_publish_job)
 snapshot_publish_job.with
