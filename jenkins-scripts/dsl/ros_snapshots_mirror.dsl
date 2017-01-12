@@ -49,7 +49,7 @@ checker_job.with
     shell("""\
       #!/bin/bash -xe
 
-      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_create_snapshot.bash
+      /bin/bash -xe ./scripts/jenkins-scripts/docker/ros_snapshots_mirror_checker.bash
       """.stripIndent())
   }
 
