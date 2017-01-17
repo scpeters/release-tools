@@ -75,6 +75,7 @@ fi
 if [[ ${SDFORMAT_MAJOR_VERSION} -ge 3 ]]; then
     # sdformat3 requires ignition-math2
     SDFORMAT_BASE_DEPENDENCIES="${SDFORMAT_BASE_DEPENDENCIES}          \\
+                                libignition-math3-dev                  \\ 
                                 libignition-math2-dev"
 fi
 
