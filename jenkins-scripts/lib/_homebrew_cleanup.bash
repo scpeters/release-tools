@@ -3,6 +3,7 @@ set -e
 
 BREW_BINARY_DIR=/usr/local/bin
 BREW_BINARY=${BREW_BINARY_DIR}/brew
+git -C $(${BREW_BINARY} --repo) fsck
 export HOMEBREW_UPDATE_TO_TAG=1
 ${BREW_BINARY} up
 
@@ -12,6 +13,7 @@ if [[ -n "${BREW_LIST}" ]]; then
   ${BREW_BINARY} remove --force --ignore-dependencies ${BREW_LIST}
 fi
 rm -rf /usr/local/lib/python2.7/site-packages
+hash -r
 # redirect error to /dev/null to avoid temporal problems detected by
 # brew tap
 for t in $(HOMEBREW_NO_AUTO_UPDATE=1 \

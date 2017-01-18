@@ -183,6 +183,8 @@ fi
 if [[ ${GAZEBO_MAJOR_VERSION} -ge 8 ]]; then
     GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
                                          libignition-transport2-dev \\
+                                         libignition-transport3-dev \\
+                                         libignition-math3-dev \\
                                          libignition-msgs-dev"
 fi
 
@@ -286,6 +288,7 @@ else
                             ros-${ROS_DISTRO}-robot-model                       \\
                             ros-${ROS_DISTRO}-robot-state-publisher             \\
                             ros-${ROS_DISTRO}-control-toolbox                   \\
+                            libtinyxml2-dev                                     \\
                             ${_GZ_ROS_PACKAGES}"
 
   if [[ $ROS_DISTRO == 'hydro' ]]; then
@@ -422,7 +425,7 @@ IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          python                \\
                          ruby-ronn             \\
                          uuid-dev              \\
-                         libignition-math2-dev \\
+                         libignition-math3-dev \\
                          libfreeimage-dev      \\
                          libgts-dev            \\
                          libavformat-dev       \\

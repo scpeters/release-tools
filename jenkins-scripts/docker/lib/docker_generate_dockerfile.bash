@@ -28,7 +28,7 @@ case ${LINUX_DISTRO} in
   'ubuntu')
     SOURCE_LIST_URL="http://archive.ubuntu.com/ubuntu"
     ;;
-    
+
   'debian')
     # Currently not needed
     # SOURCE_LIST_URL="http://ftp.us.debian.org/debian"
@@ -140,6 +140,14 @@ RUN dpkg-divert --rename --add /usr/sbin/invoke-rc.d \\
 DELIM_DOCKER_PAM_BUG
 fi
 
+# dirmngr from Yaketty on needed by apt-key
+if [[ $DISTRO != 'trusty' ]] || [[ $DISTRO != 'xenial' ]]; then
+cat >> Dockerfile << DELIM_DOCKER_DIRMNGR
+RUN apt-get update && \\
+    apt-get install -y dirmngr
+DELIM_DOCKER_DIRMNGR
+fi
+
 for repo in ${OSRF_REPOS_TO_USE}; do
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/${LINUX_DISTRO}-${repo} ${DISTRO} main" >\\
@@ -225,9 +233,16 @@ DELIM_DOCKER4
 fi
 
 if $USE_GPU_DOCKER; then
+ if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]]; then
+ # NVIDIA is using nvidia_docker integration
+cat >> Dockerfile << DELIM_NVIDIA_GPU
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+ENV PATH /usr/local/nvidia/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}
+DELIM_NVIDIA_GPU
+  else
+  # No NVIDIA cards needs to have the same X stack than the host
 cat >> Dockerfile << DELIM_DISPLAY
-ENV DISPLAY ${DISPLAY}
-
 # Check to be sure version of kernel graphic card support is the same.
 # It will kill DRI otherwise
 RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\ " | awk '{ print \$3 }' | sed 's:-.*::') \\
@@ -237,6 +252,7 @@ RUN CHROOT_GRAPHIC_CARD_PKG_VERSION=\$(dpkg -l | grep "^ii.*${GRAPHIC_CARD_PKG}\
        exit 1 \\
    fi
 DELIM_DISPLAY
+  fi
 fi
 
 if [ `expr length "${DOCKER_POSTINSTALL_HOOK}"` -gt 1 ]; then
