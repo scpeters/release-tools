@@ -172,10 +172,14 @@ cat >> Dockerfile << DELIM_DOCKER_DART_PKGS
 RUN apt-get update \\
  && apt-get install -y apt-utils software-properties-common \\
  && rm -rf /var/lib/apt/lists/*
-RUN apt-add-repository -y ppa:libccd-debs
-RUN apt-add-repository -y ppa:fcl-debs
 RUN apt-add-repository -y ppa:dartsim
 DELIM_DOCKER_DART_PKGS
+  if [[ "${DISTRO}" == "trusty" ]]; then
+cat >> Dockerfile << DELIM_DOCKER_DART_PKGS
+RUN apt-add-repository -y ppa:libccd-debs
+RUN apt-add-repository -y ppa:fcl-debs
+DELIM_DOCKER_DART_PKGS
+  fi
 fi
 
 # Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
