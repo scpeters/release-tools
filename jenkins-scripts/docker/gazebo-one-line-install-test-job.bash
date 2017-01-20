@@ -8,7 +8,7 @@ export GPU_SUPPORT_NEEDED=true
 
 # Both empty, the one line script should handle all the stuff
 export INSTALL_JOB_PKG=""
-export INSTALL_JOB_REPOS=""
+export INSTALL_JOB_REPOS="stable prerelease"
 
 INSTALL_JOB_POSTINSTALL_HOOK="""
 echo '# BEGIN SECTION: run the one-liner installation'
