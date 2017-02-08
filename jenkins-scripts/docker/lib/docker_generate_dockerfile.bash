@@ -199,7 +199,7 @@ cat >> Dockerfile << DELIM_DOCKER3
 # This is the firt big installation of packages on top of the raw image.
 # The expection of updates is low and anyway it is cathed by the next
 # update command below
-RUN echo "${MONTH_YEAR_STR}"
+RUN echo "${MONTH_YEAR_STR}" xxx cache invalidate
 # The rm after the fail of apt-get update is a workaround to deal with the error:
 # Could not open file *_Packages.diff_Index - open (2: No such file or directory)
 RUN apt-get update ||  rm -rf /var/lib/apt/lists/* && apt-get update
