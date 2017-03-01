@@ -47,11 +47,8 @@ BREW_BASE_DEPENDCIES="mercurial git cmake"
 # 1. SDFORMAT
 # ruby for xml_schemas generation and libxml2-utils for xmllint used in tests
 SDFORMAT_BASE_DEPENDENCIES="python                       \\
-                            libboost-system-dev          \\
+                            liburdfdom-dev               \\
                             libboost-filesystem-dev      \\
-                            libboost-program-options-dev \\
-                            libboost-regex-dev           \\
-                            libboost-iostreams-dev       \\
                             libtinyxml-dev               \\
                             libxml2-utils"
 
