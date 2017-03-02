@@ -9,7 +9,6 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 echo \$PATH
 java -version
 
-/etc/environment
 echo 'JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> /etc/environment
 source /etc/environment
 echo \$PATH
