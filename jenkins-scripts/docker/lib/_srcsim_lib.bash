@@ -14,10 +14,11 @@ source /etc/environment
 echo \$PATH
 java -version
 
-rm /usr/lib/jvm/default-java
-sudo ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
-echo \$PATH
-java -version
+# SKIPPPPPPPPPPP
+#rm /usr/lib/jvm/default-java
+#sudo ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
+#echo \$PATH
+#java -version
 
 export IS_GAZEBO=true
 export ROS_IP=127.0.0.1
