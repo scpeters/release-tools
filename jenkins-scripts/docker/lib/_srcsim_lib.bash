@@ -18,8 +18,16 @@ rm /tmp/default.tar.gz
 SRCSIM_ENV_SETUP="""
 update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 #update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/javac
-rm /usr/lib/jvm/default-java
-sudo ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java
+
+wget http://build.osrfoundation.org/job/generic_backport-debbuilder/lastSuccessfulBuild/artifact/pkgs/default-jre-headless_1.8-56ubuntu2%7Eubuntu14.04.1_amd64.deb
+wget http://build.osrfoundation.org/job/generic_backport-debbuilder/lastSuccessfulBuild/artifact/pkgs/default-jre_1.8-56ubuntu2%7Eubuntu14.04.1_amd64.deb
+wget http://build.osrfoundation.org/job/generic_backport-debbuilder/lastSuccessfulBuild/artifact/pkgs/default-jdk-headless_1.8-56ubuntu2%7Eubuntu14.04.1_amd64.deb
+wget http://build.osrfoundation.org/job/generic_backport-debbuilder/lastSuccessfulBuild/artifact/pkgs/default-jdk_1.8-56ubuntu2%7Eubuntu14.04.1_amd64.deb
+wget http://build.osrfoundation.org/job/generic_backport-debbuilder/lastSuccessfulBuild/artifact/pkgs/java-common_0.56ubuntu2%7Eubuntu14.04.1_all.deb
+dpkg -i *headless*.deb
+dpkg -i *default*.deb
+dpkg -i java-common_0*.deb
+
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 export IS_GAZEBO=true
 export ROS_IP=127.0.0.1
