@@ -95,6 +95,16 @@ ENV DEBFULLNAME "OSRF Jenkins"
 ENV DEBEMAIL "build@osrfoundation.org"
 DELIM_DOCKER
 
+# Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
+if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
+cat >> Dockerfile << DELIM_DOCKER_INVALIDATE
+RUN echo 'BEGIN SECTION: invalidate full docker cache'
+RUN echo "Detecting content in INVALIDATE_DOCKER_CACHE. Invalidating it"
+RUN echo "Invalidate cache enabled. ${DOCKER_RND_ID}"
+RUN echo 'END SECTION'
+DELIM_DOCKER_INVALIDATE
+fi
+
 # The redirection fails too many times using us ftp
 if [[ ${LINUX_DISTRO} == 'debian' ]]; then
 cat >> Dockerfile << DELIM_DEBIAN_APT
@@ -182,16 +192,6 @@ DELIM_DOCKER_DART_PKGS
   fi
 fi
 
-# Handle special INVALIDATE_DOCKER_CACHE keyword by set a random
-if [[ -n ${INVALIDATE_DOCKER_CACHE} ]]; then
-cat >> Dockerfile << DELIM_DOCKER_INVALIDATE
-RUN echo 'BEGIN SECTION: invalidate full docker cache'
-RUN echo "Detecting content in INVALIDATE_DOCKER_CACHE. Invalidating it"
-RUN echo "Invalidate cache enabled. ${DOCKER_RND_ID}"
-RUN echo 'END SECTION'
-DELIM_DOCKER_INVALIDATE
-fi
-
 # Packages that will be installed and cached by docker. In a non-cache
 # run below, the docker script will check for the latest updates
 PACKAGES_CACHE_AND_CHECK_UPDATES="${BASE_DEPENDENCIES} ${DEPENDENCY_PKGS}"
@@ -205,18 +205,22 @@ cat >> Dockerfile << DELIM_DOCKER3
 # This is the firt big installation of packages on top of the raw image.
 # The expection of updates is low and anyway it is cathed by the next
 # update command below
-RUN echo "${MONTH_YEAR_STR}"
 # The rm after the fail of apt-get update is a workaround to deal with the error:
 # Could not open file *_Packages.diff_Index - open (2: No such file or directory)
-RUN apt-get update ||  rm -rf /var/lib/apt/lists/* && apt-get update
-# The rm command will minimize the layer size
-RUN apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} && \
-    rm -rf /var/lib/apt/lists/* 
+RUN echo "${MONTH_YEAR_STR}" \
+ && (apt-get update || (rm -rf /var/lib/apt/lists/* && apt-get update)) \
+ && apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 # This is killing the cache so we get the most recent packages if there
-# was any update
-RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))"
-RUN apt-get update && \
-    apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES}
+# was any update. Note that we don't remove the apt/lists file here since
+# it will make to run apt-get update again
+RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))" \
+ && (apt-get update || (rm -rf /var/lib/apt/lists/* && apt-get update)) \
+ && apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} \
+ && apt-get clean
+
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3
