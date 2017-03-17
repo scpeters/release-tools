@@ -9,21 +9,20 @@
 ::                   
 
 @if "%BUILD_TYPE%" == "" set BUILD_TYPE=Release
-@if "%USE_IGNITION_ZIP%" == "" set USE_IGNITION_ZIP=TRUE
 
 :: When CI is run on the default branch use the .zip. Otherwise compile ign-math
-@if "%SRC_BRANCH%" == "default" (
+if "%SRC_BRANCH%" == "default" (
   set IGNMATH_BRANCH="default"
   set IGNMATH_ZIP="ign-math3"
-  set USE_IGNITION_ZIP=TRUE
+  @if "%USE_IGNITION_ZIP%" == "" set USE_IGNITION_ZIP=TRUE
 ) else (
   :: When passing using a branch 
   findstr /r "set(IGNITION-MATH_REQUIRED_MAJOR_VERSION" %WORKSPACE%\sdformat\cmake\SearchForStuff.cmake > version.txt
   set /p IGN_MATH_REQUIRED_VERSION=<version.txt
   set IGN_MATH_REQUIRED_VERSION=%IGN_MATH_REQUIRED_VERSION:~41,1%
   set IGNMATH_BRANCH="ign-math%IGN_MATH_REQUIRED_VERSION%"
-  set IGNMATH_ZIP=%IGNMATH_BRANCH%
-  set USE_IGNITION_ZIP=FALSE
+  @if "%USE_IGNITION_ZIP%" == "" set USE_IGNITION_ZIP=FALSE
+  set IGNMATH_ZIP=%IGNMATH_BRANCH% :: should not be needed
 )
 
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
