@@ -18,7 +18,7 @@
   set USE_IGNITION_ZIP=FALSE
 )
 
-findstr /r "set.*SDF_MAJOR_VERSION " ${WORKSPACE}/sdformat/CMakeLists.txt > version.txt
+findstr /r "set.*SDF_MAJOR_VERSION " %WORKSPACE%/sdformat/CMakeLists.txt > version.txt
 set /p SDF_MAJOR_VERSION=<version.txt
 echo %SDF_MAJOR_VERSION%
 
