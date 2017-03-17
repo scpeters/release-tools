@@ -20,6 +20,7 @@
 
 findstr /r "set.*SDF_MAJOR_VERSION " %WORKSPACE%\sdformat\CMakeLists.txt > version.txt
 set /p SDF_MAJOR_VERSION=<version.txt
+set SDF_MAJOR_VERSION=%SDF_MAJOR_VERSION:~24,25%
 echo %SDF_MAJOR_VERSION%
 
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
