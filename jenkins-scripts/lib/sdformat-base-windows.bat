@@ -23,6 +23,12 @@ set /p SDF_MAJOR_VERSION=<version.txt
 set SDF_MAJOR_VERSION=%SDF_MAJOR_VERSION:~23,24%
 echo %SDF_MAJOR_VERSION%
 
+@if "%SDF_MAJOR_VERSION%" == "5" (
+  set IGNMATH_BRANCH="ign-math3"
+else
+  set IGNMATH_BRANCH="ign-math2"
+)
+
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
 set TEST_RESULT_PATH="%WORKSPACE%\test_results"
 set TEST_RESULT_PATH_LEGACY=%WORKSPACE%\build\test_results
@@ -55,8 +61,8 @@ call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/boost_1_56_0.z
 call %win_lib% :download_7za
 call %win_lib% :unzip_7za boost_1_56_0.zip > install_boost.log
 IF %USE_IGNITION_ZIP% == TRUE (
-  call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/ign-math3.zip ign-math3.zip
-  call %win_lib% :unzip_7za ign-math3.zip
+  call %win_lib% :wget http://packages.osrfoundation.org/win32/deps/%IGNMATH_BRANCH%.zip %IGNMATH_BRANCH%.zip
+  call %win_lib% :unzip_7za %IGNMATH_BRANCH%.zip
 )
 echo # END SECTION
 
