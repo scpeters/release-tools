@@ -18,6 +18,10 @@
   set USE_IGNITION_ZIP=FALSE
 )
 
+findstr /r "set.*SDF_MAJOR_VERSION " ${WORKSPACE}/sdformat/CMakeLists.txt > version.txt
+set /p SDF_MAJOR_VERSION=<version.txt
+echo %SDF_MAJOR_VERSION%
+
 set win_lib=%SCRIPT_DIR%\lib\windows_library.bat
 set TEST_RESULT_PATH="%WORKSPACE%\test_results"
 set TEST_RESULT_PATH_LEGACY=%WORKSPACE%\build\test_results
