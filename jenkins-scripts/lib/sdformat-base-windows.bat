@@ -18,20 +18,9 @@
   set USE_IGNITION_ZIP=FALSE
 )
 
-
-:: findstr /r "set.*SDF_MAJOR_VERSION " %WORKSPACE%\sdformat\CMakeLists.txt > version.txt
-:: set /p SDF_MAJOR_VERSION=<version.txt
-:: set SDF_MAJOR_VERSION=%SDF_MAJOR_VERSION:~23,24%
-
-:: @if "%SDF_MAJOR_VERSION%" == "5" (
-::  set IGNMATH_BRANCH="ign-math3"
-:: else
-::  set IGNMATH_BRANCH="ign-math2"
-:: )
-
 findstr /r "set(IGNITION-MATH_REQUIRED_MAJOR_VERSION" %WORKSPACE%\sdformat\cmake\SearchForStuff.cmake > version.txt
 set /p IGN_MATH_REQUIRED_VERSION=<version.txt
-set IGN_MATH_REQUIRED_VERSION=%IGN_MATH_REQUIRED_VERSION:~40,41%
+set IGN_MATH_REQUIRED_VERSION=%IGN_MATH_REQUIRED_VERSION:~42,1%
 echo %IGN_MATH_REQUIRED_VERSION%
 set IGNMATH_BRANCH="ign-math%IGN_MATH_REQUIRED_VERSION%"
 
