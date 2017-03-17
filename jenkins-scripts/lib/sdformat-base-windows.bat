@@ -19,6 +19,7 @@ if "%SRC_BRANCH%" == "default" (
   :: When passing using a branch 
   findstr /r "set(IGNITION-MATH_REQUIRED_MAJOR_VERSION" %WORKSPACE%\sdformat\cmake\SearchForStuff.cmake > version.txt
   set /p IGN_MATH_REQUIRED_VERSION=<version.txt
+  echo %IGN_MATH_REQUIRED_VERSION%
   set IGN_MATH_REQUIRED_VERSION=%IGN_MATH_REQUIRED_VERSION:~41,1%
   set IGNMATH_BRANCH="ign-math%IGN_MATH_REQUIRED_VERSION%"
   @if "%USE_IGNITION_ZIP%" == "" set USE_IGNITION_ZIP=FALSE
