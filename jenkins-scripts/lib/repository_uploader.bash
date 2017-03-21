@@ -36,7 +36,7 @@ S3_upload()
     done
     tar xzf foo.tar.gz
     cd s3cmd-*
-    echo "./s3cmd put $pkg s3://osrf-distributions/${s3_destination_path}"
+    ./s3cmd put $pkg s3://osrf-distributions/${s3_destination_path}
     popd
     rm -fr ${S3_DIR}
 }
@@ -72,8 +72,8 @@ upload_dsc_package()
     # .dsc sometimes does not include priority or section, 
     # try to upload and if failed, specify the values
     # see: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=768046
-    #sudo GNUPGHOME=$HOME/.gnupg reprepro --nothingiserror includedsc $DISTRO ${pkg} || \
-    #	sudo GNUPGHOME=$HOME/.gnupg reprepro --nothingiserror --section science --priority extra includedsc $DISTRO ${pkg}
+    sudo GNUPGHOME=$HOME/.gnupg reprepro --nothingiserror includedsc $DISTRO ${pkg} || \
+    	sudo GNUPGHOME=$HOME/.gnupg reprepro --nothingiserror --section science --priority extra includedsc $DISTRO ${pkg}
 }
 
 NEEDED_HOST_PACKAGES="reprepro openssh-client"
@@ -215,7 +215,7 @@ for pkg in `ls $pkgs_path/*.deb`; do
       all.deb)
 	# Check if the package already exists. i386 and amd64 generates the same binaries.
 	# all should be multiarch, so supposed to work on every platform
-	#existing_version=$(sudo GNUPGHOME=/var/lib/jenkins/.gnupg/ reprepro ls ${pkg_name} | grep ${DISTRO} | awk '{ print $3 }')
+	existing_version=$(sudo GNUPGHOME=/var/lib/jenkins/.gnupg/ reprepro ls ${pkg_name} | grep ${DISTRO} | awk '{ print $3 }')
 	if $(dpkg --compare-versions ${pkg_version} le ${existing_version}); then
 	    echo "${pkg_relative} for ${DISTRO} is already in the repo with same version or greater"
 	    echo "SKIP UPLOAD"
