@@ -210,7 +210,7 @@ for pkg in `ls $pkgs_path/*.deb`; do
 
   case ${pkg_suffix} in
       i386.deb | amd64.deb | armhf.deb)
-	  upload_package ${pkg} ${pkg_name}
+	  upload_package ${pkg} ${PACKAGE_ALIAS}
       ;;
       all.deb)
 	# Check if the package already exists. i386 and amd64 generates the same binaries.
@@ -221,7 +221,7 @@ for pkg in `ls $pkgs_path/*.deb`; do
 	    echo "SKIP UPLOAD"
 	    continue
 	fi
-	upload_package ${pkg} ${pkg_name}
+	upload_package ${pkg} ${PACKAGE_ALIAS}
       ;;
       *)
 	  echo "ERROR: unknown pkg_suffix: ${pkg_suffix}"
