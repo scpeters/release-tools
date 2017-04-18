@@ -1,5 +1,7 @@
+import utilities.MyUtilities
+MyUtilities.addEnterpriseFeature(job)
 import _configs_.*
-import _configs_.Globals
+// import _configs_.Globals
 import javaposse.jobdsl.dsl.Job
 
 def ci_distro = [ 'trusty' ]
