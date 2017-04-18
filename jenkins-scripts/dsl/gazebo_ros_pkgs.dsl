@@ -1,10 +1,7 @@
 import _configs_.*
 import javaposse.jobdsl.dsl.Job
-import groovy.transform.Field
 
-@Field
 ArrayList ros_distros        = Globals.get_ros_suported_distros()
-@Field
 String ci_arch               = 'amd64'
 // version to test more than the official one in each ROS distro
 extra_gazebo_versions = [ 'indigo'  :  ['7'],
