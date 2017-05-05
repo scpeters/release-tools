@@ -40,7 +40,8 @@ BASE_DEPENDENCIES="build-essential \\
                    bc              \\
                    netcat-openbsd  \\
                    gnupg2          \\
-                   net-tools"
+                   net-tools       \\
+                   locales"
 
 BREW_BASE_DEPENDCIES="mercurial git cmake"
 
