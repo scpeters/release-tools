@@ -100,7 +100,7 @@ DELIM_DOCKER_INVALIDATE
 fi
 
 # The redirection fails too many times using us ftp
-if [[ ${LINUX_DISTRO} == 'debian' ]]; then
+if [[ ${LINUX_DISTRO} == 'debian' ]] && [[ ${DISTRO} != 'sid' ]]; then
 cat >> Dockerfile << DELIM_DEBIAN_APT
   RUN sed -i -e 's:httpredir:ftp.us:g' /etc/apt/sources.list
   RUN echo "deb-src http://ftp.us.debian.org/debian ${DISTRO} main" \\
