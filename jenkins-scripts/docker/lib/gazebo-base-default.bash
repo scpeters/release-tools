@@ -4,8 +4,8 @@
 #  - GAZEBO_BASE_CMAKE_ARGS (optional) extra arguments to pass to cmake
 #  - GAZEBO_BASE_TESTS_HOOK (optional) [default to run UNIT, INTEGRATION, REGRESSION, EXAMPLE]
 #                           piece of code to run in the testing section
-#  - GAZEBO_BUILD_$DEP      (optional) [default false] 
-#                           build dependencies from source. 
+#  - GAZEBO_BUILD_$DEP      (optional) [default false]
+#                           build dependencies from source.
 #                           DEP = SDFORMAT | IGN_MATH | IGN_TRANSPORT
 #                           branch parameter = $DEP_BRANCH
 
@@ -24,7 +24,7 @@ DOCKER_JOB_NAME="gazebo_ci"
 # If Coverage build type was supplied in GAZEBO_BASE_CMAKE_ARGS, add lcov
 # package.
 if [[ ${GAZEBO_BASE_CMAKE_ARGS} != ${GAZEBO_BASE_CMAKE_ARGS/Coverage} ]]; then
-  EXTRA_PACKAGES="${EXTRA_PACKAGES} lcov" 
+  EXTRA_PACKAGES="${EXTRA_PACKAGES} lcov"
 fi
 
 if [[ $GAZEBO_MAJOR_VERSION -lt 8 ]]; then
@@ -75,7 +75,7 @@ for dep_uppercase in $GAZEBO_OSRF_DEPS; do
       # Handle the depedency BRANCH
       eval dep_branch=\$$dep_uppercase\_BRANCH
       [[ -z ${dep_branch} ]] && dep_branch='default'
-cat >> build.sh << DELIM_BUILD_DEPS  
+cat >> build.sh << DELIM_BUILD_DEPS
     echo "# BEGIN SECTION: building dependency: ${dep} (${dep_branch})"
     echo '# END SECTION'
     rm -fr $WORKSPACE/$dep
@@ -88,11 +88,11 @@ cat >> build.sh << DELIM_BUILD_DEPS
     fi
 
     hg clone http://bitbucket.org/\$bitbucket_repo -b ${dep_branch} \
-	$WORKSPACE/$dep 
+	$WORKSPACE/$dep
 
     GENERIC_ENABLE_TIMING=false
     GENERIC_ENABLE_CPPCHECK=false
-    GENERIC_ENABLE_TESTS=false 
+    GENERIC_ENABLE_TESTS=false
     SOFTWARE_DIR=$dep
     cd $WORKSPACE
     . ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash ${SCRIPT_DIR}
@@ -172,11 +172,6 @@ DEPENDENCY_PKGS="${BASE_DEPENDENCIES} \
 		 ${GAZEBO_EXTRA_DEPENDENCIES} \
 		 ${EXTRA_PACKAGES}"
 
-[[ -z ${GAZEBO_BUILD_IGN_GUI} ]] && GAZEBO_BUILD_IGN_GUI=false
-if $GAZEBO_BUILD_IGN_GUI; then
-  DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${IGN_GUI_DEPENDENCIES}"
-fi
-
 [[ -z ${GAZEBO_BUILD_IGN_COMMON} ]] && GAZEBO_BUILD_IGN_COMMON=false
 if $GAZEBO_BUILD_IGN_COMMON; then
   DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${IGN_COMMON_DEPENDENCIES}"
@@ -185,6 +180,11 @@ fi
 [[ -z ${GAZEBO_BUILD_SDFORMAT} ]] && GAZEBO_BUILD_SDFORMAT=false
 if $GAZEBO_BUILD_SDFORMAT; then
   DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${SDFORMAT_BASE_DEPENDENCIES}"
+fi
+
+[[ -z ${GAZEBO_BUILD_IGN_GUI} ]] && GAZEBO_BUILD_IGN_GUI=false
+if $GAZEBO_BUILD_IGN_GUI; then
+  DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${IGN_GUI_DEPENDENCIES}"
 fi
 
 # Need for cmake DISPLAY check (it uses xwininfo command)
