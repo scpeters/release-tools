@@ -28,10 +28,14 @@ echo '# BEGIN SECTION: configure'
 cd $WORKSPACE
 [[ ! -d $WORKSPACE/build ]] && mkdir -p $WORKSPACE/build
 cd $WORKSPACE/build
+
 if $GENERIC_ENABLE_TESTS; then
+  echo "Building tests"
 else
+  echo "Not building tests"
   BUILDING_EXTRA_CMAKE_PARAMS="${BUILDING_EXTRA_CMAKE_PARAMS} -DENABLE_TESTS_COMPILATION=false"
 fi
+
 cmake $WORKSPACE/${SOFTWARE_DIR} ${BUILDING_EXTRA_CMAKE_PARAMS} \
     -DCMAKE_INSTALL_PREFIX=/usr
 echo '# END SECTION'
