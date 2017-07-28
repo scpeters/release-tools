@@ -51,12 +51,6 @@ VERSION=\$(dpkg-parsechangelog  | grep Version | awk '{print \$2}')
 VERSION_NO_REVISION=\$(echo \$VERSION | sed 's:-.*::')
 OSRF_VERSION=\$VERSION\osrf${RELEASE_VERSION}~${DISTRO}${RELEASE_ARCH_VERSION}
 
-echo "# BEGIN SECTION: check that pristine-tar is updated"
-git checkout pristine-tar || { echo "W: probably miss the pristine-tar branch" && exit 1; }
-if [[ -z \$(git tag | grep upstream/\${VERSION_NO_REVISION}) ]]; then
-   echo "W: \${VERSION_NO_REVISION} commit was not found in pristine-tar"
-   exit 1
-fi
 git checkout master
 git pull
 echo '# END SECTION'
