@@ -43,7 +43,8 @@ fi
 cd ${REPO_PATH}
 
 echo '# BEGIN SECTION: install build dependencies'
-mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
+# TODO: removed to temporary test branches
+# mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
 echo '# END SECTION'
 
 VERSION=\$(dpkg-parsechangelog  | grep Version | awk '{print \$2}')
