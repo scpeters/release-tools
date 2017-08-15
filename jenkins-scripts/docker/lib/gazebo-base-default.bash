@@ -47,12 +47,8 @@ source ${TIMING_DIR}/_time_lib.sh ${WORKSPACE}
 # Check for DART
 if $DART_COMPILE_FROM_SOURCE; then
   echo '# BEGIN SECTION: compiling DART from source'
-  if [ -d $WORKSPACE/dart ]; then
-      cd $WORKSPACE/dart
-      git pull
-  else
-     git clone https://github.com/dartsim/dart.git $WORKSPACE/dart
-  fi
+  rm -rf $WORKSPACE/dart
+  git clone https://github.com/dartsim/dart.git $WORKSPACE/dart
 
   cd $WORKSPACE/dart
   [[ -z ${DART_COMPILE_FROM_SOURCE_BRANCH} ]] && DART_COMPILE_FROM_SOURCE_BRANCH="default"
