@@ -62,7 +62,7 @@ fi
 
 # SDFORMAT related dependencies
 if [[ -z ${SDFORMAT_MAJOR_VERSION} ]]; then
-    SDFORMAT_MAJOR_VERSION=5
+    SDFORMAT_MAJOR_VERSION=4
 fi
 
 if [[ ${SDFORMAT_MAJOR_VERSION} -ge 5 ]]; then
