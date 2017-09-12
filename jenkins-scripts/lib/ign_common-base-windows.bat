@@ -111,6 +111,7 @@ xcopy test_results %TEST_RESULT_PATH% /s /i /e || goto :error
 xcopy %TEST_RESULT_PATH% %TEST_RESULT_PATH_LEGACY% /s /e /i
 echo # END SECTION
 
+set KEEP_WORKSPACE=TRUE
 if NOT DEFINED KEEP_WORKSPACE (
    echo # BEGIN SECTION: clean up workspace
    cd %WORKSPACE%
