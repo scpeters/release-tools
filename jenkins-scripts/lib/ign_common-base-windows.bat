@@ -97,7 +97,6 @@ nmake install || goto %win_lib% :error
 echo # END SECTION
 
 echo # BEGIN SECTION: running tests
-cd %WORKSPACE%\workspace\haptix-comm\build
 REM nmake test is not working test/ directory exists and nmake is not
 REM able to handle it.
 ctest -C "%BUILD_TYPE%" --force-new-ctest-process -VV  || echo "tests failed"
