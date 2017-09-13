@@ -87,6 +87,7 @@ perl Makefile.pl -install --prefix=/usr
 
 mkdir -p $WORKSPACE/abi_checker
 cd $WORKSPACE/abi_checker
+qt5_dir=\$(find /usr/include/ -name qt5 -type d)
 cat > pkg.xml << CURRENT_DELIM
  <version>
      branch: $ORIGIN_BRANCH
@@ -105,6 +106,11 @@ done
 
 cat >> pkg.xml << CURRENT_DELIM_LIBS
  </skip_headers>
+
+ <search_headers>
+  \$qt5_dir
+ </search_headers>
+
  <libs>
    /usr/local/origin_branch/lib/
  </libs>
@@ -136,6 +142,10 @@ done
 
 cat >> devel.xml << DEVEL_DELIM_LIBS
  </skip_headers>
+
+ <search_headers>
+  \$qt5_dir
+ </search_headers>
 
  <libs>
    /usr/local/target_branch/lib/
