@@ -87,7 +87,10 @@ perl Makefile.pl -install --prefix=/usr
 
 mkdir -p $WORKSPACE/abi_checker
 cd $WORKSPACE/abi_checker
+# Search for command paths needed
 qt5_dir=\$(find /usr/include/ -name qt5 -type d)
+ign_msgs_dir=\$(dpkg -l | grep 'libignition-msgs.:' |  sed 's/.*libignition-msgs\\(.\\).*/\\1/')
+
 cat > pkg.xml << CURRENT_DELIM
  <version>
      branch: $ORIGIN_BRANCH
@@ -109,6 +112,7 @@ cat >> pkg.xml << CURRENT_DELIM_LIBS
 
  <search_headers>
   \$qt5_dir
+  \$ign_msgs_dir
  </search_headers>
 
  <libs>
@@ -145,6 +149,7 @@ cat >> devel.xml << DEVEL_DELIM_LIBS
 
  <search_headers>
   \$qt5_dir
+  \$ign_msgs_dir
  </search_headers>
 
  <libs>
