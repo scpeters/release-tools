@@ -130,6 +130,10 @@ for header in $ABI_JOB_IGNORE_HEADERS; do
   echo "  /usr/local/target_branch/include/\$TARGET_DIR/\$header" >> devel.xml
 done
 
+for header in $ABI_JOB_IGNORE_HEADERS_FULL_PATH; do
+  echo "  \$header" >> devel.xml
+done
+
 cat >> devel.xml << DEVEL_DELIM_LIBS
  </skip_headers>
 
