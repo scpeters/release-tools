@@ -123,7 +123,7 @@ cat >> pkg.xml << CURRENT_DELIM_LIBS
  </libs>
 
  <gcc_options>
-   -std=c++11 ${pkg_config_flags}
+   -std=c++11 \${pkg_config_flags}
  </gcc_options>
 CURRENT_DELIM_LIBS
 
@@ -159,7 +159,7 @@ cat >> devel.xml << DEVEL_DELIM_LIBS
  </libs>
 
  <gcc_options>
-   -std=c++11 ${pkg_config_flags}
+   -std=c++11 \${pkg_config_flags}
  </gcc_options>
 DEVEL_DELIM_LIBS
 echo '# END SECTION'
