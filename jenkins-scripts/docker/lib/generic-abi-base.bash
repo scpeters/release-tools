@@ -92,6 +92,7 @@ qt5_dir=\$(find /usr/include/ -name qt5 -type d) || true
 # Get the software version
 software_version=\$(dpkg -l | grep 'lib${ABI_JOB_SOFTWARE_NAME}.:' |  sed 's/.*lib${ABI_JOB_SOFTWARE_NAME}\\(.\\).*/\\1/')
 # Specially useful for -I paths. First try unversioned and if fail versioned
+export PKG_CONFIG_PATH="\$PKG_CONFIG_FLAGS:/usr/local/origin_branch/lib/pkgconfig/"
 pkg_config_flags=\$(pkg-config ${ABI_JOB_SOFTWARE_NAME} --cflags) || \$(pkg-config ${ABI_JOB_SOFTWARE_NAME}\${software_version} --cflags)
 
 cat > pkg.xml << CURRENT_DELIM
