@@ -87,8 +87,9 @@ perl Makefile.pl -install --prefix=/usr
 
 mkdir -p $WORKSPACE/abi_checker
 cd $WORKSPACE/abi_checker
-# Search for command paths needed
-qt5_dir=\$(find /usr/include/ -name qt5 -type d) || true
+# Workaround for mising pc files in Gazebo
+OGRE_flags=\$(pkg-config OGRE --cflags) || true
+Qt5_flags=\$(pkg-config Qt5Core --cflags) || true
 # Get the software version
 software_version=\$(dpkg -l | grep 'lib${ABI_JOB_SOFTWARE_NAME}.:' |  sed 's/.*lib${ABI_JOB_SOFTWARE_NAME}\\(.\\).*/\\1/')
 # Specially useful for -I paths. First try unversioned and if fail versioned
@@ -114,16 +115,12 @@ done
 cat >> pkg.xml << CURRENT_DELIM_LIBS
  </skip_headers>
 
- <search_headers>
-  \$qt5_dir
- </search_headers>
-
  <libs>
    /usr/local/origin_branch/lib/
  </libs>
 
  <gcc_options>
-   -std=c++11 \${pkg_config_flags}
+ -std=c++11 \${pkg_config_flags} \$(OGRE_flags) \$(Qt5_flags)
  </gcc_options>
 CURRENT_DELIM_LIBS
 
@@ -150,16 +147,12 @@ done
 cat >> devel.xml << DEVEL_DELIM_LIBS
  </skip_headers>
 
- <search_headers>
-  \$qt5_dir
- </search_headers>
-
  <libs>
    /usr/local/target_branch/lib/
  </libs>
 
  <gcc_options>
-   -std=c++11 \${pkg_config_flags}
+   -std=c++11 \${pkg_config_flags} \$(OGRE_flags) \$(Qt5_flags)
  </gcc_options>
 DEVEL_DELIM_LIBS
 echo '# END SECTION'
