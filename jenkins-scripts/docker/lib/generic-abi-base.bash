@@ -88,8 +88,11 @@ perl Makefile.pl -install --prefix=/usr
 mkdir -p $WORKSPACE/abi_checker
 cd $WORKSPACE/abi_checker
 # Search for command paths needed
-qt5_dir=\$(find /usr/include/ -name qt5 -type d)
-ign_msgs_dir=\$(dpkg -l | grep 'libignition-msgs.:' |  sed 's/.*libignition-msgs\\(.\\).*/\\1/')
+qt5_dir=\$(find /usr/include/ -name qt5 -type d) || true
+# Get the software version
+software_version=\$(dpkg -l | grep 'lib${ABI_JOB_SOFTWARE_NAME}.:' |  sed 's/.*lib${ABI_JOB_SOFTWARE_NAME}\\(.\\).*/\\1/')
+# Specially useful for -I paths. First try unversioned and if fail versioned
+pkg_config_flags=\$(pkg-config ${ABI_JOB_SOFTWARE_NAME} --cflags) || \$(pkg-config ${ABI_JOB_SOFTWARE_NAME}\${software_version} --cflags)
 
 cat > pkg.xml << CURRENT_DELIM
  <version>
@@ -112,7 +115,6 @@ cat >> pkg.xml << CURRENT_DELIM_LIBS
 
  <search_headers>
   \$qt5_dir
-  \$ign_msgs_dir
  </search_headers>
 
  <libs>
@@ -120,7 +122,7 @@ cat >> pkg.xml << CURRENT_DELIM_LIBS
  </libs>
 
  <gcc_options>
-     -std=c++11
+   -std=c++11 ${pkg_config_flags}
  </gcc_options>
 CURRENT_DELIM_LIBS
 
@@ -149,7 +151,6 @@ cat >> devel.xml << DEVEL_DELIM_LIBS
 
  <search_headers>
   \$qt5_dir
-  \$ign_msgs_dir
  </search_headers>
 
  <libs>
@@ -157,7 +158,7 @@ cat >> devel.xml << DEVEL_DELIM_LIBS
  </libs>
 
  <gcc_options>
-     -std=c++11
+   -std=c++11 ${pkg_config_flags}
  </gcc_options>
 DEVEL_DELIM_LIBS
 echo '# END SECTION'
