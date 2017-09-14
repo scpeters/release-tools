@@ -23,6 +23,6 @@ if [[ $GAZEBO_MAJOR_VERSION -lt 8 ]]; then
   export ABI_JOB_CMAKE_PARAMS="-DENABLE_TESTS_COMPILATION:BOOL=False"
 fi
 export ABI_JOB_IGNORE_HEADERS="gazebo/GIMPACT gazebo/opcode gazebo/test"
-export ABI_JOB_IGNORE_HEADERS_FULL_PATH="/usr/include/simbody/ /usr/include/x86_64-linux-gnu/qt5/"
+export ABI_JOB_IGNORE_HEADERS_FULL_PATH="/usr/include/simbody/SimTKcommon/internal/StateImpl.h /usr/include/x86_64-linux-gnu/qt5/QtCore/qglobal.h"
 
 . ${SCRIPT_DIR}/lib/generic-abi-base.bash
