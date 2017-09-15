@@ -112,6 +112,10 @@ for header in $ABI_JOB_IGNORE_HEADERS; do
   echo "  /usr/local/origin_branch/include/\$ORIGIN_DIR/\$header" >> pkg.xml
 done
 
+for header in $ABI_JOB_IGNORE_HEADERS_FULL_PATH; do
+  echo "  \$header" >> devel.xml
+done
+
 cat >> pkg.xml << CURRENT_DELIM_LIBS
  </skip_headers>
 
