@@ -45,6 +45,7 @@ call %win_lib% :configure_msvc_compiler
 echo # END SECTION
 
 echo # BEGIN SECTION: setup workspace
+set KEEP_WORKSPACE=TRUE
 if NOT DEFINED KEEP_WORKSPACE (
   echo # BEGIN SECTION: preclean workspace
   IF exist %LOCAL_WS% ( rmdir /s /q %LOCAL_WS% ) || goto :error
