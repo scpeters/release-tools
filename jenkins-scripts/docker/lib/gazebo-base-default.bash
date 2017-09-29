@@ -16,6 +16,11 @@ GAZEBO_OSRF_DEPS="SDFORMAT IGN_MATH IGN_TRANSPORT IGN_GUI IGN_COMMON"
 
 . ${SCRIPT_DIR}/lib/_gazebo_version_hook.bash
 
+[[ -z ${GAZEBO_BUILD_SDFORMAT} ]] && GAZEBO_BUILD_SDFORMAT=false
+if $GAZEBO_BUILD_SDFORMAT; then
+  . ${SCRIPT_DIR}/lib/_sdformat_version_hook.bash
+fi
+
 echo '# BEGIN SECTION: setup the testing enviroment'
 # Define the name to be used in docker
 DOCKER_JOB_NAME="gazebo_ci"
@@ -182,7 +187,6 @@ if $GAZEBO_BUILD_IGN_COMMON; then
   DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${IGN_COMMON_DEPENDENCIES}"
 fi
 
-[[ -z ${GAZEBO_BUILD_SDFORMAT} ]] && GAZEBO_BUILD_SDFORMAT=false
 if $GAZEBO_BUILD_SDFORMAT; then
   DEPENDENCY_PKGS="${DEPENDENCY_PKGS} ${SDFORMAT_BASE_DEPENDENCIES}"
 fi
