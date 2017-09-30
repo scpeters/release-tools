@@ -13,7 +13,7 @@ class OSRFLinuxCompilationAny
 {
   static void create(Job job, String repo, boolean enable_testing = true)
   {
-    OSRFLinuxCompilation.create(job)
+    OSRFLinuxCompilation.create(job, enable_testing)
 
     /* Properties from generic any */
     GenericAnyJob.create(job, repo)
