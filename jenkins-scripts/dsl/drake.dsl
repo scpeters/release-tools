@@ -145,7 +145,7 @@ supported_distros.each { distro ->
     def drake_any_job = job("drake-ci-pr_any-${distro}-${arch}")
     // Use stub to supply a fake bitbucket repository. It is overwritten by the
     // git scm section below. False to disable testing.
-    OSRFLinuxCompilationAny.create(drake_any_job, "repo_stub", false)
+    OSRFLinuxCompilationAny.create(drake_any_job, "repo_stub", false, false)
     include_bazel_parselog(drake_any_job)
 
     drake_any_job.with
