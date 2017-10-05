@@ -17,6 +17,16 @@ else
         ${WORKSPACE}/ign-transport${PROJECT_MAJOR_VERSION}
 fi
 
+# Install ign-cmake.
+apt-get update && \\
+apt-get install -y mercurial && \\
+hg clone https://bitbucket.org/ignitionrobotics/ign-cmake -b CMakeRefactor_zmq&&  \\
+mkdir ign-cmake/build && \\
+cd ign-cmake/build &&  \\
+cmake .. && \\
+make install && \\
+cd ../..
+
 . ${SCRIPT_DIR}/lib/project-default-devel-homebrew-amd64.bash \
   ignition-transport${PROJECT_MAJOR_VERSION}
 
