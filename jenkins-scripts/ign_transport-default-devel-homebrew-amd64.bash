@@ -6,8 +6,8 @@ SCRIPT_DIR="${SCRIPT_DIR%/*}"
 
 # Identify PROJECT_MAJOR_VERSION to help with dependency resolution
 PROJECT_MAJOR_VERSION=`\
-  grep 'set.*PROJECT_MAJOR_VERSION ' ${WORKSPACE}/ign-transport/CMakeLists.txt | \
-  tr -d 'a-zA-Z _()'`
+  grep 'ign_configure_project(transport ' ${WORKSPACE}/ign-transport/CMakeLists.txt | \
+  tr -d 'a-zA-Z _()' | cut -d"." -f1`
 # Drop version number if it is 1 (ignition-transport 1.X is in ignition-transport.rb)
 if [ $PROJECT_MAJOR_VERSION -eq 1 ]; then
   PROJECT_MAJOR_VERSION=""
