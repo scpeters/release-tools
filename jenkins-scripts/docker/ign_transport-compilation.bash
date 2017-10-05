@@ -22,6 +22,12 @@ export BUILDING_JOB_REPOSITORIES="stable"
 export DOCKER_POSTINSTALL_HOOK="""\
   apt-get update && \\
   apt-get install -y mercurial && \\
+  hg clone https://bitbucket.org/ignitionrobotics/ign-cmake -b CMakeRefactor&&  \\
+  mkdir ign-cmake/build && \\
+  cd ign-cmake/build &&  \\
+  cmake .. && \\
+  make install && \\
+  cd ../.. && \\
   hg clone https://bitbucket.org/ignitionrobotics/ign-tools &&  \\
   mkdir ign-tools/build && \\
   cd ign-tools/build &&  \\
