@@ -2,12 +2,11 @@ import _configs_.*
 import javaposse.jobdsl.dsl.Job
 
 // IGNITION PACKAGES
-ignition_software           = [ 'transport', 'math', 'msgs', 'common', 'rndf', 'gui' ]
-ignition_debbuild           = ignition_software + [ 'transport2', 'transport3', 'math3', 'math4', 'msgs', 'cmake' ]
+ignition_software           = [ 'transport', 'math', 'msgs', 'common', 'rndf', 'gui', 'cmake' ]
 ignition_gpu                = [ 'gui' ]
 // no registered branches in ignition_branches means only series 0 or 1
 ignition_branches           = [ transport : [ '3' ],
-                                math      : [ '2', '3' ],
+                                math      : [ '2', '3', '4' ],
                                 msgs      : [ '1']]
 // Main platform using for quick CI
 def ci_distro               = Globals.get_ci_distro()
