@@ -59,6 +59,8 @@ else
   wget --quiet -O $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2 $SOURCE_TARBALL_URI
   rm -rf \$REAL_PACKAGE_NAME\-$VERSION
   tar xf $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2
+  pwd
+  ls
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME-$VERSION
 fi
 
@@ -171,6 +173,9 @@ echo '# END SECTION'
 fi
 
 echo '# BEGIN SECTION: create source package' \${OSRF_VERSION}
+pwd
+ls
+ls ../
 debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 
 cp ../*.dsc $WORKSPACE/pkgs
