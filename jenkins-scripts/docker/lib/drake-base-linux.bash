@@ -45,6 +45,13 @@ echo '# BEGIN SECTION: install'
 bazel run :install --jobs=${MAKE_JOBS} -- /opt/drake
 echo '# END SECTION'
 
+echo '# BEGIN SECTION: search for FCL symbols'
+echo "Number of FCL symbols present:"
+nm -D /opt/drake/lib/libdrake.so | grep fcl | wc -l
+echo "List of FCL symbols present:"
+nm -D --demangle /opt/drake/lib/libdrake.so | grep fcl
+echo '# END SECTION'
+
 echo '# BEGIN SECTION: particle test'
 cd ${WORKSPACE}
 [[ -d drake-shambhala ]] && rm -fr drake-shambhala
