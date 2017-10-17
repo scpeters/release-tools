@@ -5,7 +5,7 @@
 ::   - BUILD_TYPE    : (default Release) [ Release | Debug ] Build type to use
 ::   - DEPEN_PKGS    : (optional) list of dependencies (separted by spaces)
 ::   - KEEP_WORKSPACE: (optional) true | false. Clean workspace at the end
-::   - ENABLE_TESTS  : (optional) true | false. Do not compile and run tests 
+::   - ENABLE_TESTS  : (optional) true | false. Do not compile and run tests
 ::
 :: Actions
 ::   - Configure the compiler
@@ -62,6 +62,33 @@ for %%p in (%DEPEN_PKGS%) do (
 )
 echo # END SECTION
 
+if NOT "%IGN_MATH_BRANCH%" == "" (
+  echo # BEGIN SECTION: clone ign-math branch %IGN_MATH_BRANCH%
+  set IGN_MATH_DIR=%WORKSPACE%\ign-math
+  if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
+  hg clone https://bitbucket.org/ignitionrobotics/ign-math -b %IGN_MATH_BRANCH% %IGN_MATH_DIR%
+  cd %IGN_MATH_DIR%
+  mkdir build
+  cd build
+  echo # END SECTION
+
+  if exist ..\configure.bat (
+    echo # BEGIN SECTION: configuring %VCS_DIRECTORY% in %BUILD_TYPE% / %BITNESS%
+    call ..\configure.bat %BUILD_TYPE% %BITNESS% || goto :error
+  ) else (
+    echo # BEGIN SECTION: configuring %VCS_DIRECTORY% using cmake
+    cmake .. %VS_CMAKE_GEN% %VS_DEFAULT_CMAKE_FLAGS% %ARG_CMAKE_FLAGS% || goto :error
+  )
+  echo # END SECTION
+
+  echo # BEGIN SECTION: compiling %VCS_DIRECTORY%
+  nmake VERBOSE=1 || goto %win_lib% :error
+  echo # END SECTION
+  echo # BEGIN SECTION: installing %VCS_DIRECTORY%
+  nmake install || goto %win_lib% :error
+  echo # END SECTION
+)
+
 echo # BEGIN SECTION: move %VCS_DIRECTORY% source to workspace
 if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% )
 xcopy %WORKSPACE%\%VCS_DIRECTORY% %LOCAL_WS_SOFTWARE_DIR% /s /e /i || goto :error
@@ -74,7 +101,7 @@ if exist ..\configure.bat (
   echo # BEGIN SECTION: configuring %VCS_DIRECTORY% in %BUILD_TYPE% / %BITNESS%
   call ..\configure.bat %BUILD_TYPE% %BITNESS% || goto :error
 ) else (
-  echo # BEGIN SECTION: configuring %VCS_DIRECTORY% using cmake 
+  echo # BEGIN SECTION: configuring %VCS_DIRECTORY% using cmake
   cmake .. %VS_CMAKE_GEN% %VS_DEFAULT_CMAKE_FLAGS% %ARG_CMAKE_FLAGS% || goto :error
 )
 
