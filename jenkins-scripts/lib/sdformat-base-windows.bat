@@ -14,7 +14,7 @@
 findstr /r "set(IGNITION-MATH_REQUIRED_MAJOR_VERSION" %WORKSPACE%\sdformat\cmake\SearchForStuff.cmake > version.txt
 set /p IGN_MATH_REQUIRED_VERSION=<version.txt
 set IGN_MATH_REQUIRED_VERSION=%IGN_MATH_REQUIRED_VERSION:~41,1%
-set IGNMATH_BRANCH="merge_34"
+set IGNMATH_BRANCH="merge_34_test"
 @if "%USE_IGNITION_ZIP%" == "" set USE_IGNITION_ZIP=FALSE
 set IGNMATH_ZIP=%IGNMATH_BRANCH% :: should not be needed
 
