@@ -206,7 +206,7 @@ cat >> Dockerfile << DELIM_DOCKER3
 # update command below
 # The rm after the fail of apt-get update is a workaround to deal with the error:
 # Could not open file *_Packages.diff_Index - open (2: No such file or directory)
-RUN echo "${MONTH_YEAR_STR}" \
+RUN echo "${MONTH_YEAR_STR} invalidate" \
  && (apt-get update || (rm -rf /var/lib/apt/lists/* && apt-get update)) \
  && apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} \
  && apt-get clean \
