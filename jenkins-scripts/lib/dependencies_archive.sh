@@ -509,8 +509,7 @@ IGN_RENDERING_DEPENDENCIES="${ogre_pkg}\\
 
 IGN_SENSORS_DEPENDENCIES="libignition-math4-dev      \\
                           libignition-msgs-dev       \\
-                          libignition-transport3-dev \\
-                          libignition-common-dev"
+                          libignition-transport3-dev"
 #
 # HAPTIX
 #
