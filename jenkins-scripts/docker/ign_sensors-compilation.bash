@@ -25,6 +25,7 @@ export BUILD_IGN_COMMON=true
 export BUILD_IGN_MSGS=true
 export BUILD_IGN_TRANSPORT=true
 export BUILD_IGN_RENDERING=true
+export BUILD_IGN_CMAKE=true
 
 export GPU_SUPPORT_NEEDED=true
 
