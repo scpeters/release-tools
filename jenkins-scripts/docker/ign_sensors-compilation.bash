@@ -28,5 +28,6 @@ export BUILD_IGN_RENDERING=true
 export BUILD_IGN_CMAKE=true
 
 export GPU_SUPPORT_NEEDED=true
+export OSRF_REPOS_TO_USE="stable prerelease"
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash
