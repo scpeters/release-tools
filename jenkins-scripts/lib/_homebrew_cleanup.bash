@@ -33,8 +33,5 @@ export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 export GIT_AUTHOR_EMAIL="osrfbuild@osrfoundation.org"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 # The git config command needs to be done in the HOME directory
-pushd ${HOME} 2> /dev/null
 git config --global user.name "${GIT_AUTHOR_NAME}"
 git config --global user.email "${GIT_AUTHOR_EMAIL}"
-popd 2> /dev/null
-git config -l
