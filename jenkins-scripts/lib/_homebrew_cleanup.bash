@@ -37,3 +37,4 @@ pushd ${HOME} 2> /dev/null
 git config --global user.name "${GIT_AUTHOR_NAME}"
 git config --global user.email "${GIT_AUTHOR_EMAIL}"
 popd 2> /dev/null
+git config --local -l
