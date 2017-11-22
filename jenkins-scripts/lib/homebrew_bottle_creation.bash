@@ -28,9 +28,9 @@ brew tap homebrew/test-bot
 git -C $(brew --repo)/Library/Taps/homebrew/homebrew-test-bot \
     pull ${TEST_BOT_REPO} ${TEST_BOT_BRANCH}
 brew test-bot --tap=osrf/simulation \
+              --git-name="${GIT_AUTHOR_NAME}" \
+              --git-email="${GIT_AUTHOR_EMAIL}" \
               --ci-pr ${PULL_REQUEST_URL} \
-              --git-name "${GIT_AUTHOR_NAME}" \
-              --git-email "${GIT_AUTHOR_EMAIL}" \
             || { brew install hg; exit -1; }
 brew install hg
 echo '# END SECTION'
