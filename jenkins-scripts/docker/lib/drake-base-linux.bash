@@ -37,15 +37,15 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: compilation'
 cd ${WORKSPACE}/repo
-bazel build --jobs=${MAKE_JOBS} //...
+${BAZEL_CMD} build --jobs=${MAKE_JOBS} //...
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: tests'
-bazel test //... || true
+${BAZEL_CMD} test //... || true
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install'
-bazel run :install --jobs=${MAKE_JOBS} -- /opt/drake
+${BAZEL_CMD} run :install --jobs=${MAKE_JOBS} -- /opt/drake
 echo '# END SECTION'
 
 if ${CHECK_BINARY_SYMBOLS}; then
