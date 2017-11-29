@@ -153,6 +153,10 @@ supported_distros.each { distro ->
       // use only the most powerful nodes
       label "large-memory"
 
+      parameters {
+        booleanParam('CHECK_BINARY_SYMBOLS', true, 'check for bin symbols inside libdrake')
+      }
+
       scm {
         git {
           remote {
