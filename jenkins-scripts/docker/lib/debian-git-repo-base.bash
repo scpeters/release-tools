@@ -82,6 +82,7 @@ echo '# END SECTION'
 echo "# BEGIN SECTION: create source package \${OSRF_VERSION}"
 rm -f ../*.orig.* ../*.dsc ../*.debian.* ../*.deb ../*.changes ../*.build
 # Fix the real problems with lintian and remove true
+dpkg -l | grep bazel
 ${GBP_COMMAND} -S || true
 
 cp ../*.dsc $WORKSPACE/pkgs
