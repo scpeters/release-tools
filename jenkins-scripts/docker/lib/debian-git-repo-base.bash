@@ -39,6 +39,8 @@ echo '# END SECTION'
 fi
 
 cd ${REPO_PATH}
+git fetch
+git branch --all
 git checkout upstream
 git checkout ${BRANCH}
 git pull
