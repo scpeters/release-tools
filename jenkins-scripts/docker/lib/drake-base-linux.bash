@@ -60,7 +60,7 @@ if ${CHECK_BINARY_SYMBOLS}; then
   echo '# END SECTION'
 fi
 
-echo '# BEGIN SECTION: particle test'
+echo '# BEGIN SECTION: compile tests'
 cd ${WORKSPACE}
 [[ -d drake-shambhala ]] && rm -fr drake-shambhala
 git clone https://github.com/RobotLocomotion/drake-shambhala
@@ -69,16 +69,27 @@ mkdir build
 cd build
 cmake -Ddrake_DIR=/opt/drake/lib/cmake/drake ..
 make -j${MAKE_JOBS}
-cd src/particles
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: particle test'
+cd ${WORKSPACE}/drake-shambhala/drake_cmake_installed/build/src/particles
 ./uniformly_accelerated_particle_demo -simulation_time 5
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: pcl test'
+cd ${WORKSPACE}/drake-shambhala/drake_cmake_installed/build/src/pcl
+./simple_pcl_example
 echo '# END SECTION'
 DELIM
 
 SOFTWARE_DIR="repo"
 OSRF_REPOS_TO_USE="stable"
 USE_ROS_REPO="true" # Needed for libfcl-0.5-dev package
+# pcl and proj for the PCL example
 DEPENDENCY_PKGS="git \
                  wget \
+                 libpcl-dev \
+                 libproj-dev \
                  ${BASE_DEPENDENCIES} \
                  ${DRAKE_DEPENDENCIES}"
 
