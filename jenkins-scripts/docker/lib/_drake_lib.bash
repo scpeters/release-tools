@@ -33,6 +33,7 @@ echo '# END SECTION'
 
 DRAKE_SHAMBHALA_TESTS="""
 echo '# BEGIN SECTION: compile drake-shambhala tests'
+apt-get install -y libgflags-dev
 cd ${WORKSPACE}
 [[ -d drake-shambhala ]] && rm -fr drake-shambhala
 git clone https://github.com/RobotLocomotion/drake-shambhala
