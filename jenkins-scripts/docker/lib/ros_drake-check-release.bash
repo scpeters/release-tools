@@ -10,6 +10,9 @@ export ENABLE_REAPER=false
 DOCKER_JOB_NAME="drake_ci"
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
+# Import drake lib
+. ${SCRIPT_DIR}/lib/_drake_lib.bash
+
 # Generate the first part of the build.sh file for ROS
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash ""
 
@@ -30,6 +33,8 @@ git clone https://github.com/osrf/kumonoito -b use_ros_drake ${WORKSPACE}/kumono
 # Need to use clang to match ABI
 update-alternatives --set c++ /usr/bin/clang++
 update-alternatives --set cc /usr/bin/clang
+
+${DRAKE_SHAMBHALA_TESTS}
 DELIM_CHECKOUT
 
 # Generate the first part of the build.sh file for ROS

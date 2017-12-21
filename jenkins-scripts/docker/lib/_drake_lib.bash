@@ -31,6 +31,30 @@ bash \\\$INSTALL_PREREQS_FILE
 echo '# END SECTION'
 """
 
+DRAKE_SHAMBHALA_TESTS="""
+echo '# BEGIN SECTION: compile drake-shambhala tests'
+cd ${WORKSPACE}
+[[ -d drake-shambhala ]] && rm -fr drake-shambhala
+git clone https://github.com/RobotLocomotion/drake-shambhala
+cd drake-shambhala/drake_cmake_installed
+mkdir build
+cd build
+cmake -Ddrake_DIR=/opt/drake/lib/cmake/drake ..
+make -j${MAKE_JOBS}
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: particle test'
+cd ${WORKSPACE}/drake-shambhala/drake_cmake_installed/build/src/particles
+./uniformly_accelerated_particle_demo -simulation_time 5
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: pcl test'
+cd ${WORKSPACE}/drake-shambhala/drake_cmake_installed/build/src/pcl
+./simple_pcl_example
+echo '# END SECTION'
+
+"""
+
 # Bazel test result parsing
 cat > ${WORKSPACE}/bazel.parser << DELIM_PARSER
 warning /^TIMEOUT: /
