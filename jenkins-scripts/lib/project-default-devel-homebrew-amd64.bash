@@ -72,6 +72,8 @@ if [[ "${RERUN_FAILED_TESTS}" -gt 0 ]]; then
   # Install lxml for flaky_junit_merge.py
   PIP_PACKAGES_NEEDED="${PIP_PACKAGES_NEEDED} lxml"
 fi
+brew install ruby
+gem install protobuf
 
 if [[ -n "${PIP_PACKAGES_NEEDED}" ]]; then
   brew install python
