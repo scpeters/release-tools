@@ -12,12 +12,12 @@ DOCKER_JOB_NAME="gazebo_ros_pkgs_ci"
 
 # Generate the first part of the build.sh file for ROS
 CATKIN_EXTRA_ARGS="--cmake-args -DENABLE_DISPLAY_TESTS:BOOL=ON"
-ROS_SETUP_PREINSTALL_HOOK="wget https://bitbucket.org/osrf/gazebo_models/get/default.zip && tar -C \$HOME default.zip"
+ROS_SETUP_PREINSTALL_HOOK="wget https://bitbucket.org/osrf/gazebo_models/get/default.zip && unzip -d \$HOME default.zip"
 
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "gazebo_ros_pkgs"
 
 # don't have rosdep at this point and want gazebo to be cached by docker
-DEPENDENCY_PKGS="${ROS_GAZEBO_PKGS_DEPENDENCIES} ${_GZ_ROS_PACKAGES}"
+DEPENDENCY_PKGS="${ROS_GAZEBO_PKGS_DEPENDENCIES} ${_GZ_ROS_PACKAGES} unzip wget"
 USE_ROS_REPO=true
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
