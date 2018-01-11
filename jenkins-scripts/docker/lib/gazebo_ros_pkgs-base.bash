@@ -12,7 +12,7 @@ DOCKER_JOB_NAME="gazebo_ros_pkgs_ci"
 
 # Generate the first part of the build.sh file for ROS
 CATKIN_EXTRA_ARGS="--cmake-args -DENABLE_DISPLAY_TESTS:BOOL=ON"
-ROS_SETUP_PREINSTALL_HOOK="wget https://bitbucket.org/osrf/gazebo_models/get/default.zip && unzip -d \$HOME default.zip && mv \$HOME/osrf-gazebo_models-* \$HOME/.gazebo/models"
+ROS_SETUP_PREINSTALL_HOOK="wget https://bitbucket.org/osrf/gazebo_models/get/default.zip && unzip -d \$HOME default.zip && mkdir \$HOME/.gazebo/models && mv \$HOME/osrf-gazebo_models-* \$HOME/.gazebo/models"
 
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "gazebo_ros_pkgs"
 
