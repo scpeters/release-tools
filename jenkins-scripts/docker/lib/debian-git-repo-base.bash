@@ -140,7 +140,7 @@ git clean -f -d
 echo '# END SECTION'
 DELIM
 
-OSRF_REPOS_TO_USE="stable"
+OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE} stable"
 DEPENDENCY_PKGS="devscripts \
 		 ubuntu-dev-tools \
 		 debhelper \
