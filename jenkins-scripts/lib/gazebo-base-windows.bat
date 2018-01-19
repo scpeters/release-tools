@@ -57,7 +57,7 @@ echo # END SECTION
 )
 
 echo # BEGIN SECTION: detect gazebo major version
-for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_ignition_major_version.py" "%WORKSPACE%\gazebo\CMakeLists.txt"') do set GAZEBO_MAJOR_VERSION=%%i
+for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\gazebo\CMakeLists.txt"') do set GAZEBO_MAJOR_VERSION=%%i
 echo # END SECTION
 
 echo # BEGIN SECTION: compile and install ign-transport
