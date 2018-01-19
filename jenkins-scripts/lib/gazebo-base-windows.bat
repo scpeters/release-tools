@@ -56,28 +56,22 @@ echo # END SECTION
   echo # END SECTION
 )
 
+echo # BEGIN SECTION: detect gazebo major version
+for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_ignition_major_version.py" "%WORKSPACE%\gazebo\CMakeLists.txt"') do set GAZEBO_MAJOR_VERSION=%%i
+echo # END SECTION
+
 echo # BEGIN SECTION: compile and install ign-transport
 set KEEP_WORKSPACE=TRUE
 set IGN_TEST_DISABLE=TRUE
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport
 if EXIST %IGN_TRANSPORT_DIR% ( rmdir /s /q %IGN_TRANSPORT_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport3
-call "%SCRIPT_DIR%/lib/ign_transport-base-windows.bat" || goto :error
-echo # END SECTION
-
-:: compile ign-math if needed. ign-transport will probably do it first
-set IGN_MATH_WS_DIR=%LOCAL_WS%\ign-math
-if EXIST %IGN_MATH_WS_DIR% (
-  echo # BEGIN SECTION: ign-math already found
-  echo # END SECTION
-) ELSE (
-  echo # BEGIN SECTION: compile and install ign-math
-  set VCS_DIRECTORY=ign-math
-  set KEEP_WORKSPACE=TRUE
-  set ENABLE_TESTS=FALSE
+if %GAZEBO_MAJOR_VERSION% GEQ 9 (
+  call %win_lib% :install_ign_project ign-transport ign-transport4 || goto :error
+) else (
+  hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport3
   call "%SCRIPT_DIR%/lib/ign_transport-base-windows.bat" || goto :error
-  echo # END SECTION
 )
+echo # END SECTION
 
 echo # BEGIN SECTION: compile and install sdformat
 set SDFORMAT_DIR=%LOCAL_WS%\sdformat
