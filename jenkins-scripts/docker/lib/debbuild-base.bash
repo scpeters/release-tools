@@ -150,7 +150,7 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
 # Workaround for simbody bug with libblas in Artful
-ln -s /etc/alternatives/libblas.so /usr/lib/libblas.so
+ln -s /usr/lib/x86_64-linux-gnu/blas/libblas.so /usr/lib/libblas.so
 mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
 echo '# END SECTION'
 
