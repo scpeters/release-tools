@@ -287,6 +287,7 @@ all_debbuild_branches.each { branch ->
         shell("""\
               #!/bin/bash -xe
 
+              export ENABLE_ROS=false
               /bin/bash -x ./scripts/jenkins-scripts/docker/multidistribution-debbuild.bash
               """.stripIndent())
       }
@@ -321,7 +322,7 @@ all_branches.each { branch ->
                          "https://bitbucket.org/osrf/sdformat",
                          get_sdformat_branch_name(branch),
                          "sdformat", "HomeBrew")
- 
+
   sdformat_brew_ci_job.with
   {
       triggers {
