@@ -152,6 +152,10 @@ DELIM_DOCKER_DIRMNGR
 fi
 
 for repo in ${OSRF_REPOS_TO_USE}; do
+# Only stable repository in debian is supported
+if [[ $LINUX_DISTRO == "debian" ]] && [[ $repo != "stable" ]]; then
+    continue
+fi
 cat >> Dockerfile << DELIM_OSRF_REPO
 RUN echo "deb http://packages.osrfoundation.org/gazebo/${LINUX_DISTRO}-${repo} ${DISTRO} main" >\\
                                                 /etc/apt/sources.list.d/osrf.${repo}.list
