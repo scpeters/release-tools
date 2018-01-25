@@ -119,6 +119,17 @@ case ${UPLOAD_TO_REPO} in
 	  exit 1
         fi
 	;;
+    "prerelease")
+	if [[ ${LINUX_DISTRO} == "debian" ]]; then
+	    # There is no prerelease support in Debian
+	    echo "======================================================="
+	    echo ""
+	    echo " Upload to STABLE repo in Debian instead of PRERELEASE "
+	    echo ""
+	    echo "  - no prerelease repo in Debian is supported -"
+	    echo "======================================================="
+	    UPLOAD_TO_REPO="stable"
+	fi
     "nightly")
 	# No uploads for nightly packages
 	ENABLE_S3_UPLOAD=false
