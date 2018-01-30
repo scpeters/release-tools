@@ -23,13 +23,13 @@ IF %PLATFORM_TO_BUILD% == x86 (
   REM Cross compile from x86 -> amd64
   echo "Using 64bits VS configuration"
   set BITNESS=64
-  set MSVC_KEYWORD=x86_amd64
-  set PLATFORM_TO_BUILD=amd64
+  set MSVC_KEYWORD=-arch=x64
+  set PLATFORM_TO_BUILD=Win64
 )
 
 echo "Configure the VC++ compilation"
-set MSVC_ON_WIN64=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat
-set MSVC_ON_WIN32=C:\Program Files\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat
+set MSVC_ON_WIN64=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat
+set MSVC_ON_WIN32=C:\Program Files\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat
 
 IF exist "%MSVC_ON_WIN64%" ( 
    call "%MSVC_ON_WIN64%" %MSVC_KEYWORD% || goto %win_lib% :error
