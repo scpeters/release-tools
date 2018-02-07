@@ -503,6 +503,7 @@ IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          uuid-dev              \\
                          libignition-cmake-dev \\
                          libignition-math4-dev \\
+                         libignition-common-dev \\
                          libfreeimage-dev      \\
                          libgts-dev            \\
                          libavformat-dev       \\
