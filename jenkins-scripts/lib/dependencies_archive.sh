@@ -490,6 +490,7 @@ IGN_TRANSPORT_DEPENDENCIES="pkg-config           \\
 
 if [[ ${IGN_TRANSPORT_MAJOR_VERSION} -ge 4 ]]; then
     IGN_TRANSPORT_DEPENDENCIES="${IGN_TRANSPORT_DEPENDENCIES} \\
+                                libignition-common-dev \\
                                 libignition-cmake-dev \\
                                 libignition-msgs-dev"
 else
@@ -503,7 +504,6 @@ IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          uuid-dev              \\
                          libignition-cmake-dev \\
                          libignition-math4-dev \\
-                         libignition-common-dev \\
                          libfreeimage-dev      \\
                          libgts-dev            \\
                          libavformat-dev       \\
