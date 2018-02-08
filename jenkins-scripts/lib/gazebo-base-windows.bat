@@ -61,28 +61,14 @@ set KEEP_WORKSPACE=TRUE
 set IGN_TEST_DISABLE=TRUE
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport
 if EXIST %IGN_TRANSPORT_DIR% ( rmdir /s /q %IGN_TRANSPORT_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport3
+hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport4
 call "%SCRIPT_DIR%/lib/ign_transport-base-windows.bat" || goto :error
 echo # END SECTION
-
-:: compile ign-math if needed. ign-transport will probably do it first
-set IGN_MATH_WS_DIR=%LOCAL_WS%\ign-math
-if EXIST %IGN_MATH_WS_DIR% (
-  echo # BEGIN SECTION: ign-math already found
-  echo # END SECTION
-) ELSE (
-  echo # BEGIN SECTION: compile and install ign-math
-  set VCS_DIRECTORY=ign-math
-  set KEEP_WORKSPACE=TRUE
-  set ENABLE_TESTS=FALSE
-  call "%SCRIPT_DIR%/lib/ign_transport-base-windows.bat" || goto :error
-  echo # END SECTION
-)
 
 echo # BEGIN SECTION: compile and install sdformat
 set SDFORMAT_DIR=%LOCAL_WS%\sdformat
 if EXIST %SDFORMAT_DIR% ( rmdir /s /q %SDFORMAT_DIR% )
-hg clone https://bitbucket.org/osrf/sdformat %SDFORMAT_DIR% -b sdf5
+hg clone https://bitbucket.org/osrf/sdformat %SDFORMAT_DIR% -b sdf6
 cd %SDFORMAT_DIR%
 mkdir build
 cd build
