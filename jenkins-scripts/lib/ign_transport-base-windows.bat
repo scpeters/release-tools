@@ -39,10 +39,20 @@ call %win_lib% :unzip_7za protobuf-2.6.0-cmake3.5-win%BITNESS%-vc12.zip > protob
 call %win_lib% :unzip_7za zeromq-4.0.4-%PLATFORM_TO_BUILD%.zip > zeromq_7z.log || goto :error
 echo # END SECTION
 
+echo # BEGIN SECTION: compile and install ign-cmake
+set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
+if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
+hg clone https://bitbucket.org/ignitionrobotics/ign-cmake %IGN_CAMKE_DIR%
+set VCS_DIRECTORY=ign-cmake
+set KEEP_WORKSPACE=TRUE
+set ENABLE_TESTS=FALSE
+call "%SCRIPT_DIR%/lib/project-default-devel-windows.bat" || goto :error
+echo # END SECTION
+
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math3 %IGN_MATH_DIR%
+hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math6 %IGN_MATH_DIR%
 set VCS_DIRECTORY=ign-math
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
@@ -52,7 +62,7 @@ echo # END SECTION
 echo # BEGIN SECTION: compile and install ign-msgs
 set IGN_MSGS_DIR=%WORKSPACE%\ign-msgs
 if EXIST %IGN_MSGS_DIR% ( rmdir /s /q %IGN_MSGS_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs0 %IGN_MSGS_DIR%
+hg clone https://bitbucket.org/ignitionrobotics/ign-msgs -b ign-msgs1 %IGN_MSGS_DIR%
 set VCS_DIRECTORY=ign-msgs
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
