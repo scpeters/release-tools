@@ -47,6 +47,7 @@ git branch
 if [ `expr length "${DEBIAN_GIT_PREINSTALL_HOOK} "` -gt 1 ]; then
 echo '# BEGIN SECTION: running pre install hook'
 ${DEBIAN_GIT_PREINSTALL_HOOK}
+apt-get update && apt-get install -t experimental libsdformat6-dev
 echo '# END SECTION'
 fi
 
