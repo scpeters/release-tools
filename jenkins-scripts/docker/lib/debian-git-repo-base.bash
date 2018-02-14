@@ -51,7 +51,7 @@ echo '# END SECTION'
 fi
 
 # REMOVE
-apt-get update && apt-get install -t experimental libsdformat6-dev
+apt-get update && apt-get install -y -t experimental libsdformat6-dev
 
 echo '# BEGIN SECTION: install build dependencies'
 cat debian/changelog
