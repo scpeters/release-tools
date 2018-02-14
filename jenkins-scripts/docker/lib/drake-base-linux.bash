@@ -58,6 +58,7 @@ USE_ROS_REPO="true" # Needed for libfcl-0.5-dev package
 # pcl and proj for the PCL example
 DEPENDENCY_PKGS="git \
                  wget \
+                 libvtk6-dev \
                  libpcl-dev \
                  libproj-dev \
                  ${BASE_DEPENDENCIES} \
