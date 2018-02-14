@@ -51,12 +51,7 @@ echo '# END SECTION'
 fi
 
 # REMOVE
-wget http://ftp.us.debian.org/debian/pool/main/s/sdformat/sdformat-sdf_6.0.0+dfsg-2_all.deb
-dpkg -i sdformat-sdf_6.0.0+dfsg-2_all.deb
-wget http://ftp.us.debian.org/debian/pool/main/s/sdformat/libsdformat6_6.0.0+dfsg-2_amd64.deb
-dpkg -i libsdformat6_6.0.0+dfsg-2_amd64.deb
-wget http://ftp.us.debian.org/debian/pool/main/s/sdformat/libsdformat6-dev_6.0.0+dfsg-2_amd64.deb
-dpkg -i libsdformat6-dev_6.0.0+dfsg-2_amd64.deb
+apt-get update && apt-get install -t experimental libsdformat6-dev
 
 echo '# BEGIN SECTION: install build dependencies'
 cat debian/changelog
