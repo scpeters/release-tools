@@ -34,7 +34,10 @@ git clone https://github.com/osrf/kumonoito -b use_ros_drake2 ${WORKSPACE}/kumon
 # update-alternatives --set c++ /usr/bin/clang++
 # update-alternatives --set cc /usr/bin/clang
 
+wget https://drake-packages.csail.mit.edu/drake/nightly/drake-latest-xenial.tar.gz -O /tmp/drake-latest-xenial.tar.gz
+tar -xzf /tmp/drake-latest-xenial.tar.gz -C /opt/drake
 ${DRAKE_SHAMBHALA_TESTS}
+
 DELIM_CHECKOUT
 
 # Generate the first part of the build.sh file for ROS
@@ -67,7 +70,7 @@ DELIM
 USE_ROS_REPO=true
 OSRF_REPOS_TO_USE="drake"
 # Clang is needed to be able to have the same CXX11 ABI produced in the drake package
-DEPENDENCY_PKGS="${ROS_CATKIN_BASE} git ros-kinetic-ros-drake clang libpcl-dev libvtk6-dev"
+DEPENDENCY_PKGS="${ROS_CATKIN_BASE} git ros-kinetic-ros-drake clang libpcl-dev libvtk6-dev wget"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
