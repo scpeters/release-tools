@@ -35,6 +35,7 @@ git clone https://github.com/osrf/kumonoito -b use_ros_drake2 ${WORKSPACE}/kumon
 # update-alternatives --set cc /usr/bin/clang
 
 wget https://drake-packages.csail.mit.edu/drake/nightly/drake-latest-xenial.tar.gz -O /tmp/drake-latest-xenial.tar.gz
+mkdir -p /opt/drake
 tar -xzf /tmp/drake-latest-xenial.tar.gz -C /opt/drake
 ${DRAKE_SHAMBHALA_TESTS}
 
