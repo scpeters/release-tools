@@ -69,7 +69,17 @@ DELIM
 USE_ROS_REPO=true
 OSRF_REPOS_TO_USE="drake"
 # Clang is needed to be able to have the same CXX11 ABI produced in the drake package
-DEPENDENCY_PKGS="${ROS_CATKIN_BASE} git ros-kinetic-ros-drake clang libpcl-dev libvtk6-dev wget"
+DEPENDENCY_PKGS="${ROS_CATKIN_BASE} git \
+    ros-kinetic-ros-drake \
+    clang \
+    libpcl-dev \
+    libvtk6-dev \
+    wget \
+    dreal \
+    libyaml-cpp-dev \
+    libibex-dev \
+    libnlopt-dev \
+    libipopt-dev"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
