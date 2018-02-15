@@ -79,7 +79,7 @@ DEPENDENCY_PKGS="${ROS_CATKIN_BASE} git \
     libyaml-cpp-dev \
     libibex-dev \
     libnlopt-dev \
-    libipopt-dev"
+    coinor-libipopt-dev"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
