@@ -41,9 +41,15 @@ echo # END SECTION
 
 echo # BEGIN SECTION: detect ign-transport major version
 for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\ign-transport\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
-echo %IGN_TRANSPORT_MAJOR_VERSION%
 echo # END SECTION
 
+if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
+  echo "%IGN_TRANSPORT_MAJOR_VERSION% greater than or equal to 4"
+) else (
+  echo "%IGN_TRANSPORT_MAJOR_VERSION% not greater than or equal to 4"
+)
+
+echo hello1
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
   echo # BEGIN SECTION: compile and install ign-cmake
   set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
@@ -57,6 +63,7 @@ if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
 )
 
 echo # BEGIN SECTION: compile and install ign-math
+echo hello2
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
