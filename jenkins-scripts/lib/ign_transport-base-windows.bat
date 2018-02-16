@@ -56,7 +56,6 @@ if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
 )
 
 echo # BEGIN SECTION: compile and install ign-math
-echo hello2
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
