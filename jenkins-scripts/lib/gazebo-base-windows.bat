@@ -56,19 +56,31 @@ echo # END SECTION
   echo # END SECTION
 )
 
+echo # BEGIN SECTION: detect gazebo major version
+for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\gazebo\CMakeLists.txt"') do set GAZEBO_MAJOR_VERSION=%%i
+echo # END SECTION
+
 echo # BEGIN SECTION: compile and install ign-transport
 set KEEP_WORKSPACE=TRUE
 set IGN_TEST_DISABLE=TRUE
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport
 if EXIST %IGN_TRANSPORT_DIR% ( rmdir /s /q %IGN_TRANSPORT_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport4
+if %GAZEBO_MAJOR_VERSION% GEQ 9 (
+  hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport4
+) else (
+  hg clone https://bitbucket.org/ignitionrobotics/ign-transport %IGN_TRANSPORT_DIR% -b ign-transport3
+)
 call "%SCRIPT_DIR%/lib/ign_transport-base-windows.bat" || goto :error
 echo # END SECTION
 
 echo # BEGIN SECTION: compile and install sdformat
 set SDFORMAT_DIR=%LOCAL_WS%\sdformat
 if EXIST %SDFORMAT_DIR% ( rmdir /s /q %SDFORMAT_DIR% )
-hg clone https://bitbucket.org/osrf/sdformat %SDFORMAT_DIR% -b sdf6
+if %GAZEBO_MAJOR_VERSION% GEQ 9 (
+  hg clone https://bitbucket.org/osrf/sdformat %SDFORMAT_DIR% -b sdf6
+) else (
+  hg clone https://bitbucket.org/osrf/sdformat %SDFORMAT_DIR% -b sdf5
+)
 cd %SDFORMAT_DIR%
 mkdir build
 cd build
