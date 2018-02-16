@@ -43,17 +43,10 @@ echo # BEGIN SECTION: detect ign-transport major version
 for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\ign-transport\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
 echo # END SECTION
 
-if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
-  echo "%IGN_TRANSPORT_MAJOR_VERSION% greater than or equal to 4"
-) else (
-  echo "%IGN_TRANSPORT_MAJOR_VERSION% not greater than or equal to 4"
-)
-
-echo hello1
+set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
+if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
   echo # BEGIN SECTION: compile and install ign-cmake
-  set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
-  if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
   hg clone https://bitbucket.org/ignitionrobotics/ign-cmake %IGN_CMAKE_DIR%
   set VCS_DIRECTORY=ign-cmake
   set KEEP_WORKSPACE=TRUE
