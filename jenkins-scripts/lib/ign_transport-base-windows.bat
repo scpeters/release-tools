@@ -40,7 +40,7 @@ call %win_lib% :unzip_7za zeromq-4.0.4-%PLATFORM_TO_BUILD%.zip > zeromq_7z.log |
 echo # END SECTION
 
 echo # BEGIN SECTION: detect ign-transport major version
-for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
+for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\ign-transport\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
 echo # END SECTION
 
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
