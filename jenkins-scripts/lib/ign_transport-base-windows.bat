@@ -39,20 +39,30 @@ call %win_lib% :unzip_7za protobuf-2.6.0-cmake3.5-win%BITNESS%-vc12.zip > protob
 call %win_lib% :unzip_7za zeromq-4.0.4-%PLATFORM_TO_BUILD%.zip > zeromq_7z.log || goto :error
 echo # END SECTION
 
-echo # BEGIN SECTION: compile and install ign-cmake
-set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
-if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-cmake %IGN_CMAKE_DIR%
-set VCS_DIRECTORY=ign-cmake
-set KEEP_WORKSPACE=TRUE
-set ENABLE_TESTS=FALSE
-call "%SCRIPT_DIR%/lib/project-default-devel-windows.bat" || goto :error
+echo # BEGIN SECTION: detect ign-transport major version
+for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
 echo # END SECTION
+
+if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
+  echo # BEGIN SECTION: compile and install ign-cmake
+  set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
+  if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
+  hg clone https://bitbucket.org/ignitionrobotics/ign-cmake %IGN_CMAKE_DIR%
+  set VCS_DIRECTORY=ign-cmake
+  set KEEP_WORKSPACE=TRUE
+  set ENABLE_TESTS=FALSE
+  call "%SCRIPT_DIR%/lib/project-default-devel-windows.bat" || goto :error
+  echo # END SECTION
+)
 
 echo # BEGIN SECTION: compile and install ign-math
 set IGN_MATH_DIR=%WORKSPACE%\ign-math
 if EXIST %IGN_MATH_DIR% ( rmdir /s /q %IGN_MATH_DIR% )
-hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math4 %IGN_MATH_DIR%
+if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
+  hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math4 %IGN_MATH_DIR%
+) else (
+  hg clone https://bitbucket.org/ignitionrobotics/ign-math -b ign-math3 %IGN_MATH_DIR%
+)
 set VCS_DIRECTORY=ign-math
 set KEEP_WORKSPACE=TRUE
 set ENABLE_TESTS=FALSE
