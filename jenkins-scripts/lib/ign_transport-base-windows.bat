@@ -41,6 +41,7 @@ echo # END SECTION
 
 echo # BEGIN SECTION: detect ign-transport major version
 for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\ign-transport\CMakeLists.txt"') do set IGN_TRANSPORT_MAJOR_VERSION=%%i
+echo %IGN_TRANSPORT_MAJOR_VERSION%
 echo # END SECTION
 
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
