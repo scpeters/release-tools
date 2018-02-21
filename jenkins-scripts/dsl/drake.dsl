@@ -265,6 +265,10 @@ supported_distros.each { distro ->
 
     install_ros_drake_job.with
     {
+      parameters {
+        stringParam("KUMUNOITO_BRANCH","use_ros_drake2","Branch from osrf/kumonoito to test")
+      }
+ 
       steps {
         shell("""\
               #!/bin/bash -xe
