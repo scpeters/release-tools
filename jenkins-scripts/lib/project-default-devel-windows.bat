@@ -63,8 +63,8 @@ for %%p in (%DEPEN_PKGS%) do (
 echo # END SECTION
 
 echo # BEGIN SECTION: move %VCS_DIRECTORY% source to workspace
-if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% )
-xcopy %WORKSPACE%\%VCS_DIRECTORY% %LOCAL_WS_SOFTWARE_DIR% /s /e /i || goto :error
+if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% ) || goto :error
+xcopy %WORKSPACE%\%VCS_DIRECTORY% %LOCAL_WS_SOFTWARE_DIR% /s /e /i /y || goto :error
 cd %LOCAL_WS_SOFTWARE_DIR% || goto :error
 mkdir build
 cd build
