@@ -47,11 +47,7 @@ case ${ARCH} in
      FROM_VALUE=${LINUX_DISTRO}:${DISTRO}
      ;;
   'i386')
-     if [[ ${LINUX_DISTRO} == 'ubuntu' ]]; then
-       FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
-     else
-       FROM_VALUE=${LINUX_DISTRO}:${DISTRO}
-     fi
+     FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
      ;;
    'armhf' | 'arm64' )
        FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
