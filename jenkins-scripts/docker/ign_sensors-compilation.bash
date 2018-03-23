@@ -22,4 +22,9 @@ export BUILD_IGN_RENDERING=true
 
 export GPU_SUPPORT_NEEDED=true
 
+if [[ $(date +%Y%m%d) -le 20180401 ]]; then
+  ## need prerelease repo to get ignition-cmake during the development cycle
+  export BUILDING_JOB_REPOSITORIES="${BUILDING_JOB_REPOSITORIES} prerelease"
+fi
+
 . ${SCRIPT_DIR}/lib/generic-building-base.bash
