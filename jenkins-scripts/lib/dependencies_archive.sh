@@ -535,18 +535,15 @@ IGN_GUI_DEPENDENCIES="qtbase5-dev \\
                       libtinyxml2-dev \\
                       libqwt-qt5-dev"
 
-IGN_SENSORS_DEPENDENCIES="libignition-cmake1-dev     \\
-                          libignition-common-dev     \\
+IGN_RENDERING_DEPENDENCIES="${ogre_pkg}\\
+                            freeglut3-dev\\
+                            libx11-dev"
+
+IGN_SENSORS_DEPENDENCIES="libignition-common-dev     \\
                           libignition-math4-dev      \\
                           libignition-msgs-dev       \\
                           libignition-transport4-dev \\
                           libsdformat6-dev"
-
-# ign-cmake1 is used for sensors
-IGN_RENDERING_DEPENDENCIES="${ogre_pkg}   \\
-                            freeglut3-dev \\
-                            libx11-dev    \\
-                            ${IGN_SENSORS_DEPENDENCIES}"
 
 IGN_RNDF_DEPENDENCIES="libignition-cmake-dev \\
                        libignition-math4-dev"
