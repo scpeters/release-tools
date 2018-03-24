@@ -47,7 +47,7 @@ set IGN_CMAKE_DIR=%WORKSPACE%\ign-cmake
 if EXIST %IGN_CMAKE_DIR% ( rmdir /s /q %IGN_CMAKE_DIR% )
 if %IGN_TRANSPORT_MAJOR_VERSION% GEQ 4 (
   echo # BEGIN SECTION: compile and install ign-cmake
-  hg clone https://bitbucket.org/ignitionrobotics/ign-cmake -b ign-cmake0 %IGN_CMAKE_DIR%
+  hg clone https://bitbucket.org/ignitionrobotics/ign-cmake -b ign-cmake0_jrivero %IGN_CMAKE_DIR%
   set VCS_DIRECTORY=ign-cmake
   set KEEP_WORKSPACE=TRUE
   set ENABLE_TESTS=FALSE
