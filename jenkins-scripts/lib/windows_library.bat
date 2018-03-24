@@ -150,7 +150,7 @@ if "%2"=="" (
   hg clone https://bitbucket.org/ignitionrobotics/%1 %IGN_PROJECT_DEPENDENCY_DIR% -b %2
 )
 cd /d %IGN_PROJECT_DEPENDENCY_DIR%
-call .\configure.bat
+call .\configure.bat || goto :error
 nmake || goto :error
 nmake install || goto :error
 goto :EOF
