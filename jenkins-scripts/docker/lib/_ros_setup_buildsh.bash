@@ -31,7 +31,7 @@ fi
 
 echo '# BEGIN SECTION: run rosdep'
 # Step 2: configure and build
-rosdep init
+[[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]] && rosdep init
 # Hack for not failing when github is down
 update_done=false
 seconds_waiting=0
@@ -81,7 +81,7 @@ rosdep install --from-paths . \
 echo '# END SECTION'
 
 echo '# BEGIN SECTION compile the catkin workspace'
-catkin build -j${MAKE_JOBS} --verbose --summary
+catkin build -j${MAKE_JOBS} --verbose --summary ${CATKIN_EXTRA_ARGS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running tests'

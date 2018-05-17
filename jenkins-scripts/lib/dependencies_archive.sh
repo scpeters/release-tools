@@ -16,14 +16,6 @@ if ${DART_COMPILE_FROM_SOURCE}; then
     DART_FROM_PKGS=false
 fi
 
-if $DART_FROM_PKGS; then
-    if $DART_USE_4_VERSION; then
-       dart_pkg="libdart-core4-dev"
-    else
-       dart_pkg="libdart-core3-dev"
-    fi
-fi
-
 # mesa-utils for dri checks, xsltproc for qtest->junit conversion and
 # python-psutil for memory testing
 # netcat-openbsd (nc command) for squid-deb-proxy checking
@@ -35,6 +27,7 @@ BASE_DEPENDENCIES="build-essential \\
                    mesa-utils      \\
                    cppcheck        \\
                    xsltproc        \\
+                   python-lxml     \\
                    python-psutil   \\
                    python          \\
                    bc              \\
@@ -73,7 +66,13 @@ if [[ -z ${SDFORMAT_MAJOR_VERSION} ]]; then
     SDFORMAT_MAJOR_VERSION=5
 fi
 
-if [[ ${SDFORMAT_MAJOR_VERSION} -ge 5 ]]; then
+if [[ ${SDFORMAT_MAJOR_VERSION} -ge 6 ]]; then
+    # sdformat6 requires ignition-math4 and
+    # uses ignition-tools for a test
+    SDFORMAT_BASE_DEPENDENCIES="${SDFORMAT_BASE_DEPENDENCIES}  \\
+                                libignition-math4-dev          \\
+                                libignition-tools-dev"
+elif [[ ${SDFORMAT_MAJOR_VERSION} -ge 5 ]]; then
     # sdformat5 requires ignition-math3
     SDFORMAT_BASE_DEPENDENCIES="${SDFORMAT_BASE_DEPENDENCIES}          \\
                                 libignition-math3-dev"
@@ -96,6 +95,8 @@ fi
 
 if ${USE_OLD_SDFORMAT}; then
     sdformat_pkg="sdformat"
+elif [[ ${GAZEBO_MAJOR_VERSION} -ge 9 ]]; then
+    sdformat_pkg="libsdformat6-dev"
 elif [[ ${GAZEBO_MAJOR_VERSION} -ge 8 ]]; then
     sdformat_pkg="libsdformat5-dev"
 elif [[ ${GAZEBO_MAJOR_VERSION} -ge 7 ]]; then
@@ -126,6 +127,18 @@ bullet_pkg="libbullet-dev"
 if [[ ${DISTRO} == 'precise' ]] || \
    [[ ${DISTRO} == 'trusty' ]]; then
     bullet_pkg="libbullet2.82-dev"
+fi
+
+# choose dart version
+if $DART_FROM_PKGS; then
+    if [[ ${GAZEBO_MAJOR_VERSION} -ge 9 ]]; then
+       dart_pkg="libdart6-utils-urdf-dev"
+    elif [[ ${GAZEBO_MAJOR_VERSION} -ge 8 ]]; then
+       dart_pkg="libdart-core5-dev"
+    elif [[ ${GAZEBO_MAJOR_VERSION} -ge 7 ]] && \
+         [[ ${DISTRO} == 'trusty' ]]; then
+       dart_pkg="libdart-core4-dev"
+    fi
 fi
 
 # gazebo8 and above use qt5
@@ -194,11 +207,19 @@ if ! ${GAZEBO_EXPERIMENTAL_BUILD}; then
                                 libignition-transport-dev"
   fi
 
-  if [[ ${GAZEBO_MAJOR_VERSION} -ge 8 ]]; then
+  if [[ ${GAZEBO_MAJOR_VERSION} -eq 8 ]]; then
       GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
-                                           libignition-transport2-dev \\
                                            libignition-transport3-dev \\
                                            libignition-math3-dev \\
+                                           libignition-msgs0-dev"
+  fi
+
+  if [[ ${GAZEBO_MAJOR_VERSION} -ge 9 ]]; then
+      GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT="${GAZEBO_BASE_DEPENDENCIES_NO_SDFORMAT} \\
+                                           libignition-common-dev \\
+                                           libignition-fuel-tools-dev \\
+                                           libignition-transport4-dev \\
+                                           libignition-math4-dev \\
                                            libignition-msgs-dev"
   fi
 
@@ -276,6 +297,9 @@ else
       lunar)
         GAZEBO_VERSION_FOR_ROS="7"
       ;;
+      melodic)
+        GAZEBO_VERSION_FOR_ROS="9"
+      ;;
     esac
   fi
 
@@ -348,18 +372,6 @@ else
                             ros-${ROS_DISTRO}-gazebo${GAZEBO_VERSION_FOR_ROS}-plugins \\
                             ros-${ROS_DISTRO}-gazebo${GAZEBO_VERSION_FOR_ROS}-ros     \\
                             ${_GZ_ROS_PACKAGES}"
-  #
-  # SANDIA_HAND DEPENDECIES
-  #
-  SANDIA_HAND_BASE_DEPENDENCIES="ros-${ROS_DISTRO}-xacro              \\
-                                 ros-${ROS_DISTRO}-ros                \\
-                                 ros-${ROS_DISTRO}-image-common       \\
-                                 ros-${ROS_DISTRO}-ros-comm           \\
-                                 ros-${ROS_DISTRO}-common-msgs        \\
-                                 ros-${ROS_DISTRO}-message-generation \\
-                                 libboost-dev                         \\
-                                 libqt4-dev                           \\
-                                 osrf-common${ROS_POSTFIX}"
 
   #
   # ROS_GAZEBO_PKGS DEPENDECIES
@@ -465,22 +477,50 @@ fi
 # IGNITION
 #
 
+if [[ ${DISTRO} != 'trusty' ]]; then
+  if [[ ${IGN_MATH_MAJOR_VERSION} -lt 5 ]]; then
+    IGN_MATH_DEPENDENCIES="libignition-cmake-dev"
+  else
+    IGN_MATH_DEPENDENCIES="libignition-cmake1-dev"
+  fi
+fi
+
+# IGN_TRANSPORT related dependencies. Default value points to the development
+# version
+if [[ -z ${IGN_TRANSPORT_MAJOR_VERSION} ]]; then
+    IGN_TRANSPORT_MAJOR_VERSION=5
+fi
+
 IGN_TRANSPORT_DEPENDENCIES="pkg-config           \\
                             python               \\
                             ruby-ronn            \\
+                            libignition-tools-dev \\
                             libprotoc-dev        \\
                             libprotobuf-dev      \\
                             protobuf-compiler    \\
                             uuid-dev             \\
                             libzmq3-dev          \\
-                            libignition-msgs-dev \\
                             libczmq-dev"
+
+if [[ ${IGN_TRANSPORT_MAJOR_VERSION} -eq 4 ]]; then
+    IGN_TRANSPORT_DEPENDENCIES="${IGN_TRANSPORT_DEPENDENCIES} \\
+                                libignition-cmake-dev \\
+                                libignition-msgs-dev"
+elif [[ ${IGN_TRANSPORT_MAJOR_VERSION} -ge 5 ]]; then
+    IGN_TRANSPORT_DEPENDENCIES="${IGN_TRANSPORT_DEPENDENCIES} \\
+                                libignition-cmake1-dev \\
+                                libignition-msgs2-dev \\
+                                libsqlite3-dev \\
+                                ruby-ffi"
+else
+    IGN_TRANSPORT_DEPENDENCIES="${IGN_TRANSPORT_DEPENDENCIES} \\
+                                libignition-msgs0-dev"
+fi
 
 IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          python                \\
                          ruby-ronn             \\
                          uuid-dev              \\
-                         libignition-math3-dev \\
                          libfreeimage-dev      \\
                          libgts-dev            \\
                          libavformat-dev       \\
@@ -491,29 +531,82 @@ IGN_COMMON_DEPENDENCIES="pkg-config            \\
                          libtinyxml2-dev       \\
                          uuid-dev"
 
+if [[ ${IGN_COMMON_MAJOR_VERSION} -le 1 ]]; then
+    IGN_COMMON_DEPENDENCIES="${IGN_COMMON_DEPENDENCIES} \\
+                         libignition-cmake-dev \\
+                         libignition-math4-dev"
+else
+    IGN_COMMON_DEPENDENCIES="${IGN_COMMON_DEPENDENCIES} \\
+                         libignition-cmake1-dev \\
+                         libignition-math5-dev"
+fi
+
+IGN_FUEL_TOOLS_DEPENDENCIES="libignition-cmake-dev  \\
+                             libignition-common-dev \\
+                             libignition-tools-dev  \\
+                             libcurl4-openssl-dev   \\
+                             libjsoncpp-dev         \\
+                             libyaml-dev            \\
+                             libzip-dev"
+
+IGN_MSGS_DEPENDENCIES="libignition-tools-dev \\
+                       libprotobuf-dev       \\
+                       libprotoc-dev         \\
+                       protobuf-compiler     \\
+                       ruby                  \\
+                       ruby-dev"
+
+if [[ ${IGN_MSGS_MAJOR_VERSION} -le 0 ]]; then
+    IGN_MSGS_DEPENDENCIES="${IGN_MSGS_DEPENDENCIES} \\
+                           libignition-math3-dev"
+elif [[ ${IGN_MSGS_MAJOR_VERSION} -eq 1 ]]; then
+    IGN_MSGS_DEPENDENCIES="${IGN_MSGS_DEPENDENCIES} \\
+                           libignition-cmake-dev \\
+                           libignition-math4-dev"
+else
+    IGN_MSGS_DEPENDENCIES="${IGN_MSGS_DEPENDENCIES} \\
+                           libignition-cmake1-dev \\
+                           libignition-math5-dev"
+fi
+
 IGN_GUI_DEPENDENCIES="qtbase5-dev \\
+                      libignition-cmake1-dev \\
+                      libignition-math5-dev \\
+                      libignition-tools-dev \\
+                      libignition-transport5-dev \\
+                      libignition-msgs2-dev \\
+                      libignition-common2-dev \\
+                      libtinyxml2-dev \\
                       libqwt-qt5-dev"
 
-#
-# HAPTIX
-#
-HAPTIX_COMM_DEPENDENCIES_WITHOUT_IGN="pkg-config  \\
-                          libboost-system-dev     \\
-                          libprotoc-dev           \\
-                          libprotobuf-dev         \\
-                          protobuf-compiler       \\
-                          liboctave-dev"
-HAPTIX_COMM_DEPENDENCIES="${HAPTIX_COMM_DEPENDENCIES_WITHOUT_IGN} \\
-                          libignition-transport-dev"
-#
-# HANDSIM
-#
-HANDSIM_DEPENDENCIES_WITHOUT_HAPTIX="libgazebo7-haptix-dev \\
-                                     liboctave-dev"
-HANDSIM_DEPENDENCIES="${HANDSIM_DEPENDENCIES_WITHOUT_HAPTIX} \\
-                      libignition-transport-dev              \\
-                      libhaptix-comm-dev"
+IGN_PHYSICS_DEPENDENCIES="libbullet-dev \\
+                          dart6-data \\
+                          libdart6-dev \\
+                          libdart6-utils-urdf-dev \\
+                          libignition-cmake1-dev \\
+                          libignition-common2-dev \\
+                          libignition-math5-dev"
 
+IGN_RENDERING_DEPENDENCIES="${ogre_pkg}\\
+                            freeglut3-dev \\
+                            libfreeimage-dev \\
+                            libglew-dev \\
+                            libignition-cmake1-dev \\
+                            libignition-common2-dev \\
+                            libignition-math5-dev \\
+                            libogre-1.9-dev \\
+                            libx11-dev \\
+                            mesa-common-dev \\
+                            mesa-utils"
+
+IGN_SENSORS_DEPENDENCIES="libignition-common-dev     \\
+                          libignition-math4-dev      \\
+                          libignition-msgs-dev       \\
+                          libignition-transport4-dev \\
+                          libsdformat6-dev"
+
+IGN_RNDF_DEPENDENCIES="libignition-cmake-dev \\
+                       libignition-math4-dev"
 #
 # MENTOR2
 #

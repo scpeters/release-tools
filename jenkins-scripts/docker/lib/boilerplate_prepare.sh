@@ -17,9 +17,9 @@ fi
 #  *  Images that don't belong to any remaining container after that are removed
 if [[ -z ${DO_NOT_CHECK_DOCKER_DISK_USAGE} ]]; then
     # get the mount point of the docker directory, not always /
-    docker_mount_point=$(df '/var/lib/docker' | awk '{ print $6 }' | tail -n 1)
+    docker_device=$(df '/var/lib/docker' | awk '{ print $1 }' | tail -n 1)
     # in seconds: 5 days = 432000s
-    PERCENT_DISK_USED=$(df -h | grep ${docker_mount_point}$ | sed 's:.* \([0-9]*\)%.*:\1:')
+    PERCENT_DISK_USED=$(df -h ${docker_device} | grep ${docker_device} | sed 's:.* \([0-9]*\)%.*:\1:')
     if [[ $PERCENT_DISK_USED -gt 90 ]]; then
         echo "Space left is low: ${PERCENT_DISK_USED}% used"
         echo "Run docker cleaner !!"
@@ -28,12 +28,21 @@ if [[ -z ${DO_NOT_CHECK_DOCKER_DISK_USAGE} ]]; then
     fi
 
     # if not enough, run again with 1 day = 86400s
-    PERCENT_DISK_USED=$(df -h | grep ${docker_mount_point}$ | sed 's:.* \([0-9]*\)%.*:\1:')
+    PERCENT_DISK_USED=$(df -h ${docker_device} | grep ${docker_device} | sed 's:.* \([0-9]*\)%.*:\1:')
     if [[ $PERCENT_DISK_USED -gt 90 ]]; then
-        echo "Space left is low: ${PERCENT_DISK_USED}% used"
+        echo "Space left is still low: ${PERCENT_DISK_USED}% used"
         echo "Run docker cleaner !!"
         wget https://raw.githubusercontent.com/spotify/docker-gc/master/docker-gc
         sudo bash -c "GRACE_PERIOD_SECONDS=86400 bash docker-gc"
+    fi
+
+    # if not enough, kill the whole cache
+    PERCENT_DISK_USED=$(df -h ${docker_device} | grep ${docker_device} | sed 's:.* \([0-9]*\)%.*:\1:')
+    if [[ $PERCENT_DISK_USED -gt 90 ]]; then
+        echo "Space left is low again: ${PERCENT_DISK_USED}% used"
+        echo "Kill the whole docker cache !!"
+        [[ -n $(sudo docker ps -q) ]] && sudo docker kill $(sudo docker ps -q) || true
+        [[ -n $(sudo docker images -a -q) ]] && sudo docker rmi $(sudo docker images -a -q) || true
     fi
 fi
 
@@ -89,6 +98,9 @@ if $NEED_C11_COMPILER; then
       NEED_C11_COMPILER=false
   fi
 fi
+
+# in some machines squid is returning
+[ -z ${NEED_SQUID_WORKAROUND} ] && NEED_SQUID_WORKAROUND=false
 
 # Useful for running tests properly integrated ros based software
 if ${ENABLE_ROS}; then
@@ -155,6 +167,10 @@ if [[ -z $(ps aux | grep squid-deb-proxy.conf | grep -v grep | awk '{ print $2}'
   sudo service squid-deb-proxy start
 fi
 
+if ${NEED_SQUID_WORKAROUND}; then
+  sudo service squid-deb-proxy restart
+fi
+
 # Docker checking
 # Code imported from https://github.com/CognitiveRobotics/omnimapper/tree/master/docker
 # under the license detailed in https://github.com/CognitiveRobotics/omnimapper/blob/master/LICENSE
@@ -209,7 +225,7 @@ MONTH_YEAR_STR=$(date +%m%y)
 # Clean previous results in the workspace if any
 if [[ -z ${KEEP_WORKSPACE} ]]; then
     # Clean previous results, need to next mv command not to fail
-    for d in $(find ${WORKSPACE} -name '*_results' -type d); do
+    for d in $(find ${WORKSPACE} -maxdepth 1 -name '*_results' -type d); do
         sudo rm -fr ${d}
     done
 fi
