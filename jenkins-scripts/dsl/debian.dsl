@@ -25,6 +25,8 @@ packages['science-team'] = ['console-bridge',
 packages['collab-maint']   = ['peak-linux-driver',
                               'peak-pcan-basic']
 
+packages['ogre-team'] = [ 'ogre2.1' ]
+
 packages.each { repo_name, pkgs ->
  pkgs.each { pkg ->
 
