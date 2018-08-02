@@ -53,10 +53,36 @@ echo '# END SECTION'
 # Generate the first part of the build.sh file for ROS
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "subt"
 
-DEPENDENCY_PKGS="${SUBT_DEPENDENCIES}"
+# No gazebo package. Built it from gz11
+# By now using gz11 for all subt builds
+export NEEDS_GZ11_SUPPORT=true
+
+. "${SCRIPT_DIR}/lib/_gz11_hook.bash"
+
+if ${NEEDS_GZ11_SUPPORT}; then
+  export OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE} prerelease"
+  export DEPENDENCY_PKGS="${SUBT_NO_GAZEBO_DEPENDENCIES}"
+  export BUILD_IGN_CMAKE=true
+  export BUILD_IGN_PLUGIN=true
+  export BUILD_IGN_MATH=true
+  export BUILD_IGN_MSGS=true
+  export BUILD_IGN_TRANSPORT=true
+  export BUILD_IGN_GUI=true
+  export BUILD_IGN_RENDERING=true
+  export BUILD_IGN_SENSORS=true
+  export BUILD_SDFORMAT=true
+  ################################################
+
+  TODO: build gazebo and gazebo_ros_pkgs from source
+
+  ################################################
+else
+  export OSRF_REPOS_TO_USE="stable"
+  export DEPENDENCY_PKGS="${SUBT_DEPENDENCIES}"
+fi
+
 # ROS packages come from the mirror in the own subt repository
 USE_ROS_REPO=true
-OSRF_REPOS_TO_USE="stable"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash

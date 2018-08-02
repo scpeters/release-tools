@@ -685,11 +685,12 @@ DRAKE_DEPENDENCIES="alien               \\
 #
 # SUBT
 # 
-SUBT_DEPENDENCIES="mercurial                               \\
+SUBT_NO_GAZEBO_DEPENDENCIES="mercurial                     \\
                    wget                                    \\
                    curl                                    \\
                    git                                     \\
-                   gazebo${GAZEBO_VERSION_FOR_ROS}         \\
-                   libgazebo${GAZEBO_VERSION_FOR_ROS}-dev  \\
-                   ${ROS_GAZEBO_PKGS}                      \\
                    ${ROS_CATKIN_BASE}"
+
+SUBT_DEPENDENCIES="gazebo${GAZEBO_VERSION_FOR_ROS}         \\
+                   libgazebo${GAZEBO_VERSION_FOR_ROS}-dev  \\
+                   ${ROS_GAZEBO_PKGS}"
