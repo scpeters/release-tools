@@ -314,17 +314,22 @@ else
     ;;
   esac
 
-  ROS_CATKIN_BASE="python-dev              \\
-                  python-catkin-pkg        \\
-                  python-rosdep            \\
-                  python-wstool            \\
-                  ros-${ROS_DISTRO}-catkin \\
-                  ros-${ROS_DISTRO}-ros    \\
-                  python-rosinstall        \\
-                  python-catkin-tools      \\
-                  python-catkin-pkg        \\
-                  python-rospkg            \\
-                  python-vcstools"
+  PYV=""
+  if [[ ${ROS_DISTRO} != "indigo" ]]; then
+    PYV="3"
+  fi
+
+  ROS_CATKIN_BASE="python${PYV}-dev              \\
+                  python${PYV}-catkin-pkg        \\
+                  python${PYV}-rosdep            \\
+                  python${PYV}-wstool            \\
+                  ros-${ROS_DISTRO}-catkin       \\
+                  ros-${ROS_DISTRO}-ros          \\
+                  python${PYV}-rosinstall        \\
+                  python${PYV}-catkin-tools      \\
+                  python${PYV}-catkin-pkg        \\
+                  python${PYV}-rospkg            \\
+                  python${PYV}-vcstools"
 
   # DRCSIM_DEPENDENCIES
   #
