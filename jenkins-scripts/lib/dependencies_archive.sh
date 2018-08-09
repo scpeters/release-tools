@@ -320,7 +320,7 @@ else
   fi
 
   ROS_CATKIN_BASE="python${PYV}-dev              \\
-                  python${PYV}-catkin-pkg        \\
+                  python-catkin-pkg              \\
                   python${PYV}-rosdep            \\
                   python${PYV}-wstool            \\
                   ros-${ROS_DISTRO}-catkin       \\
