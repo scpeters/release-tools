@@ -15,6 +15,8 @@ if [[ ${DISTRO} == "bionic" ]]; then
   export ROS_DISTRO="melodic"
 fi
 
+. ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
+
 ROBOT_EXAMPLE_REPOS="""
 clearpathrobotics/LMS1xx.git
 tu-darmstadt-ros-pkg/hector_gazebo.git
