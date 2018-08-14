@@ -218,7 +218,7 @@ all_supported_distros.each { distro ->
               #!/bin/bash -xe
 
               # create fake SOFTWARE_DIR
-              [[ ! -d $WORKSPACE/fake ]] && mkdir $WORKSPACE/fake
+              [[ ! -d \$WORKSPACE/fake ]] && mkdir \$WORKSPACE/fake
 
               export DISTRO=${distro}
               export ARCH=${arch}
