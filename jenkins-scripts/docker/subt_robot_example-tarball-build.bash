@@ -10,6 +10,10 @@ export USE_CATKIN_MAKE=true
 
 export INFO_FILE="${WORKSPACE}/repos.info.txt"
 
+if [[ ${DISTRO} == "bionic" ]]; then
+  export ROS_DISTRO="melodic"
+fi
+
 ROBOT_EXAMPLE_REPOS="""
 clearpathrobotics/LMS1xx.git
 tu-darmstadt-ros-pkg/hector_gazebo.git
