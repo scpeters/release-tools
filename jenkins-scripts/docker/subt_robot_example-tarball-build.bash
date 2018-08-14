@@ -46,8 +46,6 @@ for repo in ${ROBOT_EXAMPLE_REPOS}; do
     git show-ref HEAD >> ${INFO_FILE}
   cd -
 done
-# fake SOFTWARE_DIR in this case since we don't have a main repo
-mdkir -fr $WORKSPACE/fake
 """
 
 export ROS_SETUP_POSTINSTALL_HOOK="""
@@ -65,7 +63,7 @@ cp ${WORKSPACE}/pkgs/subt_robot_examples_latest.tgz \
 
 DEPENDENCY_PKGS="git"
 USE_ROS_REPO=true
-OSRF_REPOS_TO_USE="stable"
+OSRF_REPOS_TO_USE="stable ros-${ROS_DISTRO}-catkin"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
