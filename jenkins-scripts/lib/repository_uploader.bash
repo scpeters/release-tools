@@ -134,8 +134,8 @@ case ${UPLOAD_TO_REPO} in
 	;;
 esac
 
-# .zip | (mostly) windows packages
-for pkg in `ls $pkgs_path/*.zip`; do
+# .zip | (mostly) windows packages and tgz (linux tarballs)
+for pkg in `ls $pkgs_path/*.zip` `ls $pkgs_path/*.tgz`; do
   # S3_UPLOAD_PATH should be send by the upstream job
   if [[ -z ${S3_UPLOAD_PATH} ]]; then
     echo "S3_UPLOAD_PATH was not defined. Not uploading"
@@ -230,6 +230,7 @@ for pkg in `ls $pkgs_path/*.deb`; do
   esac
 done
 
+rm -fr $WORKSPACE/pkgs/*.tgz
 rm -fr $WORKSPACE/pkgs/*.zip
 rm -fr $WORKSPACE/pkgs/*.dsc
 rm -fr $WORKSPACE/pkgs/*.deb
