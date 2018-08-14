@@ -217,6 +217,9 @@ all_supported_distros.each { distro ->
         shell("""\
               #!/bin/bash -xe
 
+              # create fake SOFTWARE_DIR
+              mkdir -f $WORKSPACE/fake
+
               export DISTRO=${distro}
               export ARCH=${arch}
               /bin/bash -x ./scripts/jenkins-scripts/docker/subt_robot_example-tarball-build.bash
