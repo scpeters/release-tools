@@ -188,7 +188,6 @@ build_pkg_job.with
     shell("""\
           #!/bin/bash -xe
 
-          # subt only uses a subdirectory as package
           rm -fr \$WORKSPACE/repo_backup
           rm -fr \$WORKSPACE/subt_gazebo
           cp -a \$WORKSPACE/repo/subt_gazebo \$WORKSPACE/subt_gazebo
@@ -202,5 +201,40 @@ build_pkg_job.with
           rm -fr \$WORKSPACE/repo
           mv \$WORKSPACE/repo_backup \$WORKSPACE/repo
           """.stripIndent())
+  }
+}
+
+// --------------------------------------------------------------
+// subt_robot_example tarball builder
+def build_tarball_job = job("subt_robot_example-tarball-builder")
+OSRFLinuxBuildPkgBase.create(build_tarball_job)
+
+all_supported_distros.each { distro ->
+  supported_arches.each { arch ->
+    build_tarball_job.with
+    {
+      steps {
+        shell("""\
+              #!/bin/bash -xe
+
+              export DISTRO=${distro}
+              export ARCH=${arch}
+              /bin/bash -x ./scripts/jenkins-scripts/docker/subt_robot_example-tarball-build.bash
+              """.stripIndent())
+      }
+
+      publishers {
+        downstreamParameterized {
+          trigger('repository_uploader_ng') {
+            condition('SUCCESS')
+            parameters {
+              currentBuild()
+              predefinedProp("PROJECT_NAME_TO_COPY_ARTIFACTS", "\${JOB_NAME}")
+              predefinedProp("PACKAGE_ALIAS", "\${JOB_NAME}")
+            }
+          }
+        }
+      }
+    }
   }
 }
