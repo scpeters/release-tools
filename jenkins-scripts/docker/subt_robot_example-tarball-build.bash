@@ -43,6 +43,12 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
   cd \${repo#*/}
     echo \${repo} >> ${INFO_FILE}
     git show-ref HEAD >> ${INFO_FILE}
+    if [[ \${repo} == clearpathrobotics/LMS1xx.git ]]; then
+      find . -name *.h -exec sed -i -e 's:logDebug:CONSOLE_BRIDGE_logDebug' {} \\;
+      find . -name *.h -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError' {} \\;
+      find . -name *.cpp -exec sed -i -e 's:logDebug:CONSOLE_BRIDGE_logDebug' {} \\;
+      find . -name *.cpp -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError' {} \\;
+    fi
   cd -
 done
 """
