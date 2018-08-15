@@ -61,7 +61,7 @@ cp ${WORKSPACE}/pkgs/subt_robot_examples_latest.tgz \
 # Generate the first part of the build.sh file for ROS
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "fake"
 
-DEPENDENCY_PKGS="git ros-${ROS_DISTRO}-catkin"
+DEPENDENCY_PKGS="git ${ROS_CATKIN_BASE}"
 USE_ROS_REPO=true
 OSRF_REPOS_TO_USE="stable"
 
