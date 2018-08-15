@@ -17,8 +17,11 @@ fi
 
 . ${SCRIPT_DIR}/lib/boilerplate_prepare.sh
 
-ROBOT_EXAMPLE_REPOS="""
-clearpathrobotics/LMS1xx.git
+# drop sources in the catkin workspace
+export ROS_WS_PREBUILD_HOOK="""
+rm -f ${INFO_FILE}
+
+ROBOT_EXAMPLE_REPOS=\"\"\"clearpathrobotics/LMS1xx.git
 tu-darmstadt-ros-pkg/hector_gazebo.git
 husky/husky.git
 ros-visualization/interactive_marker_twist_server.git
@@ -32,13 +35,9 @@ ros-drivers/pointgrey_camera_driver.git
 ros-teleop/teleop_twist_joy.git
 ros-teleop/twist_mux.git
 ros-teleop/twist_mux_msgs.git
-"""
+\"\"\"
 
-# drop sources in the catkin workspace
-export ROS_WS_PREBUILD_HOOK="""
-rm -f ${INFO_FILE}
-
-for repo in ${ROBOT_EXAMPLE_REPOS}; do
+for repo in \${ROBOT_EXAMPLE_REPOS}; do
   [[ -d ${repo} ]] && rm -fr \${repò}
   git clone https://github.com/\${repo}
   cd \${repo}
