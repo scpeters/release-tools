@@ -38,7 +38,7 @@ ros-teleop/twist_mux_msgs.git
 \"\"\"
 
 for repo in \${ROBOT_EXAMPLE_REPOS}; do
-  [[ -d ${repo} ]] && rm -fr \${repò}
+  [[ -d \${repo} ]] && rm -fr \${repo}
   git clone https://github.com/\${repo}
   cd \${repo}
     echo \${repo} >> ${INFO_FILE}
