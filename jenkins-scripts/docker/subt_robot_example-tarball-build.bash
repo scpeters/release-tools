@@ -36,7 +36,7 @@ ros-teleop/twist_mux_msgs.git
 
 # drop sources in the catkin workspace
 export ROS_WS_PREBUILD_HOOK="""
-rm ${INFO_FILE}
+rm -f ${INFO_FILE}
 
 for repo in ${ROBOT_EXAMPLE_REPOS}; do
   [[ -d ${repo} ]] && rm -fr \${repò}
