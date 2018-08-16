@@ -53,6 +53,12 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
     fi
   cd -
 done
+
+hg clone http://bitbucket.org/osrf/subt 
+cd subt
+echo '------ subt repo ---------' >> ${INFO_FILE}
+hg tip >> ${INFO_FILE}
+cd -
 """
 
 export ROS_SETUP_POSTINSTALL_HOOK="""
@@ -68,7 +74,7 @@ cp ${WORKSPACE}/pkgs/subt_robot_examples_latest.tgz \
 # Generate the first part of the build.sh file for ROS
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "fake"
 
-DEPENDENCY_PKGS="git ${ROS_CATKIN_BASE}"
+DEPENDENCY_PKGS="git mercurial ${ROS_CATKIN_BASE}"
 USE_ROS_REPO=true
 OSRF_REPOS_TO_USE="stable"
 
