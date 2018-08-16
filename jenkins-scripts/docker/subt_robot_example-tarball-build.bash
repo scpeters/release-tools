@@ -62,7 +62,7 @@ tar cvzf subt_robot_examples_latest.tgz install/
 mv subt_robot_examples_latest.tgz ${WORKSPACE}/pkgs/
 # copy of latest into the timestamped tarball
 cp ${WORKSPACE}/pkgs/subt_robot_examples_latest.tgz \
-   ${WORKSPACE}/pkg/subt_robot_examples_\${TIMESTAMP}.tgz
+   ${WORKSPACE}/pkgs/subt_robot_examples_\${TIMESTAMP}.tgz
 """
 
 # Generate the first part of the build.sh file for ROS
