@@ -46,8 +46,10 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
     if [[ \${repo} == clearpathrobotics/LMS1xx.git ]]; then
       find . -name *.h -exec sed -i -e 's:logDebug:CONSOLE_BRIDGE_logDebug:g' {} \\;
       find . -name *.h -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError:g' {} \\;
+      find . -name *.h -exec sed -i -e 's:logWarn:CONSOLE_BRIDGE_logWarn:g' {} \\;
       find . -name *.cpp -exec sed -i -e 's:logDebug:CONSOLE_BRIDGE_logDebug:g' {} \\;
       find . -name *.cpp -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError:g' {} \\;
+      find . -name *.cpp -exec sed -i -e 's:logWarn:CONSOLE_BRIDGE_logWarn:g' {} \\;
     fi
   cd -
 done
