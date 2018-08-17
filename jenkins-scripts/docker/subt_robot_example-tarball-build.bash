@@ -23,18 +23,21 @@ rm -f ${INFO_FILE}
 
 ROBOT_EXAMPLE_REPOS=\"\"\"clearpathrobotics/LMS1xx.git
 tu-darmstadt-ros-pkg/hector_gazebo.git
+ethz-asl/mav_comm.git
+ethz-asl/rotors_simulator.git
+fkie/multimaster_fkie.git
 husky/husky.git
-ros-visualization/interactive_marker_twist_server.git
 jackal/jackal.git
 jackal/jackal_desktop.git
 jackal/jackal_simulator.git
+OctoMap/octomap_ros.git
 ros-drivers/joystick_drivers.git
-fkie/multimaster_fkie.git
-ros-perception/pointcloud_to_laserscan.git
 ros-drivers/pointgrey_camera_driver.git
+ros-perception/pointcloud_to_laserscan.git
 ros-teleop/teleop_twist_joy.git
 ros-teleop/twist_mux.git
 ros-teleop/twist_mux_msgs.git
+ros-visualization/interactive_marker_twist_server.git
 \"\"\"
 
 for repo in \${ROBOT_EXAMPLE_REPOS}; do
@@ -50,6 +53,9 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
       find . -name *.cpp -exec sed -i -e 's:logDebug:CONSOLE_BRIDGE_logDebug:g' {} \\;
       find . -name *.cpp -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError:g' {} \\;
       find . -name *.cpp -exec sed -i -e 's:logWarn:CONSOLE_BRIDGE_logWarn:g' {} \\;
+    fi
+    if [[ \${repo} == ethz-asl/rotors_simulator.git ]]; then
+      touch rotors_hil_interface/CATKIN_IGNORE
     fi
   cd -
 done
@@ -74,7 +80,7 @@ cp ${WORKSPACE}/pkgs/subt_robot_examples_latest.tgz \
 # Generate the first part of the build.sh file for ROS
 . ${SCRIPT_DIR}/lib/_ros_setup_buildsh.bash "fake"
 
-DEPENDENCY_PKGS="git mercurial ${ROS_CATKIN_BASE}"
+DEPENDENCY_PKGS="git mercurial ${ROS_CATKIN_BASE} ros-melodic-joystick-drivers"
 USE_ROS_REPO=true
 OSRF_REPOS_TO_USE="stable"
 
