@@ -54,8 +54,10 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
       find . -name *.cpp -exec sed -i -e 's:logError:CONSOLE_BRIDGE_logError:g' {} \\;
       find . -name *.cpp -exec sed -i -e 's:logWarn:CONSOLE_BRIDGE_logWarn:g' {} \\;
     fi
+    # bug https://bitbucket.org/ignitionrobotics/ign-cmake/issues/40/cmake-cannot-parse-ignition-math4-ignition
     if [[ \${repo} == ethz-asl/rotors_simulator.git ]]; then
       touch rotors_hil_interface/CATKIN_IGNORE
+      sed '/find_package(/a ign_import_target(UUID)' rotors_gazebo_plugins/CMakeLists.txt
     fi
   cd -
 done
