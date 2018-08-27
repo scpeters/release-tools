@@ -62,7 +62,7 @@ for repo in \${ROBOT_EXAMPLE_REPOS}; do
   cd -
 done
 
-hg clone http://bitbucket.org/osrf/subt 
+hg clone http://bitbucket.org/osrf/subt -b race_cond_subt_msgs
 cd subt
 echo '------ subt repo ---------' >> ${INFO_FILE}
 hg tip >> ${INFO_FILE}
