@@ -42,7 +42,11 @@ ros-visualization/interactive_marker_twist_server.git
 
 for repo in \${ROBOT_EXAMPLE_REPOS}; do
   [[ -d \${repo} ]] && rm -fr \${repo}
-  git clone https://github.com/\${repo} \${repo#*/}
+  if [[ \${repo} == ethz-asl/rotors_simulator.git ]]; then
+    git clone https://github.com/\${repo} \${repo#*/} -b feature/gazebo9
+  else
+    git clone https://github.com/\${repo} \${repo#*/}
+  fi
   cd \${repo#*/}
     echo \${repo} >> ${INFO_FILE}
     git show-ref HEAD >> ${INFO_FILE}
