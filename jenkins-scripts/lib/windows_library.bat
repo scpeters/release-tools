@@ -196,6 +196,7 @@ colcon build --build-base "build"^
              --cmake-args " -DCMAKE_BUILD_TYPE=%BUILD_TYPE%"^
                           " -DCMAKE_TOOLCHAIN_FILE=%VCPKG_CMAKE_TOOLCHAIN_FILE%"^
                           " -DVCPKG_TARGET_TRIPLET=%VCPKG_DEFAULT_TRIPLET%"^
+                          " --trace-expand"^
                           %COLCON_EXTRA_CMAKE_ARGS%^
              --event-handler console_cohesion+ || type %HOMEPATH%/.colcon/latest & goto :error
 
