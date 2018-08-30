@@ -171,7 +171,7 @@ goto :EOF
 set gzdistro_dir=gazebodistro
 
 if exist %gzdistro_dir% (rmdir /s /q %gzdistro_dir%)
-hg clone https://bitbucket.org/osrf/gazebodistro %gzdistro_dir%
+hg clone https://bitbucket.org/osrf/gazebodistro %gzdistro_dir% -b ign_physics0_gz11
 vcs import --retry 5  < "%gzdistro_dir%\%1" "%2" || goto :error
 goto :EOF
 
