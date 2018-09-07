@@ -22,18 +22,12 @@ export BUILDING_SOFTWARE_DIRECTORY="ign-sensors"
 
 if ${NEEDS_GZ11_SUPPORT}; then
   # all dependencies of ign-sensors are ignition/sdformat
-  export BUILD_IGN_CMAKE=true
-  export BUILD_IGN_TOOLS=true
-  export BUILD_IGN_MATH=true
-  export BUILD_IGN_COMMON=true
-  export BUILD_IGN_MSGS=true
-  export BUILD_IGN_TRANSPORT=true
   export BUILD_IGN_RENDERING=true
-  export BUILD_SDFORMAT=true
 else
-  export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_SENSORS_DEPENDENCIES"
   export BUILDING_JOB_REPOSITORIES="stable"
 fi
+
+export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_SENSORS_DEPENDENCIES"
 
 if [[ $(date +%Y%m%d) -le 20181231 ]]; then
   ## need prerelease repo to get ignition-cmake1 for ign-rendering
