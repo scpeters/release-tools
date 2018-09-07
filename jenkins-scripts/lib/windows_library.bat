@@ -233,6 +233,7 @@ goto :EOF
 set LIB_DIR=%~dp0
 call %LIB_DIR%\windows_env_vars.bat
 
+%VCPKG_CMD% update
 %VCPKG_CMD% install "%1"
 goto :EOF
 
