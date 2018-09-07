@@ -22,7 +22,6 @@ export BUILDING_SOFTWARE_DIRECTORY="ign-sensors"
 
 if ${NEEDS_GZ11_SUPPORT}; then
   # all dependencies of ign-sensors are ignition/sdformat
-  export BUILD_IGN_RENDERING=true
 else
   export BUILDING_JOB_REPOSITORIES="stable"
 fi

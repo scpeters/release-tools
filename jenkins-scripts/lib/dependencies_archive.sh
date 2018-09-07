@@ -663,6 +663,7 @@ IGN_SENSORS_DEPENDENCIES="libignition-common3-dev     \\
                           libignition-math6-dev      \\
                           libignition-msgs3-dev       \\
                           libignition-tools-dev \\
+                          libignition-rendering1-dev \\
                           libignition-transport6-dev \\
                           libsdformat6-dev"
 
