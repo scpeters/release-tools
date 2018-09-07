@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Job
 ignition_software = [ 'cmake',
                       'common',
                       'fuel-tools',
+                      'gazebo',
                       'gui',
                       'math',
                       'msgs',
@@ -17,6 +18,7 @@ ignition_software = [ 'cmake',
                       'transport' ]
 ignition_debbuild  = ignition_software + [ 'cmake1','cmake2',
                                            'common2',
+                                           'gazebo0',
                                            'math5',
                                            'msgs0', 'msgs2',
                                            'transport5' ]
@@ -26,6 +28,7 @@ ignition_no_test            = [ 'tools' ]
 // no branches in ignition_branches means no released branches
 ignition_branches           = [ 'common'     : [ '1' ],
                                 'fuel-tools' : [ '1' ],
+                                'gazebo'     : [ '0' ],
                                 'math'       : [ '2', '3','4' ],
                                 'msgs'       : [ '1' ],
                                 'transport'  : [ '3','4' ]]

@@ -9,6 +9,7 @@ packages['science-team'] = ['console-bridge',
                             'fcl',
                             'ignition-cmake',
                             'ignition-common',
+                            'ignition-gazebo', // version 0
                             'ignition-math2',
                             'ignition-math4',
                             'ignition-msgs',
