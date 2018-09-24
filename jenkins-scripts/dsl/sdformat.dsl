@@ -15,6 +15,9 @@ def all_supported_distros   = Globals.get_all_supported_distros()
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 
+sdformat_no_pkg_yet         = [ 'sdformat8' ]
+
+
 String ci_distro_str = ci_distro[0]
 String ci_build_any_job_name_linux = "sdformat-ci-pr_any-ubuntu_auto-amd64"
 
@@ -223,11 +226,9 @@ ci_distro.each { distro ->
 
 // INSTALL LINUX -DEV PACKAGES ALL PLATFORMS @ CRON/DAILY
 sdformat_supported_branches.each { branch ->
-  // select distro for testing the different packages
-  if (branch == 'sdformat3')
-    testing_distro = [ 'trusty' ]
-  else
-    testing_distro = ci_distro
+  // Exclusion list
+  if (branch in sdformat_no_pkg_yet)
+    return
 
   testing_distro.each { distro ->
     supported_arches.each { arch ->
