@@ -1,5 +1,5 @@
 @echo on
-set SCRIPT_DIR="%~dp0"
+set SCRIPT_DIR=%~dp0
 
 set VCS_DIRECTORY=ign-gui
 set PLATFORM_TO_BUILD=x86_amd64
