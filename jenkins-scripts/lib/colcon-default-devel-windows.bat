@@ -2,12 +2,12 @@
 ::
 :: Parameters:
 ::   - VCS_DIRECTORY : relative path to WORKSPACE containing the sources
-::   - GAZEBODISTRO_FILE : vcs yaml file in the gazebodistro repository
 ::   - COLCON_PACKAGE : package name to test in colcon ws
 ::   - BUILD_TYPE     : (default Release) [ Release | Debug ] Build type to use
 ::   - DEPEN_PKGS     : (optional) list of dependencies (separted by spaces)
 ::   - KEEP_WORKSPACE : (optional) true | false. Clean workspace at the end
 ::   - ENABLE_TESTS   : (optional) true | false. Do not compile and run tests
+::   - GAZEBODISTRO_FILE : (optional) explicit vcs yaml file in the gazebodistro
 ::
 :: Actions
 ::   - Configure the compiler
@@ -22,6 +22,15 @@ set EXPORT_TEST_RESULT_PATH=%WORKSPACE%\build\test_results
 set LOCAL_WS=%WORKSPACE%\ws
 set LOCAL_WS_SOFTWARE_DIR=%LOCAL_WS%\%VCS_DIRECTORY%
 set LOCAL_WS_BUILD=%WORKSPACE%\build
+
+
+if not defined GAZEBODISTRO_FILE (
+  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do set PKG_MAJOR_VERSION=%%i
+  echo "MAJOR_VERSION detected: %PKG_MAJOR_VERSION%"
+  set GAZEBO_DISTRO_FILE=%VCS_DIRECTORY%%PKG_MAJOR_VERSION%.yaml
+) else (
+  echo "Using user defined GAZEBO_DISTRO_FILE: %GAZEBODISTRO_FILE%"
+)
 
 :: default values
 @if "%BUILD_TYPE%" == "" set BUILD_TYPE=Release
