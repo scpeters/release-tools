@@ -26,9 +26,11 @@ set PKG_MAJOR_VERSION=0
 
 
 if not defined GAZEBODISTRO_FILE (
-  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do set PKG_MAJOR_VERSION=%%i
-  echo "MAJOR_VERSION detected: %PKG_MAJOR_VERSION%"
-  set GAZEBO_DISTRO_FILE=%VCS_DIRECTORY%%PKG_MAJOR_VERSION%.yaml
+  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do (
+      set PKG_MAJOR_VERSION=%%i
+      echo "MAJOR_VERSION detected: %PKG_MAJOR_VERSION%"
+      set GAZEBO_DISTRO_FILE=%VCS_DIRECTORY%%PKG_MAJOR_VERSION%.yaml
+  )
 ) else (
   echo "Using user defined GAZEBO_DISTRO_FILE: %GAZEBODISTRO_FILE%"
 )
