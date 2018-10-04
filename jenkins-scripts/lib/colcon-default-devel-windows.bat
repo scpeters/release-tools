@@ -24,7 +24,7 @@ set LOCAL_WS_SOFTWARE_DIR=%LOCAL_WS%\%VCS_DIRECTORY%
 set LOCAL_WS_BUILD=%WORKSPACE%\build
 
 if not defined GAZEBODISTRO_FILE (
-  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do PKG_MAJOR_VERSION=%%i
+  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do set PKG_MAJOR_VERSION=%%i
 ) else (
   echo "Using user defined GAZEBO_DISTRO_FILE: %GAZEBODISTRO_FILE%"
 )
