@@ -22,18 +22,16 @@ set EXPORT_TEST_RESULT_PATH=%WORKSPACE%\build\test_results
 set LOCAL_WS=%WORKSPACE%\ws
 set LOCAL_WS_SOFTWARE_DIR=%LOCAL_WS%\%VCS_DIRECTORY%
 set LOCAL_WS_BUILD=%WORKSPACE%\build
-set PKG_MAJOR_VERSION=0
-
 
 if not defined GAZEBODISTRO_FILE (
-  setlocal enabledelayedexpansion
-  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do (
-      set PKG_MAJOR_VERSION=!i!
-      echo "MAJOR_VERSION detected: !PKG_MAJOR_VERSION!"
-      set GAZEBO_DISTRO_FILE=%VCS_DIRECTORY%!PKG_MAJOR_VERSION!.yaml
-  )
+  for /f %%i in ('python "%SCRIPT_DIR%\tools\detect_cmake_major_version.py" "%WORKSPACE%\%VCS_DIRECTORY%\CMakeLists.txt"') do PKG_MAJOR_VERSION=%%i
 ) else (
   echo "Using user defined GAZEBO_DISTRO_FILE: %GAZEBODISTRO_FILE%"
+)
+
+if defined PKG_MAJOR_VERSION (
+  echo "MAJOR_VERSION detected: %PKG_MAJOR_VERSION%"
+  set GAZEBO_DISTRO_FILE=%VCS_DIRECTORY%%PKG_MAJOR_VERSION%.yaml
 )
 
 :: default values
