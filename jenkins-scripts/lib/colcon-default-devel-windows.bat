@@ -72,7 +72,7 @@ echo # END SECTION
 
 echo # BEGIN SECTION: get open robotics deps (%GAZEBODISTRO_FILE%) sources into the workspace
 if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% )
-call %win_lib% get_source_from_gazebodistro %GAZEBODISTRO_FILE% %LOCAL_WS% || goto :error
+call %win_lib% :get_source_from_gazebodistro %GAZEBODISTRO_FILE% %LOCAL_WS% || goto :error
 echo # END SECTION
 
 :: this step is important since overwrite the gazebodistro file
