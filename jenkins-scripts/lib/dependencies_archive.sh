@@ -645,6 +645,7 @@ IGN_GUI_DEPENDENCIES="${IGN_GUI_NO_IGN_DEPENDENCIES} \\
                       libignition-cmake1-dev \\
                       libignition-math5-dev \\
                       libignition-tools-dev \\
+                      libignition-rendering0-dev \\
                       libignition-transport5-dev \\
                       libignition-msgs2-dev \\
                       libignition-common2-dev"
