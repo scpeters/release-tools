@@ -185,9 +185,11 @@ Map supported_install_pkg_branches(String ign_software)
   map_of_stable_versions = [:]
   map_of_stable_versions[ign_software] = [:]
   supported_branches(ign_software).each { major_version ->
-    new_relation = [:]
-    new_relation[major_version] = all_supported_distros
-    map_of_stable_versions[ign_software] << new_relation
+    if ("${major_version}") {
+      new_relation = [:]
+      new_relation[major_version] = all_supported_distros
+      map_of_stable_versions[ign_software] << new_relation
+    }
   }
 
   if (major_versions_prerelease == null)
