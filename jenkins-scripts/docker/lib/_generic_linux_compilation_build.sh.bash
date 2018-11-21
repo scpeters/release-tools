@@ -72,6 +72,11 @@ DELIM_BUILD_DEPS
 done
 
 cat >> build.sh << DELIM
+# Inject ogre-2.1 packages
+wget 'https://build.osrfoundation.org/job/ogre-2.1-debbuilder_test/lastSuccessfulBuild/artifact/pkgs/libogre-2.1-dev_2.0.9999%7E20180616%7E06a386f-3osrf%7Ebionic_amd64.deb'
+wget 'https://build.osrfoundation.org/job/ogre-2.1-debbuilder_test/lastSuccessfulBuild/artifact/pkgs/libogre-2.1_2.0.9999%7E20180616%7E06a386f-3osrf%7Ebionic_amd64.deb'
+dpkg -i libogre-2.1_*.deb
+dpkg -i libogre-2.1-dev_*.deb
 echo '# BEGIN SECTION: configure'
 # Step 2: configure and build
 cd $WORKSPACE
