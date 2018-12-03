@@ -32,6 +32,11 @@ if [[ -n "${DART_FROM_PKGS_VAR_NAME}" ]]; then
   eval DART_FROM_PKGS="\$${DART_FROM_PKGS_VAR_NAME}"
 fi
 
+CPP_STANDARD="c++11"
+if $USE_GCC8; then
+  CPP_STANDARD="c++17"
+fi
+
 cat > build.sh << DELIM
 #!/bin/bash
 
@@ -114,7 +119,7 @@ cat >> pkg.xml << CURRENT_DELIM_LIBS
  </libs>
 
  <gcc_options>
-     -std=c++11
+     -std=${CPP_STANDARD}
  </gcc_options>
 CURRENT_DELIM_LIBS
 
@@ -142,7 +147,7 @@ cat >> devel.xml << DEVEL_DELIM_LIBS
  </libs>
 
  <gcc_options>
-     -std=c++11
+     -std=${CPP_STANDARD}
  </gcc_options>
 DEVEL_DELIM_LIBS
 echo '# END SECTION'

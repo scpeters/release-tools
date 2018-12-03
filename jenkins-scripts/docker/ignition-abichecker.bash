@@ -32,6 +32,7 @@ export ${IGN_NAME_PREFIX}_MAJOR_VERSION=$(\
   ${WORKSPACE}/${ABI_JOB_SOFTWARE_NAME}/CMakeLists.txt)
 
 export ABI_JOB_REPOS="stable"
+export USE_GCC8=true
 
 # To get ign-cmake1 package in prerelease
 if [[ $(date +%Y%m%d) -le 20181231 ]]; then
