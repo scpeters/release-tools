@@ -191,6 +191,8 @@ if [ `expr length "${GAZEBO_BASE_TESTS_HOOK} "` -gt 1 ]; then
   : # keep this line, needed if the variable is empty
 else
   # Run default
+  apt-get update
+  apt-get install -y gdb
   gdb test/integration/INTEGRATION_model_editor_undo -batch -ex "run" -ex "bt" -ex "quit"
 fi
 
