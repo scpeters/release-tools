@@ -172,7 +172,7 @@ echo '# END SECTION'
 if [[ $GAZEBO_MAJOR_VERSION -ge 8 ]]; then
   echo '# BEGIN SECTION: Tests compilation'
   init_stopwatch TESTS_COMPILATION
-  make -j${MAKE_JOBS} tests
+  make -j${MAKE_JOBS} INTEGRATION_model_editor_undo
   stop_stopwatch TESTS_COMPILATION
   echo '# END SECTION'
 fi
@@ -191,21 +191,7 @@ if [ `expr length "${GAZEBO_BASE_TESTS_HOOK} "` -gt 1 ]; then
   : # keep this line, needed if the variable is empty
 else
   # Run default
-  RERUN_FAILED_TESTS=1
-  init_stopwatch TEST
-  echo '# BEGIN SECTION: UNIT testing'
-  make test ARGS="-VV -R UNIT_*" || true
-  echo '# END SECTION'
-  echo '# BEGIN SECTION: INTEGRATION testing'
-  . ${WORKSPACE}/scripts/jenkins-scripts/lib/make_test_rerun_failed.bash "-VV -R INTEGRATION_*"
-  echo '# END SECTION'
-  echo '# BEGIN SECTION: REGRESSION testing'
-  . ${WORKSPACE}/scripts/jenkins-scripts/lib/make_test_rerun_failed.bash "-VV -R REGRESSION_*"
-  echo '# END SECTION'
-  echo '# BEGIN SECTION: EXAMPLE testing'
-  make test ARGS="-VV -R EXAMPLE_*" || true
-  stop_stopwatch TEST
-  echo '# END SECTION'
+  gdb test/integration/INTEGRATION_model_editor_undo -batch -ex "run" -ex "bt" -ex "quit"
 fi
 
 if ${COVERAGE_ENABLED} ; then
