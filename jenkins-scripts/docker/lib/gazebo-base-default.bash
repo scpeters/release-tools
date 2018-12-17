@@ -192,7 +192,7 @@ if [ `expr length "${GAZEBO_BASE_TESTS_HOOK} "` -gt 1 ]; then
 else
   # Run default
   apt-get update
-  apt-get install -y gdb
+  apt-get install -y gdb 	libsdformat6-dbg
   gdb test/integration/INTEGRATION_model_editor_undo -batch -ex "run" -ex "bt" -ex "quit"
 fi
 
