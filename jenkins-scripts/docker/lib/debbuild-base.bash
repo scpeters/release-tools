@@ -149,6 +149,7 @@ cp -a --dereference \${PACKAGE_RELEASE_DIR}/* .
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
+apt-get update
 mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
 echo '# END SECTION'
 
@@ -166,6 +167,14 @@ fi
 apt-get install -y gcc-4.8 g++-4.8
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+g++ --version
+echo '# END SECTION'
+fi
+
+if $NEED_C17_COMPILER; then
+echo '# BEGIN SECTION: install C++17 compiler'
+apt-get install -y gcc-8 g++-8
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 g++ --version
 echo '# END SECTION'
 fi

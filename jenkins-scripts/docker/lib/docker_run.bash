@@ -12,17 +12,32 @@ sudo mkdir -p ${PACKAGE_DIR}
 sudo rm -fr ${WORKSPACE}/build
 sudo mkdir -p ${WORKSPACE}/build
 
-sudo docker build --tag ${DOCKER_TAG} .
+[[ -z ${DOCKER_DO_NOT_CACHE} ]] && DOCKER_DO_NOT_CACHE=false
+
+# Remove intermediate containers even if the build is not successful
+if $DOCKER_DO_NOT_CACHE; then
+  _DOCKER_BUILD_EXTRA_ARGS="--force-rm=true"
+fi
+
+sudo docker build ${_DOCKER_BUILD_EXTRA_ARGS} \
+                  --tag ${DOCKER_TAG} .
+
 stop_stopwatch CREATE_TESTING_ENVIROMENT
 
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
 echo '# END SECTION'
 
+if $USE_DOCKER_IN_DOCKER; then
+ EXTRA_PARAMS_STR="--privileged \
+                    -v /var/run/docker.sock:/var/run/docker.sock"
+fi
+
 if $USE_GPU_DOCKER; then
   EXTRA_PARAMS_STR="--privileged \
                     -e DISPLAY=unix$DISPLAY \
                     -v /sys:/sys:ro         \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
                     -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
 
   if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]]; then
@@ -43,6 +58,7 @@ sudo ${docker_cmd} run $EXTRA_PARAMS_STR  \
             -v ${WORKSPACE}:${WORKSPACE} \
             -v /dev/log:/dev/log:ro \
             -v /run/log:/run/log:ro \
+            -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
             --tty \
             --rm \
             ${DOCKER_TAG} \
@@ -64,7 +80,7 @@ if [[ -z ${KEEP_WORKSPACE} ]]; then
     for d in $(find ${WORKSPACE} -maxdepth 1 -name '*_results' -type d); do
        sudo mv ${d} ${WORKSPACE}/build/
     done
-    
+
     [[ -d ${PACKAGE_DIR} ]] && sudo chown -R jenkins ${PACKAGE_DIR}
     sudo chown jenkins -R ${WORKSPACE}/build/
 fi

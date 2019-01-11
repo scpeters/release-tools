@@ -62,7 +62,7 @@ OSRF_VERSION=\$VERSION\osrf${RELEASE_VERSION}~${DISTRO}${RELEASE_ARCH_VERSION}
 echo "# BEGIN SECTION: check that pristine-tar is updated"
 git checkout -f pristine-tar || { echo "W: probably miss the pristine-tar branch" && exit 1; }
 # The tilde (~) is not allow in git tag and changed to underscore (_)
-PRISTINE_VERSION_NO_REVISION=\$(echo \${VERSION_NO_REVISION} | sed 's:~:_:')
+PRISTINE_VERSION_NO_REVISION=\$(echo \${VERSION_NO_REVISION} | sed 's:~:_:g')
 if [[ -z \$(git tag | grep upstream/\${PRISTINE_VERSION_NO_REVISION}) ]]; then
    echo "W: \${PRISTINE_VERSION_NO_REVISION} commit was not found in pristine-tar"
    exit 1
@@ -103,9 +103,12 @@ rm -f ../*.deb
 ${GBP_COMMAND}
 echo '# END SECTION'
 
-echo '# BEGIN SECTION: export pkgs'
+echo '# BEGIN SECTION: lintian QA'
 lintian -I -i ../*.changes || true
 lintian -I -i ../*.dsc || true
+echo '# END SECTION'
+
+echo '# BEGIN SECTION: export pkgs'
 PKGS=\`find ../ -name *.deb || true\`
 
 FOUND_PKG=0
