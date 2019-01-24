@@ -205,7 +205,8 @@ colcon build --build-base "build"^
                           " -DCMAKE_TOOLCHAIN_FILE=%VCPKG_CMAKE_TOOLCHAIN_FILE%"^
                           " -DVCPKG_TARGET_TRIPLET=%VCPKG_DEFAULT_TRIPLET%"^
                           %COLCON_EXTRA_CMAKE_ARGS%^
-             --event-handler console_cohesion+ || type %HOMEPATH%/.colcon/latest & goto :error
+             --event-handler console_cohesion+ || echo error in colcon build & type %HOMEPATH%/.colcon/log/latest & goto :error
+goto :EOF
 
 :: ##################################
 ::
@@ -221,8 +222,10 @@ set COLCON_PACKAGE=%1
 call :_colcon_build_cmd "--packages-skip %COLCON_PACKAGE%" " -DBUILD_TESTING=0"
 call :_colcon_build_cmd "--packages-select %COLCON_PACKAGE%" " -DBUILD_TESTING=1"
 :: source the install wokrspace
-dir install\setup.bat
+echo %PATH%
+echo ----------- run setup.bat --------------
 install\setup.bat || echo "error in setup.bat"
+echo %PATH%
 goto :EOF
 
 :: ##################################
@@ -236,7 +239,7 @@ goto :EOF
 set COLCON_PACKAGE=%1
 
 colcon test --build-base "build" --event-handler console_direct+ --install-base "install" --packages-select %COLCON_PACKAGE% --executor sequential || goto :error
-colcon test-result --build-base "build" --all
+colcon test-result --all
 goto :EOF
 
 :: ##################################
