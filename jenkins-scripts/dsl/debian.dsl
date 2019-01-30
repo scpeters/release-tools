@@ -25,7 +25,7 @@ packages['science-team'] = ['console-bridge',
 packages['collab-maint']   = ['peak-linux-driver',
                               'peak-pcan-basic']
 
-packages['j-rivero']       = ['tinydir']
+packages['jrivero-guest']  = ['tinydir']
 
 packages.each { repo_name, pkgs ->
  pkgs.each { pkg ->
