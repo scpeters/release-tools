@@ -63,10 +63,10 @@ packages.each { repo_name, pkgs ->
   // --------------------------------------------------------------
   // 2. Create the job that tries to build the package and run lintian
 
-  if (repo_name == 'science-team') {
+  git_repo = "https://salsa.debian.org/${repo_name}/${pkg}.git"
+
+  if (repo_name == 'collab-maint') {
     git_repo = "https://salsa.debian.org/${repo_name}/${pkg}.git"
-  } else {
-    git_repo = "git://anonscm.debian.org/${repo_name}/${pkg}.git"
   }
 
   def ci_job = job("${pkg}-pkg_builder-master-debian_sid-amd64")
