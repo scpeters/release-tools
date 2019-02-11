@@ -222,10 +222,7 @@ set COLCON_PACKAGE=%1
 call :_colcon_build_cmd "--packages-skip %COLCON_PACKAGE%" " -DBUILD_TESTING=0"
 call :_colcon_build_cmd "--packages-select %COLCON_PACKAGE%" " -DBUILD_TESTING=1"
 :: source the install wokrspace
-echo %PATH%
-echo ----------- run setup.bat --------------
-call ".\install\setup.bat" || echo "error in setup.bat"
-echo %PATH%
+call ".\install\setup.bat" || goto :error
 goto :EOF
 
 :: ##################################
