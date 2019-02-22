@@ -411,6 +411,10 @@ ignition_software.each { ign_sw ->
             scm('@daily')
           }
 
+          parameters {
+            booleanParam('INVALIDATE_DOCKER_CACHE', true, 'invalidate docker cache')
+          }
+
           // only a few release branches support trusty anymore
           if (("${distro}" == "trusty") && !(
               ("${branch}" == "ign-math2") ||
