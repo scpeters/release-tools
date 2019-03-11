@@ -15,15 +15,28 @@ if [[ -z ${DISTRO} ]]; then
 fi
 
 export BUILDING_SOFTWARE_DIRECTORY="ign-gui"
-export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_GUI_DEPENDENCIES"
 export BUILDING_JOB_REPOSITORIES="stable"
-if [[ $(date +%Y%m%d) -le 20180831 ]]; then
-  ## need prerelease repo to get ignition-cmake1 for ign-rendering
-  export BUILDING_JOB_REPOSITORIES="${BUILDING_JOB_REPOSITORIES} prerelease"
+export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_GUI_DEPENDENCIES"
+
+# Identify IGN_GUI_MAJOR_VERSION to help with dependency resolution
+IGN_GUI_MAJOR_VERSION=$(\
+  python ${SCRIPT_DIR}/../tools/detect_cmake_major_version.py \
+  ${WORKSPACE}/ign-gui/CMakeLists.txt)
+
+# Check IGN_GUI_MAJOR_VERSION version is integer
+if ! [[ ${IGN_GUI_MAJOR_VERSION} =~ ^-?[0-9]+$ ]]; then
+  echo "Error! IGN_GUI_MAJOR_VERSION is not an integer, check the detection"
+  exit -1
 fi
 
-# TODO: stop building dependencies from source after there's a release
-export BUILD_IGN_RENDERING=true
+if [[ ${IGN_GUI_MAJOR_VERSION} -ge 1 ]]; then
+  export USE_GCC8=true
+else
+  # need to build ign-rendering0 for ign-gui0
+  export BUILD_IGN_RENDERING=true
+  export IGN_RENDERING_MAJOR_VERSION=0
+  export IGN_RENDERING_BRANCH="ign-rendering${IGN_RENDERING_MAJOR_VERSION}"
+fi
 
 export GPU_SUPPORT_NEEDED=true
 

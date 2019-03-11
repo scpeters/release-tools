@@ -14,6 +14,11 @@ if [[ -z ${DISTRO} ]]; then
   exit 1
 fi
 
+export BUILDING_SOFTWARE_DIRECTORY="ign-msgs"
+export BUILDING_JOB_REPOSITORIES="stable"
+export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_MSGS_DEPENDENCIES"
+export DOCKER_POSTINSTALL_HOOK="gem install protobuf"
+
 # Identify IGN_MSGS_MAJOR_VERSION to help with dependency resolution
 IGN_MSGS_MAJOR_VERSION=$(\
   python ${SCRIPT_DIR}/../tools/detect_cmake_major_version.py \
@@ -25,14 +30,8 @@ if ! [[ ${IGN_MSGS_MAJOR_VERSION} =~ ^-?[0-9]+$ ]]; then
   exit -1
 fi
 
-export BUILDING_SOFTWARE_DIRECTORY="ign-msgs"
-export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_MSGS_DEPENDENCIES"
-export BUILDING_JOB_REPOSITORIES="stable"
-export DOCKER_POSTINSTALL_HOOK="gem install protobuf"
-
-if [[ $(date +%Y%m%d) -le 20180831 ]]; then
-  ## need prerelease repo to get ignition-math5 and ignition-cmake1
-  export BUILDING_JOB_REPOSITORIES="${BUILDING_JOB_REPOSITORIES} prerelease"
+if [[ ${IGN_MSGS_MAJOR_VERSION} -ge 3 ]]; then
+  export USE_GCC8=true
 fi
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash

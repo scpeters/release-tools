@@ -2,8 +2,11 @@
 
 NIGHTLY_MODE=${NIGHTLY_MODE:-false}
 if [ "${UPLOAD_TO_REPO}" = "nightly" ]; then
-   OSRF_REPOS_TO_USE="stable nightly"
+   OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE:-stable nightly}"
    NIGHTLY_MODE=true
+   # SOURCE_TARBALL_URI is reused in nightly mode to indicate the branch
+   # to built nightly packages from
+   NIGHTLY_SRC_BRANCH=${SOURCE_TARBALL_URI}
 fi
 
 # Option to use $WORKSPACE/repo as container (git or hg) for the nightly source
@@ -37,7 +40,7 @@ if ${NIGHTLY_MODE}; then
   if ${USE_REPO_DIRECTORY_FOR_NIGHTLY}; then
     mv ${WORKSPACE}/repo \$REAL_PACKAGE_NAME
   else
-    hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r default
+    hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r ${NIGHTLY_SRC_BRANCH}
   fi
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME
   cd \$REAL_PACKAGE_NAME
@@ -126,7 +129,7 @@ cd \${PACKAGE_RELEASE_DIR}
 # [nightly] Adjust version in nightly mode
 if $NIGHTLY_MODE; then
   NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+\${TIMESTAMP}r\${REV}-${RELEASE_VERSION}~${DISTRO}
-  debchange --package ${PACKAGE} \\
+  debchange --package ${PACKAGE_ALIAS} \\
               --newversion \${NIGHTLY_VERSION_SUFFIX} \\
               --distribution ${DISTRO} \\
               --force-distribution \\
@@ -149,6 +152,7 @@ cp -a --dereference \${PACKAGE_RELEASE_DIR}/* .
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
+apt-get update
 mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
 echo '# END SECTION'
 
@@ -166,6 +170,14 @@ fi
 apt-get install -y gcc-4.8 g++-4.8
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+g++ --version
+echo '# END SECTION'
+fi
+
+if $NEED_C17_COMPILER; then
+echo '# BEGIN SECTION: install C++17 compiler'
+apt-get install -y gcc-8 g++-8
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 g++ --version
 echo '# END SECTION'
 fi

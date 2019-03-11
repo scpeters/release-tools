@@ -1,7 +1,7 @@
 import _configs_.*
 import javaposse.jobdsl.dsl.Job
 
-def gazebo_supported_branches = [ 'gazebo7', 'gazebo8', 'gazebo9' ]
+def gazebo_supported_branches = [ 'gazebo7', 'gazebo9', 'gazebo10' ]
 def gazebo_supported_build_types = [ 'Release', 'Debug', 'Coverage' ]
 // nightly_gazebo_branch is not the branch used to get the code from but
 // the one used to generate the corresponding debbuild job.
@@ -105,8 +105,7 @@ ci_distro.each { distro ->
                  downstreamParameterized {
                    trigger("${abi_job_name}") {
                      parameters {
-                       predefinedProp("ORIGIN_BRANCH", '$DEST_BRANCH')
-                       predefinedProp("TARGET_BRANCH", '$SRC_BRANCH')
+                       currentBuild()
                      }
                    }
                  }
@@ -510,6 +509,7 @@ all_debbuild_branches.each { branch ->
         shell("""\
               #!/bin/bash -xe
 
+              export ENABLE_ROS=false
               /bin/bash -x ./scripts/jenkins-scripts/docker/multidistribution-debbuild.bash
               """.stripIndent())
       }

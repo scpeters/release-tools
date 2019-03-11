@@ -11,6 +11,32 @@ if [ -z ${ROS_DISTRO} ]; then
 fi
 
 [[ -z ${USE_GZ_VERSION_ROSDEP} ]] && USE_GZ_VERSION_ROSDEP=false
+[[ -z ${USE_CATKIN_MAKE} ]] && USE_CATKIN_MAKE=false # use catkin tools by default
+[[ -z ${USE_COLCON} ]] && USE_COLCON=false
+
+if ${USE_COLCON}; then
+  export CMD_CATKIN_CONFIG=""
+  export CMD_CATKIN_LIST="colcon list -g"
+  export CMD_CATKIN_BUILD="colcon build --parallel-workers ${MAKE_JOBS} --symlink-install --event-handler console_direct+ ${CATKIN_EXTRA_ARGS}"
+  export CMD_CATKIN_TEST="colcon test --parallel-workers 1 --event-handler console_direct+ || true"
+  export CMD_CATKIN_TEST_RESULTS="colcon test-result --verbose || true"
+  export IGNORE_FILE="COLCON_IGNORE"
+elif ${USE_CATKIN_MAKE}; then
+  export CMD_CATKIN_CONFIG=""
+  export CMD_CATKIN_LIST=""
+  export CMD_CATKIN_BUILD="catkin_make -j${MAKE_JOBS} && catkin_make install"
+  export CMD_CATKIN_TEST="catkin_make run_tests -j1 || true"
+  export CMD_CATKIN_TEST_RESULTS="catkin_test_results || true"
+  export IGNORE_FILE="CATKIN_IGNORE"
+else
+  # catkin tools
+  export CMD_CATKIN_CONFIG="catkin config --init --mkdirs"
+  export CMD_CATKIN_LIST=""
+  export CMD_CATKIN_BUILD="catkin build -j${MAKE_JOBS} --verbose --summary ${CATKIN_EXTRA_ARGS}"
+  export CMD_CATKIN_TEST="catkin run_tests -j1 || true"
+  export CMD_CATKIN_TEST_RESULTS="catkin_test_results --all --verbose || true"
+  export IGNORE_FILE="CATKIN_IGNORE"
+fi
 
 export CATKIN_WS="${WORKSPACE}/ws"
 
@@ -54,9 +80,9 @@ echo '# BEGIN SECTION: create the catkin workspace'
 rm -fr ${CATKIN_WS}
 mkdir -p ${CATKIN_WS}/src
 cd ${CATKIN_WS}
-catkin config --init --mkdirs
+${CMD_CATKIN_CONFIG}
 ln -s "${WORKSPACE}/${SOFTWARE_DIR}" "${CATKIN_WS}/src/${SOFTWARE_DIR}"
-catkin list
+${CMD_CATKIN_LIST}
 echo '# END SECTION'
 DELIM_CONFIG
 
@@ -72,21 +98,31 @@ cat >> build.sh << DELIM_COMPILATION
 echo '# END SECTION'
 
 echo '# BEGIN SECTION install the system dependencies'
-catkin list
+${CMD_CATKIN_LIST}
 rosdep install --from-paths . \
+               -r             \
                --ignore-src   \
                --rosdistro=${ROS_DISTRO} \
                --default-yes \
                --as-root apt:false
+# Package installation could bring some local_setup.sh files with it
+# need to source it again after installation
+SHELL=/bin/sh . /opt/ros/${ROS_DISTRO}/setup.sh
 echo '# END SECTION'
 
 echo '# BEGIN SECTION compile the catkin workspace'
-catkin build -j${MAKE_JOBS} --verbose --summary ${CATKIN_EXTRA_ARGS}
+${CMD_CATKIN_BUILD}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: running tests'
-catkin run_tests -j1 || true
-catkin_test_results --all --verbose || true
+# some tests needs to source install before running
+source install/setup.bash || true
+# need to ignore build and install directories per
+# https://github.com/ament/ament_lint/issues/48#issuecomment-320129800
+[[ -d install/ ]] && touch install/${IGNORE_FILE}
+[[ -d build/ ]] && touch build/${IGNORE_FILE}
+${CMD_CATKIN_TEST}
+${CMD_CATKIN_TEST_RESULTS}
 
 # link test results to usual place
 mkdir -p ${WORKSPACE}/build/test_results
@@ -99,7 +135,7 @@ done
 echo '# END SECTION'
 
 if [ `expr length "${ROS_SETUP_POSTINSTALL_HOOK} "` -gt 1 ]; then
-echo '# BEGIN SECTION: running pre TEST hook'
+echo '# BEGIN SECTION: running post install hook'
 ${ROS_SETUP_POSTINSTALL_HOOK}
 echo '# END SECTION'
 fi

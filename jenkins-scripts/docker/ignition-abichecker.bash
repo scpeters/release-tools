@@ -24,6 +24,7 @@ fi
 IGN_NAME_PREFIX=$(\
   echo ${ABI_JOB_SOFTWARE_NAME} | tr '[:lower:]-' '[:upper:]_')
 ABI_JOB_PKG_DEPENDENCIES_VAR_NAME=${IGN_NAME_PREFIX}_DEPENDENCIES
+DART_FROM_PKGS_VAR_NAME=${IGN_NAME_PREFIX}_DART_FROM_PKGS
 
 # Identify IGN_MSGS_MAJOR_VERSION to help with dependency resolution
 export ${IGN_NAME_PREFIX}_MAJOR_VERSION=$(\
@@ -31,11 +32,5 @@ export ${IGN_NAME_PREFIX}_MAJOR_VERSION=$(\
   ${WORKSPACE}/${ABI_JOB_SOFTWARE_NAME}/CMakeLists.txt)
 
 export ABI_JOB_REPOS="stable"
-
-# To get ign-cmake1 package in prerelease
-if [[ $(date +%Y%m%d) -le 20180831 ]]; then
-  ## need prerelease repo to get ignition-cmake1 for ign-rendering
-  export ABI_JOB_REPOS="${ABI_JOB_REPOS} prerelease"
-fi
 
 . ${SCRIPT_DIR}/lib/generic-abi-base.bash

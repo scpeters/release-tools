@@ -16,24 +16,21 @@ JOB_NAME_PATTERN = '%s-debbuilder'
 JOB_NAME_UPSTREAM_PATTERN = 'upstream-%s-debbuilder'
 GENERIC_BREW_PULLREQUEST_JOB='generic-release-homebrew_pull_request_updater'
 UPLOAD_DEST_PATTERN = 's3://osrf-distributions/%s/releases/'
-DOWNLOAD_URI_PATTERN = 'http://gazebosim.org/distributions/%s/releases/'
+DOWNLOAD_URI_PATTERN = 'https://osrf-distributions.s3.amazonaws.com/%s/releases/'
 
-UBUNTU_ARCHS = ['amd64', 'i386']
+LINUX_DISTROS = [ 'ubuntu', 'debian' ]
+SUPPORTED_ARCHS = ['amd64', 'i386', 'armhf', 'arm64']
+
 # Ubuntu distributions are automatically taken from the top directory of
 # the release repositories, when needed.
 UBUNTU_DISTROS = []
-# UBUNTU_DISTROS_EXTRA will be added to the discovered list of distros
-# use it if you need manual intervention
-UBUNTU_DISTROS_EXTRA = []
-
-ROS_DISTROS_IN_PRECISE = [ 'hydro' ]
-ROS_DISTROS_IN_TRUSTY = [ 'indigo' ];
 
 OSRF_REPOS_SUPPORTED="stable prerelease nightly mentor2 haptix-pre"
 OSRF_REPOS_SELF_CONTAINED="mentor2"
 
 DRY_RUN = False
 NIGHTLY = False
+PRERELEASE = False
 UPSTREAM = False
 NO_SRC_FILE = False
 DRCSIM_MULTIROS = False
@@ -72,6 +69,7 @@ def generate_package_source(srcdir, builddir):
 def parse_args(argv):
     global DRY_RUN
     global NIGHTLY
+    global PRERELEASE
     global UPSTREAM
     global NO_SRC_FILE
     global DRCSIM_MULTIROS
@@ -104,7 +102,10 @@ def parse_args(argv):
                         help='use ignition robotics URL repositories instead of OSRF')
     parser.add_argument('--upload-to-repo', dest='upload_to_repository', default="stable",
                         help='OSRF repo to upload: stable | prerelease | nightly')
-
+    parser.add_argument('--extra-osrf-repo', dest='extra_repo', default="",
+                        help='extra OSRF repository to use in the build')
+    parser.add_argument('--nightly-src-branch', dest='nightly_branch', default="default",
+                        help='branch in the source code repository to build the nightly from')
 
     args = parser.parse_args()
     if not args.package_alias:
@@ -115,10 +116,11 @@ def parse_args(argv):
     DRCSIM_MULTIROS = args.drcsim_multiros
     IGN_REPO = args.ignition_repo
     UPLOAD_REPO = args.upload_to_repository
-    # Check for nightly releases
-    NIGHTLY = False
     if args.upload_to_repository == 'nightly':
         NIGHTLY = True
+        NIGHTLY_BRANCH = args.nightly_branch
+    if args.upload_to_repository == 'prerelease':
+        PRERELEASE = True
     # Upstream and nightly do not generate a tar.bz2 file
     if args.upstream or NIGHTLY:
         NO_SRC_FILE = True
@@ -270,9 +272,7 @@ def sanity_checks(args, repo_dir):
 
     shutil.rmtree(repo_dir)
 
-def discover_distros(args, repo_dir):
-    global UBUNTU_DISTROS
-
+def discover_ubuntu_distros(args, repo_dir):
     subdirs =  os.walk(repo_dir).next()[1]
     subdirs.remove('.hg')
     # remove ubuntu (common stuff) and debian (new supported distro at top level)
@@ -286,7 +286,21 @@ def discover_distros(args, repo_dir):
 
     print('Releasing for distributions: ' + ', '.join(subdirs))
 
-    UBUNTU_DISTROS = subdirs
+    return subdirs
+
+def discover_debian_distros(args, repo_dir):
+    if not os.path.isdir(repo_dir + '/debian/'):
+      return None
+
+    subdirs =  os.walk(repo_dir+ '/debian/').next()[1]
+
+    if not subdirs:
+        error('Can not find debian distributions directories in the -release repo')
+
+    print('Releasing for distributions: ' + ', '.join(subdirs))
+
+    return subdirs
+
 
 def check_call(cmd, ignore_dry_run = False):
     if ignore_dry_run:
@@ -305,6 +319,25 @@ def check_call(cmd, ignore_dry_run = False):
             print('stderr: %s'%(err))
             raise Exception('subprocess call failed')
         return out, err
+
+# Returns: sha, tarball file name, tarball full path
+def create_tarball_path(tarball_name, version, builddir, dry_run):
+    tarball_fname = '%s-%s.tar.bz2'%(tarball_name, version)
+    # Try using the tarball_name as it is
+    tarball_path = os.path.join(builddir, tarball_fname)
+
+    if not os.path.isfile(tarball_path):
+        # Try looking for special project names using underscores
+        alt_tarball_name = "_".join(tarball_name.rsplit("-",1))
+        alt_tarball_fname = '%s-%s.tar.bz2'%(alt_tarball_name, version)
+        alt_tarball_path = os.path.join(builddir, alt_tarball_fname)
+        if (not dry_run):
+            if not os.path.isfile(alt_tarball_path):
+                error("Can not find a tarball at: " + tarball_path + " or at " + alt_tarball_path)
+        tarball_path = alt_tarball_path
+
+    shasum_out_err = check_call(['shasum', '--algorithm', '256', tarball_path])
+    return shasum_out_err[0].split(' ')[0], tarball_fname, tarball_path
 
 def generate_upload_tarball(args):
     ###################################################
@@ -336,7 +369,7 @@ def generate_upload_tarball(args):
     generate_package_source(srcdir, builddir)
 
     # Upload tarball. Do not include versions in tarballs
-    tarball_name = re.sub(r'[0-9]$','', args.package)
+    tarball_name = re.sub(r'[0-9]+$','', args.package)
 
     # Trick to make mentor job project to get proper URLs
     if args.package == "mentor2":
@@ -344,21 +377,15 @@ def generate_upload_tarball(args):
 
     # For ignition, we use the alias without version numbers as package name
     if IGN_REPO:
-        tarball_name = re.sub(r'[0-9]$','', args.package_alias)
+        tarball_name = re.sub(r'[0-9]+$','', args.package_alias)
 
-    # TODO: we're assuming a particular naming scheme and a particular compression tool
-    tarball_fname = '%s-%s.tar.bz2'%(tarball_name, args.version)
-    tarball_path = os.path.join(builddir, tarball_fname)
-    shasum_out_err = check_call(['shasum', '--algorithm', '256', tarball_path])
-    tarball_sha = shasum_out_err[0].split(' ')[0]
+    tarball_sha, tarball_fname, tarball_path = create_tarball_path(tarball_name, args.version, builddir, args.dry_run)
+
     # If we're releasing under a different name, then rename the tarball (the
     # package itself doesn't know anything about this).
     if args.package != args.package_alias:
         tarball_fname = '%s-%s.tar.bz2'%(args.package_alias, args.version)
         if (not args.dry_run):
-            if not os.path.isfile(tarball_path):
-                error("Failed to found the tarball: " + tarball_path +
-                      ". Please check that you don't have an underscore in the project() statement of the CMakeList.txt. In that case, change it by a dash")
             dest_file = os.path.join(builddir, tarball_fname)
             # Do not copy if files are the same
             if not (tarball_path == dest_file):
@@ -409,7 +436,8 @@ def go(argv):
     if not UPSTREAM:
         repo_dir = download_release_repository(args.package, args.release_repo_branch)
         # The supported distros are the ones in the top level of -release repo
-        discover_distros(args, repo_dir)
+        ubuntu_distros = discover_ubuntu_distros(args, repo_dir)
+        debian_distros = discover_debian_distros(args, repo_dir)
         if not args.no_sanity_checks:
             sanity_checks(args, repo_dir)
 
@@ -433,24 +461,22 @@ def go(argv):
     params['UPLOAD_TO_REPO'] = args.upload_to_repository
     # Assume that we want stable + own repo in the building
     params['OSRF_REPOS_TO_USE'] = "stable " + args.upload_to_repository
+    if args.extra_repo:
+        params['OSRF_REPOS_TO_USE'] += " " + args.extra_repo
 
     if args.upload_to_repository in OSRF_REPOS_SELF_CONTAINED:
         params['OSRF_REPOS_TO_USE'] = args.upload_to_repository
 
     if NIGHTLY:
         params['VERSION'] = 'nightly'
-        params['SOURCE_TARBALL_URI'] = ''
+        # reuse SOURCE_TARBALL_URI to indicate the nightly branch
+        # name must be modified in the future
+        params['SOURCE_TARBALL_URI'] = args.nightly_branch
 
     if UPSTREAM:
         job_name = JOB_NAME_UPSTREAM_PATTERN%(args.package)
     else:
         job_name = JOB_NAME_PATTERN%(args.package)
-
-    # Enable new armhf jobs in sdformat2 and gazebo5
-    if (args.package == 'sdformat2' or args.package == 'gazebo5'):
-        # No prereleases
-        if (not args.release_repo_branch == 'prerelease'):
-            UBUNTU_ARCHS.append('armhf')
 
     params_query = urllib.urlencode(params)
 
@@ -458,61 +484,52 @@ def go(argv):
     brew_url = '%s/job/%s/buildWithParameters?%s'%(JENKINS_URL,
                                                    GENERIC_BREW_PULLREQUEST_JOB,
                                                    params_query)
-    print('- Brew: %s'%(brew_url))
     if not DRY_RUN and not NIGHTLY:
+        print('- Brew: %s'%(brew_url))
         urllib.urlopen(brew_url)
 
     # RELEASING FOR LINUX
-    distros = UBUNTU_DISTROS
-    if UBUNTU_DISTROS_EXTRA:
-        distros.extend(UBUNTU_DISTROS_EXTRA)
-
-    for d in distros:
-        for a in UBUNTU_ARCHS:
-            if (NIGHTLY and a == 'i386'):
-                # only keep i386 for sdformat in nightly,
-                # just to test CI infrastructure
-                if (not args.package[:-1] == 'sdformat'):
-                    continue
-
-            # no wily for i386 in docker
-            if (d == 'wily' and a == 'i386'):
+    for l in LINUX_DISTROS:
+        if (l == 'ubuntu'):
+            distros = ubuntu_distros
+        elif (l == 'debian'):
+            if (PRERELEASE or NIGHTLY):
                 continue
+            distros = debian_distros
+        else:
+            error("Distro not supported in code")
 
-            if (a == 'armhf'):
-                # Only release armhf in trusty for now
-                if (d != 'trusty'):
+        for d in distros:
+            for a in SUPPORTED_ARCHS:
+                # Filter prerelease and nightly architectures
+                if (PRERELEASE or NIGHTLY):
+                    if (a == 'armhf' or a == 'arm64'):
+                        continue
+
+                linux_platform_params = params.copy()
+                linux_platform_params['ARCH'] = a
+                linux_platform_params['LINUX_DISTRO'] = l
+                linux_platform_params['DISTRO'] = d
+
+                if (a == 'armhf' or a == 'arm64'):
+                    # No sid releases for arm64/armhf lack of docker image
+                    # https://hub.docker.com/r/aarch64/debian/ fails on Jenkins
+                    if (d == 'sid'):
+                        continue
+                    # Need to use JENKINS_NODE_TAG parameter for large memory nodes
+                    # since it runs qemu emulation
+                    linux_platform_params['JENKINS_NODE_TAG'] = 'large-memory'
+
+                if (NIGHTLY and a == 'i386'):
                     continue
-                # armhf runs on docker, it needs a different base_url
-                base_url = '%s/job/%s-docker/buildWithParameters?%s'%(JENKINS_URL, job_name, params_query)
-            else:
-                base_url = '%s/job/%s/buildWithParameters?%s'%(JENKINS_URL, job_name, params_query)
 
-            if not DRCSIM_MULTIROS:
-                url = '%s&ARCH=%s&DISTRO=%s'%(base_url, a, d)
+                linux_platform_params_query = urllib.urlencode(linux_platform_params)
+
+                url = '%s/job/%s/buildWithParameters?%s'%(JENKINS_URL, job_name, linux_platform_params_query)
                 print('- Linux: %s'%(url))
 
                 if not DRY_RUN:
                     urllib.urlopen(url)
-            else:
-                if (d == 'precise'):
-                    ROS_DISTROS = ROS_DISTROS_IN_PRECISE
-                elif (d == 'trusty'):
-                    ROS_DISTROS = ROS_DISTROS_IN_TRUSTY
-                else:
-                    print ("ERROR in ROS_DISTROS: unkonwn distribution")
-                    sys.exit(1)
-
-                for r in ROS_DISTROS:
-                    url = '%s&ARCH=%s&DISTRO=%s&ROS_DISTRO=%s'%(base_url, a, d, r)
-                    print('Accessing multiros: %s'%(url))
-                    if not DRY_RUN:
-                        urllib.urlopen(url)
-
-    ###################################################
-    # Fedora-specific stuff.
-    # The goal is to build rpms.
-    # TODO
 
 if __name__ == '__main__':
     go(sys.argv)

@@ -60,6 +60,14 @@ if [ -z ${ROS_DISTRO} ]; then
   ROS_DISTRO=indigo
 fi
 
+if [ -z "${ROS2}" ]; then
+  export ROS2=false
+fi
+
+if ${ROS2}; then
+  export USE_COLCON=true
+fi
+
 # Define making jobs by default if not present
 if [ -z ${MAKE_JOBS} ]; then
     MAKE_JOBS=1
@@ -78,6 +86,10 @@ fi
 # By default, do not need to use C++11 compiler
 if [ -z ${NEED_C11_COMPILER} ]; then
   NEED_C11_COMPILER=false
+fi
+
+if [ -z ${NEED_C17_COMPILER} ]; then
+  NEED_C17_COMPILER=false
 fi
 
 # By default, do not use ROS
