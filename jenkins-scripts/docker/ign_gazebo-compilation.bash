@@ -15,7 +15,7 @@ if [[ -z ${DISTRO} ]]; then
 fi
 
 export BUILDING_SOFTWARE_DIRECTORY="ign-gazebo"
-export BUILDING_JOB_REPOSITORIES="stable"
+export BUILDING_JOB_REPOSITORIES="stable nightly"
 export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_GAZEBO_DEPENDENCIES"
 
 export USE_GCC8=true
