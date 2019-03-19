@@ -146,7 +146,9 @@ ignition_collections.each { ign_collection ->
   dashboardView("DSLign-${ign_collection}")
   {
       jobs {
-          names(ignition_collection_jobs["${ign_collection}"].join(", "))
+          ignition_collection_jobs["${ign_collection}"].each { jobname ->
+            name(jobname)
+          }
       }
 
       columns {
@@ -168,7 +170,7 @@ ignition_collections.each { ign_collection ->
       }
 
       configure { view ->
-        view / columns / 'hudson.plugins.warnings.WarningsColumnplugin="warnings@5.0.1"' { }
+        view / columns << "hudson.plugins.warnings.WarningsColumn" (plugin: 'warnings@5.0.1')
 
         def topPortlets = view / NodeBuilder.newInstance().topPortlets {}
 
