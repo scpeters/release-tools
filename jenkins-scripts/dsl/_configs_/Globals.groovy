@@ -4,10 +4,11 @@ class Globals
 {
    // Notifications for email ext plugin
    static default_emails = '$DEFAULT_RECIPIENTS, scpeters@osrfoundation.org'
-   static build_cop_email = 'buildcop@osrfoundation.org'  
+   static build_cop_email = 'buildcop@osrfoundation.org'
    static extra_emails   = ''
 
    static rtools_description = true
+   static gazebodistro_branch = false
 
    static gpu_by_distro  = [ trusty : [ 'nvidia', 'intel' ],
                              xenial  : [ 'nvidia' ] ]
@@ -17,7 +18,8 @@ class Globals
                      'kinetic' : ['xenial'] ,
                      'lunar'   : ['xenial'] ,
                      'melodic' : ['bionic'] ,
-                     'bouncy'  : ['bionic']]
+                     'crystal' : ['bionic'] ,
+                     'dashing' : ['bionic']]
 
    // This should be in sync with archive_library
    static gz_version_by_rosdistro = [ 'indigo'  : ['2'] ,
@@ -25,7 +27,8 @@ class Globals
                                       'kinetic' : ['7'] ,
                                       'lunar'   : ['7'] ,
                                       'melodic' : ['9'] ,
-                                      'bouncy'  : ['9']]
+                                      'crystal' : ['9'] ,
+                                      'dashing' : ['9']]
 
    static ArrayList get_ros_distros_by_ubuntu_distro(String ubuntu_distro)
    {
@@ -106,7 +109,7 @@ class Globals
 
    static ArrayList get_ros2_suported_distros()
    {
-     return [ 'bouncy' ]
+     return [ 'crystal' ]
    }
 
    static String get_gz11_ubuntu_distro()

@@ -30,14 +30,7 @@ if ! [[ ${IGN_MATH_MAJOR_VERSION} =~ ^-?[0-9]+$ ]]; then
 fi
 
 if [[ ${IGN_MATH_MAJOR_VERSION} -ge 6 ]]; then
-  export NEEDS_GZ11_SUPPORT=true
-fi
-
-. "${SCRIPT_DIR}/lib/_gz11_hook.bash"
-
-if [[ $(date +%Y%m%d) -le 20181231 ]]; then
-  ## need prerelease repo to get ignition-cmake[12]
-  export BUILDING_JOB_REPOSITORIES="${BUILDING_JOB_REPOSITORIES} prerelease"
+  export USE_GCC8=true
 fi
 
 . "${SCRIPT_DIR}/lib/generic-building-base.bash"

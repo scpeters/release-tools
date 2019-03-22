@@ -173,7 +173,9 @@ RUN apt-get update \\
     && apt-get install -y curl \\
     && rm -rf /var/lib/apt/lists/*
 RUN echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main ${DISTRO} main" > \\
-                                                 /etc/apt/sources.list.d/ros2-latest.list 
+                                                 /etc/apt/sources.list.d/ros2-latest.list
+RUN echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/testing ${DISTRO} main" > \\
+                                                 /etc/apt/sources.list.d/ros2-testing.list
 RUN curl http://repo.ros2.org/repos.key | apt-key add -
 DELIM_ROS_REPO
   else
@@ -183,6 +185,14 @@ RUN echo "deb http://packages.ros.org/${ROS_REPO_NAME}/ubuntu ${DISTRO} main" > 
                                                 /etc/apt/sources.list.d/ros.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 DELIM_ROS_REPO
+# Need ros stable for the cases of ros-shadow-fixed or ros-shadow
+if [[ ${ROS_REPO_NAME} != "ros" ]]; then
+cat >> Dockerfile << DELIM_ROS_REPO_STABLE
+# Note that ROS uses ubuntu hardcoded in the paths of repositories
+RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
+                                         /etc/apt/sources.list.d/ros-stable.list
+DELIM_ROS_REPO_STABLE
+fi
   fi
 fi
 
@@ -255,7 +265,7 @@ RUN echo "${MONTH_YEAR_STR} invalidate" \
 # it will make to run apt-get update again
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))" \
  && (apt-get update || (rm -rf /var/lib/apt/lists/* && apt-get update)) \
- && apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} \
+ && apt-get dist-upgrade -y \
  && apt-get clean
 
 # Map the workspace into the container
