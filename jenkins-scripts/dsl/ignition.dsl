@@ -67,9 +67,13 @@ ignition_colcon_win         = [ 'gazebo',
                                 'rendering',
                                 'sensors' ]
 
+// packages using performance testing
+ignition_performance_sw = [ 'gazebo' ]
+
 // Main platform using for quick CI
 def ci_distro               = Globals.get_ci_distro()
 def abi_distro              = Globals.get_abi_distro()
+def performance_distro      = Globals.get_performance_distro()
 // Other supported platform to be checked but no for quick
 // CI integration.
 def other_supported_distros = Globals.get_other_supported_distros()
@@ -237,6 +241,45 @@ ignition_software.each { ign_sw ->
                 export ARCH=${arch}
                 export ABI_JOB_SOFTWARE_NAME=${checkout_subdir}
                 /bin/bash -xe ./scripts/jenkins-scripts/docker/ignition-abichecker.bash
+                """.stripIndent())
+        } // end of steps
+      }  // end of with
+    } // end of arch
+  } // end of distro
+} // end of ignition
+
+// Performance job
+ignition_performance_sw.each { ign_sw ->
+  performance_distro.each { distro ->
+    supported_arches.each { arch ->
+      abi_job_names[ign_sw] = "ignition_${ign_sw}-performance-any_to_any-ubuntu_auto-${arch}"
+      def abi_job = job(abi_job_names[ign_sw])
+      checkout_subdir = "ign-${ign_sw}"
+
+      OSRFLinuxABI.create(abi_job)
+      OSRFBitbucketHg.create(abi_job,
+                            "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/",
+                            '${DEST_BRANCH}', checkout_subdir)
+      abi_job.with
+      {
+        steps {
+          shell("""\
+                #!/bin/bash -xe
+                wget https://raw.githubusercontent.com/osrf/bash-yaml/master/yaml.sh -O yaml.sh
+                source yaml.sh
+
+                create_variables \${WORKSPACE}/${checkout_subdir}/bitbucket-pipelines.yml
+
+                export DISTRO=${distro}
+
+                if [[ -n \${image} ]]; then
+                  echo "Bitbucket pipeline.yml detected. Default DISTRO is ${distro}"
+                  export DISTRO=\$(echo \${image} | sed  's/ubuntu://')
+                fi
+
+                export ARCH=${arch}
+                export ABI_JOB_SOFTWARE_NAME=${checkout_subdir}
+                /bin/bash -xe ./scripts/jenkins-scripts/docker/ignition-performance.bash
                 """.stripIndent())
         } // end of steps
       }  // end of with

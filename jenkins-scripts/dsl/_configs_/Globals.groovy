@@ -72,6 +72,11 @@ class Globals
      return [ 'xenial' ]
    }
 
+   static ArrayList get_performance_distro()
+   {
+     return [ 'bionic' ]
+   }
+
    static ArrayList get_ci_gpu()
    {
      return [ 'nvidia' ]
