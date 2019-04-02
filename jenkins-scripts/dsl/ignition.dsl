@@ -252,15 +252,14 @@ ignition_software.each { ign_sw ->
 ignition_performance_sw.each { ign_sw ->
   performance_distro.each { distro ->
     supported_arches.each { arch ->
-      abi_job_names[ign_sw] = "ignition_${ign_sw}-performance-any_to_any-ubuntu_auto-${arch}"
-      def abi_job = job(abi_job_names[ign_sw])
+      def perf_job = job("ignition_${ign_sw}-performance-any_to_any-ubuntu_auto-${arch}")
       checkout_subdir = "ign-${ign_sw}"
 
-      OSRFLinuxABI.create(abi_job)
-      OSRFBitbucketHg.create(abi_job,
+      OSRFLinuxABI.create(perf_job)
+      OSRFBitbucketHg.create(perf_job,
                             "https://bitbucket.org/ignitionrobotics/ign-${ign_sw}/",
                             '${DEST_BRANCH}', checkout_subdir)
-      abi_job.with
+      perf_job.with
       {
         steps {
           shell("""\
