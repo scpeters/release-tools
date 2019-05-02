@@ -16,6 +16,10 @@ if ${DART_COMPILE_FROM_SOURCE}; then
     DART_FROM_PKGS=false
 fi
 
+if [ -z ${USE_CLANG} ]; then
+  USE_CLANG=false
+fi
+
 # mesa-utils for dri checks, xsltproc for qtest->junit conversion and
 # python-psutil for memory testing
 # netcat-openbsd (nc command) for squid-deb-proxy checking
@@ -35,6 +39,10 @@ BASE_DEPENDENCIES="build-essential \\
                    gnupg2          \\
                    net-tools       \\
                    locales"
+
+if ${USE_CLANG}; then
+  BASE_DEPENDENCIES="${BASE_DEPENDENCIES} clang"
+fi
 
 BREW_BASE_DEPENDCIES="mercurial git cmake"
 

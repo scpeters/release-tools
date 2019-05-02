@@ -363,6 +363,13 @@ echo '# END SECTION'
 BUILDSH_CCACHE
 fi
 
+if $USE_CLANG; then
+cat >> build.sh << BUILDSH_USE_CLANG
+RUN update-alternatives --set c++ /usr/bin/clang++
+RUN update-alternatives --set cc /usr/bin/clang
+BUILDSH_USE_CLANG
+fi
+
 echo '# BEGIN SECTION: see build.sh script'
 cat build.sh
 echo '# END SECTION'
