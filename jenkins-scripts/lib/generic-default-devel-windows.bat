@@ -45,7 +45,6 @@ echo # BEGIN SECTION: configure the MSVC compiler
 call %win_lib% :configure_msvc2017_compiler
 echo # END SECTION
 
-
 :: Set the PATH variable so that dependencies installed inside this workspace
 :: are visible to the build system and the run time.
 :: NOTE: This should be called after %win_lib% :configure_msvc####_compiler so
@@ -74,7 +73,7 @@ echo # END SECTION
 
 if exist .\configure.bat (
   echo # BEGIN SECTION: Configuring %VCS_DIRECTORY% using its configure.bat script
-  call .\configure.bat || goto :error
+  call .\configure.bat "%BUILD_TYPE%" || goto :error
 ) else (
   echo # BEGIN SECTION: Configuring %VCS_DIRECTORY% using cmake
   md build

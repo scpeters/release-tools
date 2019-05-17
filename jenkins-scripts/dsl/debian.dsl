@@ -12,8 +12,9 @@ packages['science-team'] = ['console-bridge',
                             'ignition-math2',
                             'ignition-math4',
                             'ignition-msgs',
+                            'ignition-tools',
                             'ignition-transport', // version 4
-                            'kido',
+                            'dart',
                             'libccd',
                             'octomap',
                             'sdformat', // version 6
@@ -136,3 +137,41 @@ packages.each { repo_name, pkgs ->
     }
   }
 }
+
+// ratt package to help during transition
+def ratt_pkg_job = job("debian-ratt-builder")
+OSRFLinuxBase.create(ratt_pkg_job)
+ratt_pkg_job.with
+{
+  // use only the most powerful nodes
+  label "large-memory"
+
+  parameters
+  {
+     stringParam('DEB_PACKAGE','master',
+                 'package to run ratt against (check lib transition)')
+  }
+
+  logRotator {
+    artifactNumToKeep(10)
+  }
+
+  concurrentBuild(true)
+
+  throttleConcurrentBuilds {
+    maxPerNode(1)
+    maxTotal(5)
+  }
+
+  steps {
+    shell("""\
+          #!/bin/bash -xe
+
+          /bin/bash -xe ./scripts/jenkins-scripts/docker/debian-ratt-builder.bash
+          """.stripIndent())
+  }
+}
+
+
+
+

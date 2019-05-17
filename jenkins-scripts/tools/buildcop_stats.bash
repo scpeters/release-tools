@@ -1,10 +1,11 @@
 #!/bin/bash
-curl https://build.osrfoundation.org/view/main/view/BuildCopFail/api/json 2>/dev/null | python -c '\
-import json, sys;
-jobs = json.loads(sys.stdin.read())["jobs"];
-print("| Type | Count | Percent | Change |")
-print("|--|--|--|--|")
-print("| total | %d | |  |" % len(jobs));
-for c in ["blue", "yellow", "red", "aborted"]:
-    jc = [j for j in jobs if j["color"].startswith(c)]
-    print("| %s | %d/%d | %.1f%% |  |" % (c, len(jc), len(jobs), 100*float(len(jc)) / len(jobs)))'
+
+views='ign-blueprint ign-acropolis'
+
+echo "# Build Cop Report $(date +%Y-%m-%d)"
+echo "## Aggregate Results as of $(date '+%Y-%m-%d %H:%M:%S')"
+
+for v in ${views}; do
+  curl https://build.osrfoundation.org/view/"${v}"/api/json 2>/dev/null \
+    | VIEW=${v} python3 parse_buildcop_stats.py
+done

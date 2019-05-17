@@ -9,6 +9,7 @@
 # - USE_ROS_REPO      : [default false] true|false if add the packages.ros.org to the sources.list
 # - DEPENDENCY_PKGS   : (optional) packages to be installed in the image
 # - SOFTWARE_DIR      : (optional) directory to copy inside the image
+# - DOCKER_DO_NOT_CACHE : (optional) do not cache docker intermediate images
 # - DOCKER_PREINSTALL_HOOK : (optional) bash code to run before installing  DEPENDENCY_PKGS.
 #                       It can be used for installing extra repositories needed for DEPENDENCY_PKGS
 # - DOCKER_POSTINSTALL_HOOK : (optional) bash code to run after installing  DEPENDENCY_PKGS.
@@ -25,6 +26,8 @@ if [[ -z ${LINUX_DISTRO} ]]; then
   echo "Linux distro undefined, default to ubuntu"
   export LINUX_DISTRO="ubuntu"
 fi
+
+[[ -z ${USE_GCC8} ]] && USE_GCC8=false
 
 case ${LINUX_DISTRO} in
   'ubuntu')
@@ -50,7 +53,8 @@ case ${ARCH} in
      if [[ ${LINUX_DISTRO} == 'ubuntu' ]]; then
        FROM_VALUE=osrf/${LINUX_DISTRO}_${ARCH}:${DISTRO}
      else
-       FROM_VALUE=${LINUX_DISTRO}:${DISTRO}
+       # debian i386
+       FROM_VALUE=${ARCH}/${LINUX_DISTRO}:${DISTRO}
      fi
      ;;
    'armhf' | 'arm64' )
@@ -64,6 +68,8 @@ esac
 [[ -z ${USE_OSRF_REPO} ]] && USE_OSRF_REPO=false
 [[ -z ${OSRF_REPOS_TO_USE} ]] && OSRF_REPOS_TO_USE=""
 [[ -z ${USE_ROS_REPO} ]] && USE_ROS_REPO=false
+# Default ros-shadow-fixed to internal test it and get quick fixes
+[[ -z ${ROS_REPO_NAME} ]] && ROS_REPO_NAME="ros-shadow-fixed"
 
 # depracted variable, do migration here
 if [[ -z ${OSRF_REPOS_TO_USE} ]]; then
@@ -144,7 +150,7 @@ DELIM_DOCKER_PAM_BUG
 fi
 
 # dirmngr from Yaketty on needed by apt-key
-if [[ $DISTRO != 'trusty' ]] || [[ $DISTRO != 'xenial' ]]; then
+if [[ $DISTRO != 'xenial' ]]; then
 cat >> Dockerfile << DELIM_DOCKER_DIRMNGR
 RUN apt-get update && \\
     apt-get install -y dirmngr
@@ -160,12 +166,44 @@ DELIM_OSRF_REPO
 done
 
 if ${USE_ROS_REPO}; then
+  if ${ROS2}; then
 cat >> Dockerfile << DELIM_ROS_REPO
 # Note that ROS uses ubuntu hardcoded in the paths of repositories
-RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
+RUN apt-get update \\
+    && apt-get install -y curl \\
+    && rm -rf /var/lib/apt/lists/*
+RUN echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main ${DISTRO} main" > \\
+                                                 /etc/apt/sources.list.d/ros2-latest.list
+RUN echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/testing ${DISTRO} main" > \\
+                                                 /etc/apt/sources.list.d/ros2-testing.list
+RUN curl http://repo.ros2.org/repos.key | apt-key add -
+DELIM_ROS_REPO
+  else
+cat >> Dockerfile << DELIM_ROS_REPO
+# Note that ROS uses ubuntu hardcoded in the paths of repositories
+RUN echo "deb http://packages.ros.org/${ROS_REPO_NAME}/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 DELIM_ROS_REPO
+# Need ros stable for the cases of ros-shadow-fixed or ros-shadow
+if [[ ${ROS_REPO_NAME} != "ros" ]]; then
+cat >> Dockerfile << DELIM_ROS_REPO_STABLE
+# Note that ROS uses ubuntu hardcoded in the paths of repositories
+RUN echo "deb http://packages.ros.org/ros/ubuntu ${DISTRO} main" > \\
+                                         /etc/apt/sources.list.d/ros-stable.list
+DELIM_ROS_REPO_STABLE
+fi
+  fi
+fi
+
+if [[ $ARCH == 'arm64' ]]; then
+cat >> Dockerfile << DELIM_SYSCAL_ARM64
+# Workaround for problem with syscall 277 in man-db
+ENV MAN_DISABLE_SECCOMP 1
+RUN apt-get update \\
+    && apt-get install -y man-db \\
+    && rm -rf /var/lib/apt/lists/*
+DELIM_SYSCAL_ARM64
 fi
 
 if [ `expr length "${DOCKER_PREINSTALL_HOOK}"` -gt 1 ]; then
@@ -183,12 +221,16 @@ RUN apt-get update \\
  && rm -rf /var/lib/apt/lists/*
 RUN apt-add-repository -y ppa:dartsim
 DELIM_DOCKER_DART_PKGS
-  if [[ "${DISTRO}" == "trusty" ]]; then
-cat >> Dockerfile << DELIM_DOCKER_DART_PKGS
-RUN apt-add-repository -y ppa:libccd-debs
-RUN apt-add-repository -y ppa:fcl-debs
-DELIM_DOCKER_DART_PKGS
-  fi
+fi
+
+# Workaround a problem in simbody on artful bad paths
+if [[ $DISTRO == "artful" ]]; then
+cat >> Dockerfile << DELIM_DOCKER_WORKAROUND_SIMBODY
+RUN apt-get update \\
+ && apt-get install -y apt-utils software-properties-common \\
+ && rm -rf /var/lib/apt/lists/*
+RUN add-apt-repository ppa:j-rivero/simbody-artful
+DELIM_DOCKER_WORKAROUND_SIMBODY
 fi
 
 # Packages that will be installed and cached by docker. In a non-cache
@@ -217,12 +259,23 @@ RUN echo "${MONTH_YEAR_STR}" \
 # it will make to run apt-get update again
 RUN echo "Invalidating cache $(( ( RANDOM % 100000 )  + 1 ))" \
  && (apt-get update || (rm -rf /var/lib/apt/lists/* && apt-get update)) \
- && apt-get install -y ${PACKAGES_CACHE_AND_CHECK_UPDATES} \
+ && apt-get dist-upgrade -y \
  && apt-get clean
 
 # Map the workspace into the container
 RUN mkdir -p ${WORKSPACE}
 DELIM_DOCKER3
+
+# Beware of moving this code since it needs to run update-alternative after
+# installing the default compiler in PACKAGES_CACHE_AND_CHECK_UPDATES
+if ${USE_GCC8}; then
+cat >> Dockerfile << DELIM_GCC8
+   RUN apt-get update \\
+   && apt-get install -y g++-8 \\
+   && rm -rf /var/lib/apt/lists/* \\
+   && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
+DELIM_GCC8
+fi
 
 cat >> Dockerfile << DELIM_DOCKER_SQUID
 # If host is running squid-deb-proxy on port 8000, populate /etc/apt/apt.conf.d/30proxy
@@ -245,8 +298,8 @@ if $USE_GPU_DOCKER; then
  # NVIDIA is using nvidia_docker integration
 cat >> Dockerfile << DELIM_NVIDIA_GPU
 LABEL com.nvidia.volumes.needed="nvidia_driver"
-ENV PATH /usr/local/nvidia/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}
+ENV PATH /usr/local/nvidia/bin:\${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:\${LD_LIBRARY_PATH}
 DELIM_NVIDIA_GPU
   else
   # No NVIDIA cards needs to have the same X stack than the host

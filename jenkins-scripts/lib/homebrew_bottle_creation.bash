@@ -28,6 +28,7 @@ brew tap homebrew/test-bot
 git -C $(brew --repo)/Library/Taps/homebrew/homebrew-test-bot \
     pull ${TEST_BOT_REPO} ${TEST_BOT_BRANCH}
 brew test-bot --tap=osrf/simulation \
+              --root-url=https://osrf-distributions.s3.amazonaws.com/bottles-simulation \
               --ci-pr ${PULL_REQUEST_URL} \
               --verbose --debug \
             || { brew install hg; exit -1; }
@@ -36,10 +37,19 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: export bottle'
 if [[ $(find . -name '*.bottle.*' | wc -l | sed 's/^ *//') -lt 2 ]]; then
-  echo "Can not find at least two bottle files. Something went wrong."
-  exit -1
+  echo "Can not find at least two bottle files."
+  exit 0
 fi
 
+# local bottle names don't match the uploaded names anymore
+# https://github.com/Homebrew/brew/pull/4612
+for j in $(ls *.bottle.json); do
+  SRC_BOTTLE=$(brew ruby -e \
+    "puts JSON.load(IO.read(\"${j}\")).values[0]['bottle']['tags'].values[0]['local_filename']")
+  DEST_BOTTLE=$(brew ruby -e \
+    "puts JSON.load(IO.read(\"${j}\")).values[0]['bottle']['tags'].values[0]['filename']")
+  mv ${SRC_BOTTLE} ${DEST_BOTTLE}
+done
 mv *.bottle*.tar.gz ${PKG_DIR}
 mv *.bottle.json ${PKG_DIR}
 
