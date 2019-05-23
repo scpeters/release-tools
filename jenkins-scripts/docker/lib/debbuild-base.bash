@@ -229,7 +229,9 @@ DEPENDENCY_PKGS="devscripts \
 		 equivs \
 		 dh-make \
 		 mercurial \
-		 git"
+		 git \
+		 gcc \
+		 g++"
 
 . ${SCRIPT_DIR}/lib/docker_generate_dockerfile.bash
 . ${SCRIPT_DIR}/lib/docker_run.bash
