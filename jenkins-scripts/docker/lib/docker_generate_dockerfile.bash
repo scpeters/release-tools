@@ -181,6 +181,9 @@ DELIM_ROS_REPO
   else
 cat >> Dockerfile << DELIM_ROS_REPO
 # Note that ROS uses ubuntu hardcoded in the paths of repositories
+RUN apt-get update \\
+    && apt-get install -y curl \\
+    && rm -rf /var/lib/apt/lists/*
 RUN echo "deb http://packages.ros.org/${ROS_REPO_NAME}/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list
 RUN curl http://repositories.ros.org/repos.key | apt-key add -
