@@ -183,7 +183,7 @@ cat >> Dockerfile << DELIM_ROS_REPO
 # Note that ROS uses ubuntu hardcoded in the paths of repositories
 RUN echo "deb http://packages.ros.org/${ROS_REPO_NAME}/ubuntu ${DISTRO} main" > \\
                                                 /etc/apt/sources.list.d/ros.list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+RUN curl http://repositories.ros.org/repos.key | apt-key add -
 DELIM_ROS_REPO
 # Need ros stable for the cases of ros-shadow-fixed or ros-shadow
 if [[ ${ROS_REPO_NAME} != "ros" ]]; then
