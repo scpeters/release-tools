@@ -47,7 +47,7 @@ then
   export USE_GCC8=true
 fi
 
-export ABI_JOB_REPOS="stable"
+export ABI_JOB_REPOS="stable prerelease"
 
 # Enable prerelease repos until a certain date
 if [[ "${ABI_JOB_SOFTWARE_NAME}" = "ign-gazebo" ]] || \
