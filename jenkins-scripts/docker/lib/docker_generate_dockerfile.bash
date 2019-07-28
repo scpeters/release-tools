@@ -330,11 +330,13 @@ fi
 
 if $USE_GPU_DOCKER; then
  if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]]; then
- # NVIDIA is using nvidia_docker integration
+ # NVIDIA is using nvidia_docker2 integration
 cat >> Dockerfile << DELIM_NVIDIA_GPU
-LABEL com.nvidia.volumes.needed="nvidia_driver"
-ENV PATH /usr/local/nvidia/bin:\${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:\${LD_LIBRARY_PATH}
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES \
+    ${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES \
+    ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 DELIM_NVIDIA_GPU
   else
   # No NVIDIA cards needs to have the same X stack than the host

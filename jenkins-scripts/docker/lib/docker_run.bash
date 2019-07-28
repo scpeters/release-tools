@@ -1,7 +1,6 @@
 # TODO: run inside docker as a normal user and replace the sudo calls
 # This are usually for debbuilders
 export PACKAGE_DIR="${WORKSPACE}/pkgs"
-export docker_cmd="docker"
 
 # Do not delete packages from the scripts since some of them can be
 # run twice from the same jenkins job and generate different pkgs
@@ -41,7 +40,8 @@ if $USE_GPU_DOCKER; then
                     -v /tmp/.X11-unix:/tmp/.X11-unix:rw"
 
   if [[ $GRAPHIC_CARD_NAME == "Nvidia" ]]; then
-    export docker_cmd="nvidia-docker"
+    export EXTRA_PARAMS_STR="${EXTRA_PARAMS_STR} \
+	                     --runtime=nvidia"
   fi
 fi
 
@@ -51,7 +51,7 @@ if $ENABLE_CCACHE; then
 fi
 
 # DOCKER_FIX is for workaround https://github.com/docker/docker/issues/14203
-sudo ${docker_cmd} run $EXTRA_PARAMS_STR  \
+sudo docker run $EXTRA_PARAMS_STR  \
             -e DOCKER_FIX=''  \
             -e WORKSPACE=${WORKSPACE} \
             -e TERM=xterm-256color \
