@@ -10,23 +10,20 @@ class Globals
    static rtools_description = true
    static gazebodistro_branch = false
 
-   static gpu_by_distro  = [ trusty : [ 'nvidia', 'intel' ],
-                             xenial  : [ 'nvidia' ] ]
+   static gpu_by_distro  = [ xenial  : [ 'nvidia' ] ]
 
-   static ros_ci = [ 'indigo'  : ['trusty'] ,
-                     'jade'    : ['trusty'] ,
-                     'kinetic' : ['xenial'] ,
-                     'lunar'   : ['xenial'] ,
-                     'melodic' : ['bionic'] ,
-                     'crystal' : ['bionic']]
+   static ros_ci = [ 'kinetic'  : ['xenial'] ,
+                     'melodic'  : ['bionic'] ,
+                     'crystal'  : ['bionic'] ,
+                     'dashing'  : ['bionic'] ,
+                     'eloquent' : ['bionic']]
 
    // This should be in sync with archive_library
-   static gz_version_by_rosdistro = [ 'indigo'  : ['2'] ,
-                                      'jade'    : ['5'] ,
-                                      'kinetic' : ['7'] ,
-                                      'lunar'   : ['7'] ,
-                                      'melodic' : ['9'] ,
-                                      'crystal' : ['9']]
+   static gz_version_by_rosdistro = [ 'kinetic'  : ['7'] ,
+                                      'melodic'  : ['9'] ,
+                                      'crystal'  : ['9'] ,
+                                      'dashing'  : ['9'] ,
+                                      'eloquent' : ['9']]
 
    static ArrayList get_ros_distros_by_ubuntu_distro(String ubuntu_distro)
    {
@@ -77,7 +74,7 @@ class Globals
 
    static ArrayList get_other_supported_distros()
    {
-     return [ 'trusty', 'bionic' ]
+     return [ 'bionic' ]
    }
 
    static ArrayList get_supported_arches()
@@ -102,12 +99,12 @@ class Globals
 
    static ArrayList get_ros_suported_distros()
    {
-     return [ 'indigo', 'kinetic', 'lunar', 'melodic' ]
+     return [ 'kinetic', 'melodic' ]
    }
 
    static ArrayList get_ros2_suported_distros()
    {
-     return [ 'crystal' ]
+     return [ 'crystal', 'dashing' ]
    }
 
    static String get_gz11_ubuntu_distro()

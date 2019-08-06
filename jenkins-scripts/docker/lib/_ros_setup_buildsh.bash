@@ -69,10 +69,6 @@ while (! \$update_done); do
 done
 
 SHELL=/bin/sh . /opt/ros/${ROS_DISTRO}/setup.sh
-
-# In our nvidia machines, run the test to launch altas
-# Seems like there is no failure in runs on precise pbuilder in
-# our trusty machine. So we do not check for GRAPHIC_TESTS=true
 mkdir -p \$HOME/.gazebo
 echo '# END SECTION'
 
@@ -129,8 +125,8 @@ mkdir -p ${WORKSPACE}/build/test_results
 DIRS=\$(find . -name test_results -type d)
 for d in \$DIRS; do
   for t in \$(find \$d -name "*.xml" -type f) ; do
-     mv \$t ${WORKSPACE}/build/test_results
- done
+     mv \$t ${WORKSPACE}/build/test_results/\$(basename \$(dirname \$t))_\$(basename \$t)
+  done
 done
 echo '# END SECTION'
 

@@ -16,7 +16,7 @@ JOB_NAME_PATTERN = '%s-debbuilder'
 JOB_NAME_UPSTREAM_PATTERN = 'upstream-%s-debbuilder'
 GENERIC_BREW_PULLREQUEST_JOB='generic-release-homebrew_pull_request_updater'
 UPLOAD_DEST_PATTERN = 's3://osrf-distributions/%s/releases/'
-DOWNLOAD_URI_PATTERN = 'http://gazebosim.org/distributions/%s/releases/'
+DOWNLOAD_URI_PATTERN = 'https://osrf-distributions.s3.amazonaws.com/%s/releases/'
 
 LINUX_DISTROS = [ 'ubuntu', 'debian' ]
 SUPPORTED_ARCHS = ['amd64', 'i386', 'armhf', 'arm64']
@@ -33,10 +33,18 @@ NIGHTLY = False
 PRERELEASE = False
 UPSTREAM = False
 NO_SRC_FILE = False
-DRCSIM_MULTIROS = False
 IGN_REPO = False
 
 IGNORE_DRY_RUN = True
+
+class ErrorGitRepo(Exception):
+    pass
+
+class ErrorNoPermsRepo(Exception):
+    pass
+
+class ErrorNoUsernameSupplied(Exception):
+    pass
 
 def error(msg):
     print("\n !! " + msg + "\n")
@@ -72,7 +80,6 @@ def parse_args(argv):
     global PRERELEASE
     global UPSTREAM
     global NO_SRC_FILE
-    global DRCSIM_MULTIROS
     global IGN_REPO
 
     parser = argparse.ArgumentParser(description='Make releases.')
@@ -92,8 +99,6 @@ def parse_args(argv):
     parser.add_argument('-r', '--release-version', dest='release_version',
                         default=None,
                         help='Release version suffix; usually 1 (e.g., 1')
-    parser.add_argument('--drcsim-multiros', dest='drcsim_multiros', action='store_true', default=False,
-                        help='To be used with drcsim, osrf-common and sandia-hand. Generate ROS_DISTRO based on drcsim support (i.e: ')
     parser.add_argument('--no-sanity-checks', dest='no_sanity_checks', action='store_true', default=False,
                         help='no-sanity-checks; i.e. skip sanity checks commands')
     parser.add_argument('--no-generate-source-file', dest='no_source_file', action='store_true', default=False,
@@ -113,7 +118,6 @@ def parse_args(argv):
     DRY_RUN = args.dry_run
     UPSTREAM = args.upstream
     NO_SRC_FILE = args.no_source_file
-    DRCSIM_MULTIROS = args.drcsim_multiros
     IGN_REPO = args.ignition_repo
     UPLOAD_REPO = args.upload_to_repository
     if args.upload_to_repository == 'nightly':
@@ -230,11 +234,13 @@ def sanity_project_package_in_stable(version, repo_name):
     if repo_name != 'stable':
         return
 
-    if not '+' in version:
-        return
+    if '+' in version:
+        error("Detected stable repo upload using project versioning scheme (include '+' in the version)")
 
+    if '~pre' in version:
+        error("Detected stable repo upload using project versioning scheme (include '~pre' in the version)")
 
-    error("Detected stable repo upload using project versioning scheme (include '+' in the version)")
+    return
 
 def sanity_use_prerelease_branch(release_branch):
     if release_branch == 'prerelease':
@@ -314,6 +320,19 @@ def check_call(cmd, ignore_dry_run = False):
         po = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = po.communicate()
         if po.returncode != 0:
+            if "Permission denied" in out:
+                raise ErrorNoPermsRepo()
+            if "abort: no username supplied" in err:
+                raise ErrorNoUsernameSupplied()
+            if "hg" in cmd:
+                try:
+                    r = subprocess.Popen(["git", "status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                except OSError as e:
+                    print("Unable to run 'git status'. Is git installed?")
+                    raise
+                if r.returncode != 0:
+                    raise ErrorGitRepo()
+            # Unkown exception
             print('Error running command (%s).'%(' '.join(cmd)))
             print('stdout: %s'%(out))
             print('stderr: %s'%(err))
@@ -361,8 +380,8 @@ def generate_upload_tarball(args):
         # sitting in the working copy
         srcdir = os.path.join(tmpdir, 'src')
         check_call(['hg', 'archive', srcdir])
-    except Exception as e:
-        # Assume that it's git and that we'll just use the CWD
+    except ErrorGitRepo as e:
+        # it's git and that we'll just use the CWD
         srcdir = os.getcwd()
 
     # use cmake to generate package_source
@@ -404,9 +423,18 @@ def generate_upload_tarball(args):
 
         # Push tag
         check_call(['hg', 'push','-b','.'])
-    except Exception as e:
-        # Assume git
+    except ErrorGitRepo as e:
+        # do nothing for git repos (no git support is implemented)
         pass
+    except ErrorNoPermsRepo as e:
+        print('The bitbucket server reports problems with permissions')
+        print('The branch could be blocked by configuration if you do not have')
+        print('rights to push code in default branch.')
+        sys.exit(1)
+    except ErrorNoUsernameSupplied as e:
+        print('The hg tag could not be committed because you have not configured')
+        print('your username. Use "hg config --edit" to set your username.')
+        sys.exit(1)
 
     source_tarball_uri = DOWNLOAD_URI_PATTERN%get_canonical_package_name(args.package) + tarball_fname
 
@@ -494,6 +522,8 @@ def go(argv):
             distros = ubuntu_distros
         elif (l == 'debian'):
             if (PRERELEASE or NIGHTLY):
+                continue
+            if not debian_distros:
                 continue
             distros = debian_distros
         else:

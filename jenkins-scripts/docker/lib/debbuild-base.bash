@@ -59,9 +59,11 @@ if ${NIGHTLY_MODE}; then
     REV=0
   fi
 else
-  wget --quiet -O $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2 $SOURCE_TARBALL_URI
+  wget --quiet -O orig_tarball $SOURCE_TARBALL_URI
+  TARBALL_EXT=${SOURCE_TARBALL_URI/*tar./}
+  mv orig_tarball $PACKAGE_ALIAS\_$VERSION.orig.tar.\${TARBALL_EXT}
   rm -rf \$REAL_PACKAGE_NAME\-$VERSION
-  tar xf $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2
+  tar xf $PACKAGE_ALIAS\_$VERSION.orig.tar.*
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME-$VERSION
 fi
 
@@ -128,7 +130,7 @@ cd \${PACKAGE_RELEASE_DIR}
 
 # [nightly] Adjust version in nightly mode
 if $NIGHTLY_MODE; then
-  NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+\${TIMESTAMP}r\${REV}-${RELEASE_VERSION}~${DISTRO}
+  NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+\${TIMESTAMP}+${RELEASE_VERSION}r\${REV}-${RELEASE_VERSION}~${DISTRO}
   debchange --package ${PACKAGE_ALIAS} \\
               --newversion \${NIGHTLY_VERSION_SUFFIX} \\
               --distribution ${DISTRO} \\
@@ -142,7 +144,7 @@ cd \`find $WORKSPACE/build -mindepth 1 -type d |head -n 1\`
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
 if $NIGHTLY_MODE; then
   rm -fr .hg*
-  echo | dh_make -y -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}+\${TIMESTAMP}r\${REV} > /dev/null
+  echo | dh_make -y -s --createorig -p${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}+\${TIMESTAMP}+${RELEASE_VERSION}r\${REV} > /dev/null
 fi
 
 # Adding extra directories to code. debian has no problem but some extra directories
@@ -191,6 +193,12 @@ cp ../*.tar.* $WORKSPACE/pkgs
 # debian is only generated in quilt format, native does not have it
 cp ../*.debian.* $WORKSPACE/pkgs || true
 echo '# END SECTION'
+
+# Enable compat level 12 to get --list-missing enabled by default, if the
+# support is found in debhelper
+if [[ -n  \$(grep -R 'compat 12' /usr/share/perl5/Debian/Debhelper/Dh_*.pm) ]]; then
+  echo 12 > debian/compat
+fi
 
 echo '# BEGIN SECTION: create deb packages'
 debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
