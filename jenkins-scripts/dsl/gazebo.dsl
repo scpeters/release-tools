@@ -17,9 +17,8 @@ def abi_distro              = Globals.get_abi_distro()
 def performance_box         = Globals.get_performance_box()
 // Other supported platform to be checked but no for quick
 // CI integration.
-def other_supported_distros = Globals.get_other_supported_distros()
 // disco in only supported in gazebo classic
-def all_supported_distros   = Globals.get_all_supported_distros() + [ 'disco' ]
+def other_supported_distros = Globals.get_other_supported_distros() + [ 'disco ' ]
 def supported_arches        = Globals.get_supported_arches()
 def experimental_arches     = Globals.get_experimental_arches()
 def all_supported_gpus      = Globals.get_all_supported_gpus()
