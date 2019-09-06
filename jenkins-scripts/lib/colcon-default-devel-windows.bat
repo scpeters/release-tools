@@ -73,18 +73,18 @@ if defined KEEP_WORKSPACE (
     echo # END SECTION
   )
 )
-mkdir %LOCAL_WS% || echo "Workspace already exists!"
+
+if exist %LOCAL_WS% ( rmdir /q /s %LOCAL_WS% )
+mkdir %LOCAL_WS%
 cd %LOCAL_WS%
 echo # END SECTION
 
 echo # BEGIN SECTION: get open robotics deps (%GAZEBODISTRO_FILE%) sources into the workspace
-if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% )
 call %win_lib% :get_source_from_gazebodistro %GAZEBODISTRO_FILE% %LOCAL_WS% || goto :error
 echo # END SECTION
 
 :: this step is important since overwrite the gazebodistro file
 echo # BEGIN SECTION: move %VCS_DIRECTORY% source to workspace
-if exist %LOCAL_WS_SOFTWARE_DIR% ( rmdir /q /s %LOCAL_WS_SOFTWARE_DIR% )
 xcopy %WORKSPACE%\%VCS_DIRECTORY% %LOCAL_WS_SOFTWARE_DIR% /s /e /i > xcopy_vcs_directory.log || goto :error
 echo # END SECTION
 
