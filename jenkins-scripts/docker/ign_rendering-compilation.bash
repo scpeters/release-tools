@@ -15,14 +15,24 @@ if [[ -z ${DISTRO} ]]; then
 fi
 
 export BUILDING_SOFTWARE_DIRECTORY="ign-rendering"
-export BUILDING_JOB_REPOSITORIES="stable"
 export BUILDING_PKG_DEPENDENCIES_VAR_NAME="IGN_RENDERING_DEPENDENCIES"
 
-if [[ $(date +%Y%m%d) -le 20180831 ]]; then
-  ## need prerelease repo to get ignition-cmake during the development cycle
-  export BUILDING_JOB_REPOSITORIES="${BUILDING_JOB_REPOSITORIES} prerelease"
+# Identify IGN_RENDERING_MAJOR_VERSION to help with dependency resolution
+IGN_RENDERING_MAJOR_VERSION=$(\
+  python ${SCRIPT_DIR}/../tools/detect_cmake_major_version.py \
+  ${WORKSPACE}/ign-rendering/CMakeLists.txt)
+
+# Check IGN_RENDERING version is integer
+if ! [[ ${IGN_RENDERING_MAJOR_VERSION} =~ ^-?[0-9]+$ ]]; then
+  echo "Error! IGN_RENDERING_MAJOR_VERSION is not an integer, check the detection"
+  exit -1
+fi
+
+if [[ ${IGN_RENDERING_MAJOR_VERSION} -ge 1 ]]; then
+  export USE_GCC8=true
 fi
 
 export GPU_SUPPORT_NEEDED=true
+export GZDEV_PROJECT_NAME="ignition-rendering${IGN_RENDERING_MAJOR_VERSION}"
 
 . ${SCRIPT_DIR}/lib/generic-building-base.bash

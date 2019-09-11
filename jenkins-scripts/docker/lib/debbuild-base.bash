@@ -2,8 +2,11 @@
 
 NIGHTLY_MODE=${NIGHTLY_MODE:-false}
 if [ "${UPLOAD_TO_REPO}" = "nightly" ]; then
-   OSRF_REPOS_TO_USE="stable nightly"
+   OSRF_REPOS_TO_USE="${OSRF_REPOS_TO_USE:-stable nightly}"
    NIGHTLY_MODE=true
+   # SOURCE_TARBALL_URI is reused in nightly mode to indicate the branch
+   # to built nightly packages from
+   NIGHTLY_SRC_BRANCH=${SOURCE_TARBALL_URI}
 fi
 
 # Option to use $WORKSPACE/repo as container (git or hg) for the nightly source
@@ -37,7 +40,7 @@ if ${NIGHTLY_MODE}; then
   if ${USE_REPO_DIRECTORY_FOR_NIGHTLY}; then
     mv ${WORKSPACE}/repo \$REAL_PACKAGE_NAME
   else
-    hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r default
+    hg clone https://bitbucket.org/${BITBUCKET_REPO}/\$REAL_PACKAGE_NAME -r ${NIGHTLY_SRC_BRANCH}
   fi
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME
   cd \$REAL_PACKAGE_NAME
@@ -56,9 +59,11 @@ if ${NIGHTLY_MODE}; then
     REV=0
   fi
 else
-  wget --quiet -O $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2 $SOURCE_TARBALL_URI
+  wget --quiet -O orig_tarball $SOURCE_TARBALL_URI
+  TARBALL_EXT=${SOURCE_TARBALL_URI/*tar./}
+  mv orig_tarball $PACKAGE_ALIAS\_$VERSION.orig.tar.\${TARBALL_EXT}
   rm -rf \$REAL_PACKAGE_NAME\-$VERSION
-  tar xf $PACKAGE_ALIAS\_$VERSION.orig.tar.bz2
+  tar xf $PACKAGE_ALIAS\_$VERSION.orig.tar.*
   PACKAGE_SRC_BUILD_DIR=\$REAL_PACKAGE_NAME-$VERSION
 fi
 
@@ -125,8 +130,8 @@ cd \${PACKAGE_RELEASE_DIR}
 
 # [nightly] Adjust version in nightly mode
 if $NIGHTLY_MODE; then
-  NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+\${TIMESTAMP}r\${REV}-${RELEASE_VERSION}~${DISTRO}
-  debchange --package ${PACKAGE} \\
+  NIGHTLY_VERSION_SUFFIX=\${UPSTREAM_VERSION}+\${TIMESTAMP}+${RELEASE_VERSION}r\${REV}-${RELEASE_VERSION}~${DISTRO}
+  debchange --package ${PACKAGE_ALIAS} \\
               --newversion \${NIGHTLY_VERSION_SUFFIX} \\
               --distribution ${DISTRO} \\
               --force-distribution \\
@@ -139,7 +144,7 @@ cd \`find $WORKSPACE/build -mindepth 1 -type d |head -n 1\`
 # If use the quilt 3.0 format for debian (drcsim) it needs a tar.gz with sources
 if $NIGHTLY_MODE; then
   rm -fr .hg*
-  echo | dh_make -y -s --createorig -p ${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}+\${TIMESTAMP}r\${REV} > /dev/null
+  echo | dh_make -y -s --createorig -p${PACKAGE_ALIAS}_\${UPSTREAM_VERSION}+\${TIMESTAMP}+${RELEASE_VERSION}r\${REV} > /dev/null
 fi
 
 # Adding extra directories to code. debian has no problem but some extra directories
@@ -149,6 +154,7 @@ cp -a --dereference \${PACKAGE_RELEASE_DIR}/* .
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: install build dependencies'
+apt-get update
 mk-build-deps -r -i debian/control --tool 'apt-get --yes -o Debug::pkgProblemResolver=yes -o  Debug::BuildDeps=yes'
 echo '# END SECTION'
 
@@ -170,6 +176,14 @@ g++ --version
 echo '# END SECTION'
 fi
 
+if $NEED_C17_COMPILER; then
+echo '# BEGIN SECTION: install C++17 compiler'
+apt-get install -y gcc-8 g++-8
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
+g++ --version
+echo '# END SECTION'
+fi
+
 echo '# BEGIN SECTION: create source package' \${OSRF_VERSION}
 debuild --no-tgz-check -uc -us -S --source-option=--include-binaries
 
@@ -179,6 +193,12 @@ cp ../*.tar.* $WORKSPACE/pkgs
 # debian is only generated in quilt format, native does not have it
 cp ../*.debian.* $WORKSPACE/pkgs || true
 echo '# END SECTION'
+
+# Enable compat level 12 to get --list-missing enabled by default, if the
+# support is found in debhelper
+if [[ -n  \$(grep -R 'compat 12' /usr/share/perl5/Debian/Debhelper/Dh_*.pm) ]]; then
+  echo 12 > debian/compat
+fi
 
 echo '# BEGIN SECTION: create deb packages'
 debuild --no-tgz-check -uc -us --source-option=--include-binaries -j${MAKE_JOBS}
