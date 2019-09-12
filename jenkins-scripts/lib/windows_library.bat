@@ -115,7 +115,7 @@ goto :EOF
 :: Download the unzip utility from osrfoundation.org
 :download_7za
 ::
-if not exist 7za.exe (call :wget http://gazebosim.org/distributions/win32/deps/7za.exe 7za.exe || goto :error)
+if not exist 7za.exe (call :wget http://www.7-zip.org/a/7z1900-x64.exe 7za.exe || goto :error)
 goto :EOF
 
 :: ##################################
