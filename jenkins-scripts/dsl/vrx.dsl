@@ -9,6 +9,8 @@ def ENABLE_TESTS = true
 def DISABLE_CPPCHECK = false
 // Globals.extra_emails = "caguero@osrfoundation.org"
 
+ ci_build_any_job_name_linux = []
+
 void include_parselog(Job job)
 {
   job.with
@@ -72,10 +74,12 @@ ci_distro.each { distro, ros_distro ->
     }
     // --------------------------------------------------------------
     // 2. Create the any job
-    def vrx_ci_any_job = job("vrx-ci-pr_any_${ros_distro}-${distro}-${arch}")
+    def vrx_ci_any_job_name = "vrx-ci-pr_any_${ros_distro}-${distro}-${arch}"
+    def vrx_ci_any_job = job(vrx_ci_any_job_name)
     OSRFLinuxCompilationAny.create(vrx_ci_any_job,
                                   'https://bitbucket.org/osrf/vrx',
                                   ENABLE_TESTS, DISABLE_CPPCHECK)
+    ci_build_any_job_name_linux << vrx_ci_any_job_name
     // GPU label and parselog
     include_parselog(vrx_ci_any_job)
 
@@ -128,3 +132,7 @@ ci_distro.each { distro, ros_distro ->
     } // end of with
   }
 }
+
+// Create the main CI work flow job
+def vrx_ci_main = pipelineJob("vrx-ci-pr_any")
+OSRFCIWorkFlowMultiAny.create(vrx_ci_main, ci_build_any_job_name_linux)
