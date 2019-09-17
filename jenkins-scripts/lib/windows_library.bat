@@ -115,6 +115,7 @@ goto :EOF
 :: Download the unzip utility from osrfoundation.org
 :download_7za
 ::
+echo "******** call to download_7za *************"
 if not exist 7za.exe (call :wget http://osrf-distributions.s3.us-east-1.amazonaws.com/win32/deps/7z1900.exe 7za.exe || goto :error)
 goto :EOF
 
@@ -154,6 +155,7 @@ goto :EOF
 :: arg1: Name of the ignition project (e.g. ign-cmake, ign-math)
 :: arg2: [Optional] desired branch
 ::
+echo "******** call to install_ign_project *************"
 set IGN_PROJECT_DEPENDENCY_DIR=%LOCAL_WS%\%1
 if exist %IGN_PROJECT_DEPENDENCY_DIR% ( rmdir /s /q %IGN_PROJECT_DEPENDENCY_DIR% )
 if "%2"=="" (
