@@ -136,7 +136,9 @@ goto :EOF
 echo Uncompressing %~1 to %~d0\install
 IF NOT exist %~1 ( echo "Zip file does not exist: %~1" && goto :error )
 call :download_7za || goto :error
+echo "******** run extract *************"
 7za.exe x %~1 -aoa -o%WORKSPACE_INSTALL_DIR% || goto :error
+echo "******** end extract *************"
 goto :EOF
 
 :: ##################################
@@ -155,7 +157,6 @@ goto :EOF
 :: arg1: Name of the ignition project (e.g. ign-cmake, ign-math)
 :: arg2: [Optional] desired branch
 ::
-echo "******** call to install_ign_project *************"
 set IGN_PROJECT_DEPENDENCY_DIR=%LOCAL_WS%\%1
 if exist %IGN_PROJECT_DEPENDENCY_DIR% ( rmdir /s /q %IGN_PROJECT_DEPENDENCY_DIR% )
 if "%2"=="" (
