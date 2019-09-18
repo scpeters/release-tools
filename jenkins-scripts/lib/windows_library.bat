@@ -115,7 +115,6 @@ goto :EOF
 :: Download the unzip utility from osrfoundation.org
 :download_7za
 ::
-echo "******** call to download_7za *************"
 if not exist 7z.dll (call :wget http://osrf-distributions.s3.us-east-1.amazonaws.com/win32/deps/7z.dll 7z.dll || goto :error)
 if not exist 7z.exe (call :wget http://osrf-distributions.s3.us-east-1.amazonaws.com/win32/deps/7z.exe 7z.exe || goto :error)
 goto :EOF
