@@ -136,9 +136,7 @@ goto :EOF
 echo Uncompressing %~1 to %~d0\install
 IF NOT exist %~1 ( echo "Zip file does not exist: %~1" && goto :error )
 call :download_7za || goto :error
-echo "******** run extract *************"
 7z.exe x %~1 -aoa -o%WORKSPACE_INSTALL_DIR% || goto :error
-echo "******** end extract *************"
 goto :EOF
 
 :: ##################################
