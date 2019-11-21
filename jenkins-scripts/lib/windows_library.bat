@@ -43,7 +43,7 @@ echo "before extend PATH=%PATH%"
 if "%VCPKG_PATH_ADDED%" == "" (
   set PATH=%PATH%;%VCPKG_DIR%\installed\%VCPKG_DEFAULT_TRIPLET%\bin
 ::  echo " after extend PATH=%PATH%"
-  set VCPKG_PATH_ADDED=1
+::  set VCPKG_PATH_ADDED=1
 )
 
 IF exist "%MSVC_ON_WIN64_E%" (
