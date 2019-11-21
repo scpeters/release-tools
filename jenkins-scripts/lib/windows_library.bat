@@ -40,9 +40,11 @@ set MSVC_ON_WIN32_C=C:\Program Files\Microsoft Visual Studio\2017\Community\VC\A
 set LIB_DIR="%~dp0"
 call %LIB_DIR%\windows_env_vars.bat
 echo "before extend PATH="%PATH%
-set PATH=%PATH%;%VCPKG_DIR%\installed\%VCPKG_DEFAULT_TRIPLET%\bin
-echo " after extend PATH="%PATH%
-
+if "%VCPKG_PATH_ADDED%" == "" (
+  set PATH=%PATH%;%VCPKG_DIR%\installed\%VCPKG_DEFAULT_TRIPLET%\bin
+  echo " after extend PATH="%PATH%
+  set VCPKG_PATH_ADDED=1
+)
 
 IF exist "%MSVC_ON_WIN64_E%" (
    call "%MSVC_ON_WIN64_E%" %MSVC_KEYWORD% || goto %win_lib% :error
