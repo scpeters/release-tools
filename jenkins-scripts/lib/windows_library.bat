@@ -42,7 +42,7 @@ call %LIB_DIR%\windows_env_vars.bat
 echo "before extend PATH=%PATH%"
 if "%VCPKG_PATH_ADDED%" == "" (
   set PATH=%PATH%;%VCPKG_DIR%\installed\%VCPKG_DEFAULT_TRIPLET%\bin
-  echo " after extend PATH=%PATH%"
+::  echo " after extend PATH=%PATH%"
   set VCPKG_PATH_ADDED=1
 )
 
