@@ -43,10 +43,11 @@ echo "before extend PATH=%PATH%"
 
 setlocal EnableDelayedExpansion
 if "%_VCPKG_PATH_ADDED%" == "" (
-set PATH=!PATH!;!VCPKG_DIR!\installed\!VCPKG_DEFAULT_TRIPLET!\bin
+set PATH=!PATH!!VCPKG_DIR!\installed\!VCPKG_DEFAULT_TRIPLET!\bin
 set _VCPKG_PATH_ADDED=1
 )
 echo " after extend PATH=%PATH%"
+xcopy --help || goto %win_lib% :error
 
 IF exist "%MSVC_ON_WIN64_E%" (
    call "%MSVC_ON_WIN64_E%" %MSVC_KEYWORD% || goto %win_lib% :error
