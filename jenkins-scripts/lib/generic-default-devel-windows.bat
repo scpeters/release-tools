@@ -52,16 +52,12 @@ echo # END SECTION
 @set PATH=%WORKSPACE_INSTALL_DIR%;%WORKSPACE_INSTALL_DIR%\bin;%WORKSPACE_INSTALL_DIR%\lib;%WORKSPACE_INSTALL_DIR%\include;%WORKSPACE_INSTALL_DIR%\share;%PATH%
 :: Workaround to remove duplicates in PATH
 @python -c "import os; print(';'.join(list(set(os.environ['PATH'].split(';')))))" > clean_path.txt
-@set PATH=""
-@set /P PATH=< clean_path.txt
-@echo "expand PATH %PATH%"
-
-echo # BEGIN SECTION: Setup Workspace
-if not DEFINED KEEP_WORKSPACE (
-  echo # BEGIN SECTION: Preclean Workspace
-  if exist %LOCAL_WS% ( rmdir /s /q %LOCAL_WS% ) || goto :error
-  echo # END SECTION
-)
+echo "INIT PATH: %PATH%"
+echo "--------------------------------------------------------"
+set PATH=""
+for /f "usebackq delims=" %%f in ("clean_path.txt") do set "PATH=%%f"
+echo "expand PATH %PATH%"
+echo "--------------------------------------------------------"
 
 mkdir %LOCAL_WS% || echo "Workspace already exists!"
 cd /d %LOCAL_WS%
