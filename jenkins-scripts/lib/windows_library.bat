@@ -40,6 +40,11 @@ set MSVC_ON_WIN32_C=C:\Program Files\Microsoft Visual Studio\2017\Community\VC\A
 set LIB_DIR="%~dp0"
 call %LIB_DIR%\windows_env_vars.bat
 set PATH=%PATH%;%VCPKG_DIR%\installed\%VCPKG_DEFAULT_TRIPLET%\bin
+:: Workaround to remove duplicates in PATH
+@python -c "import os; print(';'.join(list(set(os.environ['PATH'].split(';')))))" > clean_path.txt
+@set PATH=""
+@set /P PATH=< clean_path.txt
+@echo "expand PATH %PATH%"
 
 IF exist "%MSVC_ON_WIN64_E%" (
    call "%MSVC_ON_WIN64_E%" %MSVC_KEYWORD% || goto %win_lib% :error
