@@ -55,13 +55,9 @@ IF exist "%MSVC_ON_WIN64_E%" (
 )
 
 :: Workaround to remove duplicates in PATH
-@python -c "import os; print(';'.join(list(set(os.environ['PATH'].split(';')))))" > clean_path.txt
-echo "INIT PATH: %PATH%"
-echo "--------------------------------------------------------"
+python -c "import os; print(';'.join(list(set(os.environ['PATH'].split(';')))))" > clean_path.txt
 set PATH=""
 for /f "usebackq delims=" %%f in ("clean_path.txt") do set "PATH=%%f"
-echo "expand PATH %PATH%"
-echo "--------------------------------------------------------"
 
 goto :EOF
 
