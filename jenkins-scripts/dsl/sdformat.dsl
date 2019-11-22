@@ -275,7 +275,7 @@ sdformat_supported_branches.each { branch ->
 // --------------------------------------------------------------
 // DEBBUILD: linux package builder
 
-all_debbuild_branches = sdformat_supported_branches + nightly_sdformat_branch
+all_debbuild_branches = sdformat_supported_branches + nightly_sdformat_branch + [ 'sdformat9' ]
 all_debbuild_branches.each { branch ->
   def build_pkg_job = job("${branch}-debbuilder")
   OSRFLinuxBuildPkg.create(build_pkg_job)
