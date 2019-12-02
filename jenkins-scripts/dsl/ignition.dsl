@@ -40,7 +40,7 @@ ignition_branches           = [ 'cmake'      : [ '1', '2' ],
                                 'plugin'     : [ '0', '1' ],
                                 'rendering'  : [ '0', '2' ],
                                 'sensors'    : [ '2' ],
-                                'transport'  : [ '4', '5', '7' ],
+                                'transport'  : [ '4', '5', '7', '8' ],
                                 'tools'      : [ '0' ]]
 // DESC: prerelease branches are managed as any other supported branches for
 // special cases different to major branches: get compilation CI on the branch
