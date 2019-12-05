@@ -70,7 +70,7 @@ fi
 # Step 4: add debian/ subdirectory with necessary metadata files to unpacked source tarball
 rm -rf /tmp/$PACKAGE-release
 if ${GITHUB_RELEASE}; then
-  git clone https://github.com/ignition-release/$PACKAGE-release -b $RELEASE_REPO_BRANCH /tmp/$PACKAGE-release
+  git clone https://github.com/ignition-release/$PACKAGE\2-release -b $RELEASE_REPO_BRANCH /tmp/$PACKAGE-release
 else
   hg clone https://bitbucket.org/${BITBUCKET_REPO}/$PACKAGE-release -b $RELEASE_REPO_BRANCH /tmp/$PACKAGE-release
 fi
