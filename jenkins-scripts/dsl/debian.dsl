@@ -17,6 +17,7 @@ packages['science-team'] = ['console-bridge',
                             'dart',
                             'libccd',
                             'octomap',
+                            'ogre-next',
                             'sdformat', // version 6
                             'simbody',
                             'urdfdom',
@@ -26,6 +27,8 @@ packages['debian']  = ['peak-linux-driver',
                        'peak-pcan-basic']
 
 packages['jrivero-guest'] = ['empy']
+
+pacakges['ogre-team'] = ['ogre-next']
 
 
 packages.each { repo_name, pkgs ->
@@ -167,7 +170,3 @@ ratt_pkg_job.with
           """.stripIndent())
   }
 }
-
-
-
-
