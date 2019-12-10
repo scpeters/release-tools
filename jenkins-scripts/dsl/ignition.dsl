@@ -481,6 +481,8 @@ ignition_debbuild.each { ign_sw ->
     if (("${ign_sw}" == "gazebo") ||
         (("${ign_sw}" == "transport") && ("${major_version}" == "6"  || "${major_version}" == "7" )))
       extra_str="export USE_GCC8=true"
+    else if  ("${ign_sw}" == "physics" && "${major_version}" == "2")
+      extra_str="DART_FROM_PKGS"
 
     def build_pkg_job = job("ign-${ign_sw}${major_version}-debbuilder")
     OSRFLinuxBuildPkg.create(build_pkg_job)

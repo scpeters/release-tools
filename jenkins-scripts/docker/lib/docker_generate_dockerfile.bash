@@ -244,7 +244,7 @@ fi
 
 # Dart repositories
 if ${DART_FROM_PKGS} || ${DART_COMPILE_FROM_SOURCE}; then
-if [[ $DISTRO == 'xenial' ]]; then
+if [[ $DISTRO == 'xenial' ]] || [[ $DISTRO == 'bionic' ]]; then
 cat >> Dockerfile << DELIM_DOCKER_DART_PKGS
 # Install dart from pkgs
 RUN apt-get update \\
