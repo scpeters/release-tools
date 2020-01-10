@@ -77,7 +77,7 @@ packages.each { repo_name, pkgs ->
             relativeTargetDirectory('repo')
           }
 
-          branches('refs/heads/master refs/heads/upstream')
+          branches('refs/heads/master', 'refs/heads/upstream')
         }
       }
 
