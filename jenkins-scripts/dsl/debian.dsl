@@ -77,7 +77,8 @@ packages.each { repo_name, pkgs ->
             relativeTargetDirectory('repo')
           }
 
-          branch('refs/heads/master')
+          // needs empty to checkout all branches for gbp
+          branch('')
         }
       }
 
