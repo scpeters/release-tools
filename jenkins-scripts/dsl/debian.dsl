@@ -15,6 +15,7 @@ packages['science-team'] = ['console-bridge',
                             'ignition-math4',
                             'ignition-math6',
                             'ignition-msgs',
+                            'ignition-msgs5',
                             'ignition-tools',
                             'ignition-transport', // version 4
                             'dart',
