@@ -54,12 +54,6 @@ echo # END SECTION
 
 :: add PATH where jom was uncompressed. Needs for nmake JOM files
 set PATH=%LOCAL_WS%;%PATH%
-echo %PATH%
-echo "cd=%cd%"
-dir
-cd ..
-jom
-cd %LOCAL_WS%
 
 echo # BEGIN SECTION: compile and install ign-transport
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport

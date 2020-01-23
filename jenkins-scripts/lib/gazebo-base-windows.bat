@@ -54,6 +54,9 @@ echo # END SECTION
   echo # END SECTION
 )
 
+:: add PATH where jom was uncompressed. Needs for nmake JOM files
+set PATH=%LOCAL_WS%;%PATH%
+
 echo # BEGIN SECTION: compile and install ign-fuel-tools
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-fuel-tools
 if EXIST %IGN_TRANSPORT_DIR% ( rmdir /s /q %IGN_TRANSPORT_DIR% )
@@ -105,7 +108,6 @@ call "..\configure.bat" Release %BITNESS% || goto %win_lib% :error
 echo # END SECTION
 
 echo # BEGIN SECTION: compiling gazebo
-copy %LOCAL_WS%\jom.exe .
 jom -j%MAKE_JOBS% || goto :error
 echo # END SECTION
 
