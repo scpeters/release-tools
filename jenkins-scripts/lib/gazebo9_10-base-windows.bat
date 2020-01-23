@@ -44,9 +44,6 @@ call %win_lib% :download_unzip_install zziplib-0.13.62-vc12-x64-release-debug.zi
 call %win_lib% :wget http://download.qt-project.org/official_releases/jom/jom.zip jom.zip
 call %win_lib% :unzip_7za jom.zip
 
-:: add PATH where jom was uncompressed. Needs for nmake JOM files
-set PATH=%LOCAL_WS%;%PATH%
-
 echo # END SECTION
 ) ELSE (
   echo # BEGIN SECTION: reusing workspace
@@ -54,6 +51,9 @@ echo # END SECTION
   IF EXIST %LOCAL_WS%\gazebo ( rmdir /s /q %LOCAL_WS%\gazebo ) || goto :error
   echo # END SECTION
 )
+
+:: add PATH where jom was uncompressed. Needs for nmake JOM files
+set PATH=%LOCAL_WS%;%PATH%
 
 echo # BEGIN SECTION: compile and install ign-transport
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport
