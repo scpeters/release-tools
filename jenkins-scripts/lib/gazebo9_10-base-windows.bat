@@ -11,7 +11,7 @@ echo # END SECTION
 
 :: avoid conflicts with vcpkg packages
 call %win_lib% :disable_vcpkg_integration
-call %win_lib% :remove_vcpkg_package protobuf 
+call %win_lib% :remove_vcpkg_package protobuf
 call %win_lib% :remove_vcpkg_package qt5
 call %win_lib% :remove_vcpkg_package qwt
 
@@ -43,6 +43,9 @@ call %win_lib% :download_unzip_install zziplib-0.13.62-vc12-x64-release-debug.zi
 
 call %win_lib% :wget http://download.qt-project.org/official_releases/jom/jom.zip jom.zip
 call %win_lib% :unzip_7za jom.zip
+
+:: add PATH where jom was uncompressed. Needs for nmake JOM files
+set PATH=%LOCAL_WS%;%PATH%
 
 echo # END SECTION
 ) ELSE (
@@ -92,7 +95,6 @@ call "..\configure.bat" Release %BITNESS% || goto %win_lib% :error
 echo # END SECTION
 
 echo # BEGIN SECTION: compiling gazebo
-copy %LOCAL_WS%\jom.exe .
 jom -j%MAKE_JOBS% || goto :error
 echo # END SECTION
 
