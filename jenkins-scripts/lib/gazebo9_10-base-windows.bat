@@ -54,10 +54,6 @@ echo # END SECTION
 
 :: add PATH where jom was uncompressed. Needs for nmake JOM files
 set PATH=%LOCAL_WS%;%PATH%
-dir 
-cd %LOCAL_WS%\gazebo
-jom --help
-cd %LOCAL_WS%
 
 echo # BEGIN SECTION: compile and install ign-transport
 set IGN_TRANSPORT_DIR=%WORKSPACE%\ign-transport
