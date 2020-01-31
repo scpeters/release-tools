@@ -37,7 +37,7 @@ while 'next' in j:
                 pr_response = urllib.request.urlopen(url)
                 pr_j = json.loads(pr_response.read().decode('utf-8'))
                 pulls += pr_j["size"]
-            pullIssueWiki = [pulls, v["has_issues"], v["has_wiki"]]
+            pullIssueWiki = [pulls, v["has_issues"], v["has_wiki"], v["full_name"]]
             repo_pullIssueWiki[v["full_name"]] = pullIssueWiki
         except urllib.error.HTTPError:
             continue
