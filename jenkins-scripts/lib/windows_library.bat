@@ -228,6 +228,7 @@ set LIB_DIR=%~dp0
 call %LIB_DIR%\windows_env_vars.bat || goto :error
 
 %VCPKG_CMD% install "%1"
+%VCPKG_CMD% list "%1"
 goto :EOF
 
 :: ##################################
