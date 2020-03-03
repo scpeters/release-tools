@@ -96,7 +96,7 @@ if $GENERIC_ENABLE_TESTS; then
   init_stopwatch TEST
   mkdir -p \$HOME
   export RERUN_FAILED_TESTS=1
-  . ${WORKSPACE}/scripts/jenkins-scripts/lib/make_test_rerun_failed.bash "-VV" || true
+  . ${WORKSPACE}/scripts/jenkins-scripts/lib/make_test_rerun_failed.bash "-VV"
   stop_stopwatch TEST
   echo '# END SECTION'
 else
