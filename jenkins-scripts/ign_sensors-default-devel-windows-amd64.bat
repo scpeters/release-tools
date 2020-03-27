@@ -5,7 +5,7 @@ set VCS_DIRECTORY=ign-sensors
 set PLATFORM_TO_BUILD=x86_amd64
 set IGN_CLEAN_WORKSPACE=true
 
-set DEPEN_PKGS="dlfcn-win32 gts freeimage ogre protobuf tinyxml2 zeromq cppzmq ogre ogre2"
+set DEPEN_PKGS="cppzmq dlfcn-win32 gts freeimage ogre ogre2 protobuf tinyxml2 zeromq"
 :: This needs to be migrated to DSL to get multi-major versions correctly
 set COLCON_PACKAGE=ignition-sensors
 set COLCON_AUTO_MAJOR_VERSION=true
