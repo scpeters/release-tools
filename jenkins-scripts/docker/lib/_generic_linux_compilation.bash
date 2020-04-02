@@ -2,6 +2,5 @@
 # for details read _generic_linux_compilation_build.sh.bash
 SCRIPT_DIR=${1}
 
-chmod +x "${SCRIPT_DIR}/lib/_generic_linux_compilation_build.sh.bash"
-"${SCRIPT_DIR}/lib/_generic_linux_compilation_build.sh.bash"
+. ${SCRIPT_DIR}/lib/_generic_linux_compilation_build.sh.bash ${MAKE_JOBS}
 . build.sh

@@ -14,6 +14,8 @@ if [[ -z ${SOFTWARE_DIR} ]]; then
     exit 1
 fi
 
+MAKE_JOBS=${1}
+
 [[ -z $GENERIC_ENABLE_TIMING ]] && GENERIC_ENABLE_TIMING=true
 [[ -z $GENERIC_ENABLE_CPPCHECK ]] && GENERIC_ENABLE_CPPCHECK=true
 [[ -z $GENERIC_ENABLE_TESTS ]] && GENERIC_ENABLE_TESTS=true
@@ -65,8 +67,7 @@ cat >> build.sh << DELIM_BUILD_DEPS
     GENERIC_ENABLE_TESTS=false
     SOFTWARE_DIR=$dep
     cd $WORKSPACE
-    chmod +x ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash
-    MAKE_JOBS=${MAKE_JOBS} ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash ${SCRIPT_DIR}
+    . ${SCRIPT_DIR}/lib/_generic_linux_compilation.bash ${SCRIPT_DIR}
     cd $WORKSPACE &&  rm -fr $WORKSPACE/build
 DELIM_BUILD_DEPS
   fi
@@ -84,7 +85,7 @@ echo '# END SECTION'
 
 echo '# BEGIN SECTION: compiling'
 init_stopwatch COMPILATION
-make -j${MAKE_JOBS}
+make -j\${MAKE_JOBS}
 echo '# END SECTION'
 
 echo '# BEGIN SECTION: installing'
