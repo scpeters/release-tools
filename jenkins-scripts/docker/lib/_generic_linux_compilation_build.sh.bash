@@ -14,7 +14,10 @@ if [[ -z ${SOFTWARE_DIR} ]]; then
     exit 1
 fi
 
-MAKE_JOBS=${1}
+if [[ -z ${MAKE_JOBS} ]]; then
+    echo "MAKE_JOBS empty using file"
+    MAKE_JOBS=$(cat ${WORKSPACE}/make_jobs)
+fi
 
 [[ -z $GENERIC_ENABLE_TIMING ]] && GENERIC_ENABLE_TIMING=true
 [[ -z $GENERIC_ENABLE_CPPCHECK ]] && GENERIC_ENABLE_CPPCHECK=true
