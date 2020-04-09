@@ -20,6 +20,7 @@ do
   pushd $(jq -r ".[\"${h}\"]" ${REPO_MAPPING})
   git init
   echo hg-fast-export.sh -r ${h}
+  trap "echo hg-fast-export.sh failed to export ${h}; exit" ERR
   hg-fast-export.sh -r ${h}
   popd
 done
